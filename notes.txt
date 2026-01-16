@@ -1,0 +1,33 @@
+Fonctionnalités:
+- page d'accueil (avec bouton pour se connecter / s'inscrire)
+- page de connexion / inscription 
+- page menu onigiri (prix, recettes)
+- page events (eventuellement dans la page d'accueil)
+- dashboard utilisateur (stats, montant, statut de la commande)
+- affichage bandeau statut de la commande (avec liste d'attente)
+- dashboard admin (stats)
+- page commander (fermée tant que l'event est pas ouvert)
+    - page pre commande ?
+- page contact ?
+- page mandat ?
+- cote admin (ajoyter supprimer dans le menu onigiri)
+- cote admin peut annuler une commande
+- utilisateur peut annuler une commande (en fonction du temps ? de la liste d'attente ?)
+- recettes favorites, recommander la meme commande
+- au moment de la commande, voir l'heure estimée 
+- chaque commande doit contenir: trigramme, nom, montant (euros), numéro de commande, etat, aubergine, delamama, thon, boeuf, poulet
+- gestion des stocks ?
+
+- dashboard admin
+    - liste d'attente (avec boutons valider commande)
+    - puis cette commande va dans une autre liste (à retirer, avec des boutons "Retirées")
+    - une fois retirée la commande va dans une liste de commandes retirées (accessible en cas d'erreur, sous forme de liste déroulante)
+    - stats en haut (nombre d'onigirix en attente par recette)
+        - un onglet total
+        - un onglet 10 prochains
+    - bouton stop commandes pour stopper les commandes si c'est le bordel
+    
+
+
+
+à la fin de la session, generer un sheet excel recapitulatif
