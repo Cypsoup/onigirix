@@ -22,12 +22,6 @@ Fonctionnalités:
     - liste d'attente (avec boutons valider commande)
     - puis cette commande va dans une autre liste (à retirer, avec des boutons "Retirées")
     - une fois retirée la commande va dans une liste de commandes retirées (accessible en cas d'erreur, sous forme de liste déroulante)
-    - stats en haut (nombre d'onigirix en attente par recette)
-        - un onglet total
-        - un onglet 10 prochains
+    - stats en haut (nombre d'onigirix en attente par recette). je veux qu'on puisse voir le total par recette, ainsi que le total simplement sur es 10 prochaines commandes
     - bouton stop commandes pour stopper les commandes si c'est le bordel
-    
-
-
-
-à la fin de la session, generer un sheet excel recapitulatif
+    - à la fin de la session, generer un sheet excel recapitulatif

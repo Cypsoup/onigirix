@@ -2,16 +2,16 @@
 
 Cette application web permet aux étudiants de commander leurs onigiris en ligne, de suivre l'état de la file d'attente en temps réel et de recevoir une notification dès que leur commande est prête. Elle inclut également une interface administrateur complète pour la gestion du stand.
 
-## 🚀 Fonctionnalités
+## Fonctionnalités
 
-### 📱 Côté Utilisateur (Client)
+### Côté Utilisateur
 
 * **Menu Digital :** Consultation de la carte des onigiris avec allergènes et disponibilités.
 * **Commande en ligne :** Panier d'achat et validation de commande.
 * **Live Queue :** Visualisation de sa position dans la file d'attente et estimation du temps d'attente (ETD).
 * **Notifications :** Alerte (Web Push ou SMS/Email) quand la commande passe au statut "Prête".
 
-### 🛠️ Côté Administrateur (Staff Onigiri)
+### Côté Admin
 
 * **Tableau de bord des commandes :** Gestion des statuts en un clic (*En attente* ⮕ *En préparation* ⮕ *Prête* ⮕ *Récupérée*).
 * **Gestion des Stocks :** Mise à jour automatique des stocks. Si un ingrédient manque, l'onigiri passe automatiquement en "Rupture de stock" sur le site.
@@ -19,7 +19,7 @@ Cette application web permet aux étudiants de commander leurs onigiris en ligne
 
 ---
 
-## 🛠️ Stack Technique (Suggérée)
+## Stack Technique
 
 Pour gérer le **temps réel** (file d'attente) et les **notifications**, voici la stack recommandée :
 
@@ -30,11 +30,11 @@ Pour gérer le **temps réel** (file d'attente) et les **notifications**, voici 
 ---
 
 
-## 🗄️ Structure de la Base de Données
+## Structure de la Base de Données
 
 Nous utilisons une base de données relationnelle pour gérer les utilisateurs, les stocks et les commandes de manière flexible.
 
-### 📊 Schéma des Tables
+### Schéma des Tables
 
 #### 1. Table `users`
 Gère les comptes des étudiants et les accès admin.
@@ -58,7 +58,7 @@ Gère les types d'onigiris disponibles.
 - `nom` (VARCHAR(50)) : Ex: Thon, Boeuf, Aubergine...
 - `description` (TEXT) : Ingrédients et allergènes.
 - `prix` (DECIMAL) : Prix unitaire.
-- `stock_disponible` (INT) : Quantité restante pour l'évènement en cours.
+- `stock` (INT) : Quantité restante pour l'évènement en cours.
 
 #### 4. Table `orders` (L'Enveloppe)
 Contient les informations globales d'une commande.
@@ -79,7 +79,7 @@ C'est ici que sont stockés les détails (plusieurs onigiris pour une même comm
 
 ---
 
-### 💡 Exemple de fonctionnement
+### Exemple de fonctionnement
 Si **Jean** commande **2 Thon** et **1 Boeuf** :
 
 1. Une ligne est créée dans `orders` (ID: 42, User: ABC, Total: 7.50€).
@@ -89,24 +89,5 @@ Si **Jean** commande **2 Thon** et **1 Boeuf** :
 
 Cela permet à l'admin de voir instantanément le détail de la commande #42 et de calculer les stats globales de production.
 
----
 
-
-## 📈 Roadmap / Prochaines étapes
-
-* [ ] Maquettage de l'interface de commande (UI/UX).
-* [ ] Mise en place de la base de données pour les stocks.
-* [ ] Développement du système de calcul du temps d'attente (basé sur le nombre de commandes en cours).
-* [ ] Ajout d'un système de paiement (Lydia, Stripe ou jetons asso).
-
----
-
-## ⛩️ Contact
-
-* **Équipe Tech Onigiri :** [Votre Nom]
-* **Association :** [Lien réseaux sociaux]
-
----
-
-*Bon appétit ! Itadakimasu !* 🥢
 
