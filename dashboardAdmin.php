@@ -1,120 +1,79 @@
+<?php 
+require_once 'config/db.php';
+require_once 'includes/functions.php';
+$activePage = 'dashboard'; 
+?>
+
 <!DOCTYPE html>
 <html lang="fr" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OnigiriX Admin - Dashboard</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        /* Effet de trait dégradé pour les séparateurs de colonnes */
-        .brush-divider {
-            border-right: 1px solid transparent;
-            border-image: linear-gradient(to bottom, transparent, black, transparent) 1;
-        }
-        /* Masquage de la scrollbar */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Enlève les flèches des input number sur Chrome/Safari/Edge */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-        /* Pareil pour Firefox */
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-    </style>
 </head>
 <body class="h-full bg-white text-black font-sans">
 
     <div class="flex h-full w-full">
 
-        <aside class="w-[60px] bg-black flex flex-col items-center py-6 justify-between z-20">
-            <div class="flex flex-col items-center gap-8">
-                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden">
-                    <img src="images/logo.jpg" alt="Logo" class="object-cover w-full h-full">
-                </div>
-                <nav class="flex flex-col gap-6">
-                    <a href="#" class="text-[#E60012] p-2 bg-white/10 rounded-lg"><i data-lucide="layout-dashboard"></i></a>
-                    <a href="#" class="text-white/50 hover:text-white transition-colors p-2"><i data-lucide="package"></i></a>
-                    <a href="#" class="text-white/50 hover:text-white transition-colors p-2"><i data-lucide="history"></i></a>
-                </nav>
-            </div>
-            <a href="#" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-out"></i></a>
-        </aside>
+        <!-- SIDEBAR -->
+        <?php include 'includes/sidebar.php'; ?>
 
         <main class="flex-1 grid grid-cols-4 h-full"> <!-- flex-1 pour prendre tout l'espace disponible -->
             
-            <section class="flex flex-col brush-divider h-full min-h-0"> <!-- min-h-0 car par défaut, min-height:auto et donc la colonne s'agrandit et on ne peut pas scroller -->
-                <div class="p-4 flex justify-between items-center border-b border-black/5">
+            <section class="flex flex-col column-divider h-full min-h-0"> <!-- min-h-0 car par défaut, min-height:auto et donc la colonne s'agrandit et on ne peut pas scroller -->
+            <?php
+                $pendingOrders = getOrdersByStatus($pdo, 'attente');
+            ?>    
+            <div class="p-4 flex justify-between items-center border-b border-black/5">
                     <h2 class="font-bold uppercase tracking-widest text-sm">En Attente</h2> <!-- tracking-widest pour étirer le texte, text-sm pour reduire la taille -->
-                    <span class="font-black text-5xl">12</span>
+                    <span class="font-black text-5xl"><?= count($pendingOrders) ?></span>
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
-                    <div class="border border-black p-4 relative hover:shadow-lg transition-shadow bg-white group">
-                        <button class="absolute top-2 right-2 text-black/20 hover:text-[#E60012] opacity-0 group-hover:opacity-100 transition-opacity duration-100"><i data-lucide="x" class="w-4 h-4"></i></button>
-                        <div class="flex justify-between mb-3">
-                            <div class="text-2xl font-black">JDO</div>
-                            <div class="text-xs text-black/40">10 min</div>
-                        </div>
-                        <ul class="text-sm space-y-1 mb-5">
-                            <li class="flex justify-between items-center">
-                                <span>Poulet Teriyaki</span>
-                                <span class="font-bold">x3</span>
-                            </li>
-                            <li class="flex justify-between items-center">
-                                <span>Boeuf Gyudon</span>
-                                <span class="font-bold">x1</span>
-                            </li>
-                        </ul>
-                        <button class="uppercase w-full py-2 border border-black text-sm hover:bg-black hover:text-white transition-colors tracking-widest font-bold">Préparer</button>
-                    </div>
+                    <?php
+                        foreach ($pendingOrders as $order) {
+                            renderOrderCard($pdo, $order);
+                        }
+                    ?>
                 </div>
             </section>
 
-            <section class="flex flex-col brush-divider h-full min-h-0">
-                <div class="p-4 flex justify-between items-center border-b border-black/5">
-                    <h2 class="font-bold uppercase tracking-widest text-sm">En Préparation</h2>
-                    <span class="font-black text-5xl">5</span>
+            <section class="flex flex-col column-divider h-full min-h-0"> <!-- min-h-0 car par défaut, min-height:auto et donc la colonne s'agrandit et on ne peut pas scroller -->
+            <?php
+                $pendingOrders = getOrdersByStatus($pdo, 'prepa');
+            ?>    
+            <div class="p-4 flex justify-between items-center border-b border-black/5">
+                    <h2 class="font-bold uppercase tracking-widest text-sm">En Préparation</h2> <!-- tracking-widest pour étirer le texte, text-sm pour reduire la taille -->
+                    <span class="font-black text-5xl"><?= count($pendingOrders) ?></span>
                 </div>
-                <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar"> <!-- space-y-4 pour ajouter de l'espace entre les éléments -->
-                    <div class="border-2 border-black p-4 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                        <div class="flex justify-between mb-3">
-                            <div class="text-2xl font-black">ABC</div>
-                            <div class="text-xs text-black/40">3 min</div>
-                        </div>
-                        <ul class="text-sm mb-5">
-                            <li class="flex justify-between items-center">
-                                <span>Poulet Teriyaki</span>
-                                <span class="font-bold">x3</span>
-                            </li>
-                        </ul>
-                        <!-- <button class="w-full py-2 bg-white border border-[#E60012] text-[#E60012] hover:text-white hover:bg-[#E60012] text-sm font-bold tracking-widest transition-colors">PRÊT !</button> -->
-                        <button class="w-full py-2 bg-green-500/25 border border-black hover:bg-green-500/70 text-sm font-bold tracking-widest transition-colors">PRÊT !</button>
-                    </div>
+                <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
+                    <?php
+                        foreach ($pendingOrders as $order) {
+                            renderOrderCard($pdo, $order);
+                        }
+                    ?>
                 </div>
             </section>
 
-            <section class="flex flex-col brush-divider h-full min-h-0">
-                <div class="p-4 flex justify-between items-center border-b border-black/5">
-                    <h2 class="font-bold uppercase tracking-widest text-sm text-[#E60012]">Prêts</h2>
-                    <span class="font-black text-[#E60012] text-5xl">3</span>
+            <section class="flex flex-col column-divider h-full min-h-0"> <!-- min-h-0 car par défaut, min-height:auto et donc la colonne s'agrandit et on ne peut pas scroller -->
+            <?php
+                $pendingOrders = getOrdersByStatus($pdo, 'pret');
+            ?>    
+            <div class="p-4 flex justify-between items-center border-b border-black/5">
+                    <h2 class="font-bold uppercase tracking-widest text-sm text-[#E60012]">Prêts</h2> <!-- tracking-widest pour étirer le texte, text-sm pour reduire la taille -->
+                    <span class="font-black text-[#E60012] text-5xl"><?= count($pendingOrders) ?></span>
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
-                    <div class="border border-[#E60012] p-4 bg-white relative">
-                        <div class="absolute top-0 right-0 w-10 h-10 bg-[#E60012]/10 [clip-path:polygon(0_0,100%_0,100%_100%)]"></div>
-                        <div class="text-2xl font-black text-[#E60012] mb-3">XYZ</div>
-                        <ul class="text-sm mb-5">
-                            <li class="flex justify-between items-center">
-                                <span class="text-[#99000C]">Poulet Teriyaki</span>
-                                <span class="font-bold text-[#99000C]">x3</span>
-                            </li>
-                        </ul>
-                        <button class="w-full py-2 bg-black hover:bg-[#E60012] text-white font-bold tracking-widest text-sm transition-colors">ARCHIVER</button>
-                    </div>
+                    <?php
+                        foreach ($pendingOrders as $order) {
+                            renderOrderCard($pdo, $order);
+                        }
+                    ?>
                 </div>
             </section>
 
@@ -122,27 +81,27 @@
                 <div class="bg-white border border-black p-4">
                     <div class="flex gap-4 border-b border-black/10 mb-4 text-xs font-bold">
                         <button id="btn-next" onclick="switchStats('next')" class="pb-2 text-black border-b-2 border-black transition-colors">
-                            NEXT 10
+                            À PRÉPARER
                         </button>
                         
                         <button id="btn-total" onclick="switchStats('total')" class="pb-2 text-black/40 border-b-2 border-transparent hover:text-black transition-colors">
-                            TOTAL
+                            EN ATTENTE
                         </button>
                     </div>
 
-                    <div class="relative h-20 overflow-hidden">
-                        <div id="content-next" class="absolute inset-0 space-y-2 text-sm overflow-y-auto transition-opacity duration-200">
-                            <div class="flex justify-between"><span>Thon Mayo</span><strong>14</strong></div>
-                            <div class="flex justify-between"><span>Boeuf Gyudon</span><strong>8</strong></div>
-                            <div class="flex justify-between"><span>Poulet Teriyaki</span><strong>5</strong></div>
-                            <div class="flex justify-between"><span>Poulet Teriyaki</span><strong>5</strong></div>
-                            <div class="flex justify-between"><span>Poulet Teriyaki</span><strong>5</strong></div>
+                    <div id="stats-container">
+                        <div id="content-next" class="space-y-2 text-sm overflow-y-auto">
+                            <?php
+                                $stats = getStatsByStatus($pdo, 'prepa');
+                                renderStats($stats);
+                            ?>
                         </div>
 
-                        <div id="content-total" class="absolute inset-0 space-y-2 text-sm overflow-y-auto opacity-0 pointer-events-none transition-opacity duration-200">
-                            <div class="flex justify-between text-black"><span>Poulet</span><strong>2</strong></div>
-                            <div class="flex justify-between text-black"><span>Thon</span><strong>1</strong></div>
-                            <div class="flex justify-between text-black"><span>Saumon</span><strong>4</strong></div>
+                        <div id="content-total" class="hidden space-y-2 text-sm overflow-y-auto">
+                            <?php
+                                $stats = getStatsByStatus($pdo, 'attente');
+                                renderStats($stats);
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -150,19 +109,18 @@
 
                 <div id="archiveContainer" class="bg-white border border-black p-4 flex-none overflow-hidden flex flex-col transition-all duration-300">
                     <button onclick="toggleArchives()" class="flex justify-between items-center w-full font-bold text-xs uppercase mb-0 group">
-                        Archives
+                        Commandes retirées
                         <i id="archiveIcon" data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
                     </button>
                     <div id="archiveList" class="hidden text-xs text-black/40 space-y-2 overflow-y-auto mt-4">
-                        <div class="flex justify-between border-b border-black/10 pb-1">
-                            <span>#102 - ABC</span><span>12,50€</span>
-                        </div>
-                        <div class="flex justify-between border-b border-black/10 pb-1">
-                            <span>#101 - JDO</span><span>8,00€</span>
-                        </div>
-                        <div class="flex justify-between border-b border-black/10 pb-1">
-                            <span>#100 - XYZ</span><span>15,50€</span>
-                        </div>
+                        <?php
+                            $archivedOrders = getOrdersByStatus($pdo, 'archive');
+                            if ($archivedOrders) {
+                                foreach ($archivedOrders as $order) {
+                                    renderArchivedOrder($order);
+                                }
+                            }  
+                        ?>
                     </div>
                 </div>
 
@@ -233,88 +191,7 @@
         </form>
     </div>
 
-    <script>
-        // Initialisation des icônes
-        lucide.createIcons();
-
-        // Logique d'ouverture du panel
-        function togglePanel() {
-            const panel = document.getElementById('slideOver');
-            const overlay = document.getElementById('overlay');
-            
-            // Si le panneau est "caché", on l'ouvre
-            if (panel.classList.contains('translate-x-full')) {
-                panel.classList.remove('translate-x-full');
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.add('opacity-100'), 10); // on attend 10 ms pour laisser le temps au CSS de s'appliquer
-            } else {
-                panel.classList.add('translate-x-full');
-                overlay.classList.remove('opacity-100');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
-        }
-
-        // Logique d'ouverture du menu déroulant des commandes archivées
-        function toggleArchives() {
-            const container = document.getElementById('archiveContainer');
-            const list = document.getElementById('archiveList');
-            const icon = document.getElementById('archiveIcon');
-
-            // On bascule la visibilité de la liste
-            list.classList.toggle('hidden');
-
-            // On fait tourner l'icône
-            icon.classList.toggle('rotate-180');
-
-            // Si la liste est visible (donc menu ouvert), on donne toute la place disponible au conteneur (flex-1)
-            // Sinon, on le rend rigide (flex-none) pour qu'il ne prenne que la place du titre
-            if (!list.classList.contains('hidden')) {
-                container.classList.remove('flex-none');
-                container.classList.add('flex-1');
-                // Petit hack pour forcer le titre à garder sa marge quand c'est ouvert
-                // (optionnel selon tes préférences de design)
-            } else {
-                container.classList.remove('flex-1');
-                container.classList.add('flex-none');
-            }
-        }
-
-        // Fonction pour changer d'onglet de stats
-        function switchStats(tab) {
-            // Récupération des éléments
-            const btnTotal = document.getElementById('btn-total');
-            const btnNext = document.getElementById('btn-next');
-            const contentTotal = document.getElementById('content-total');
-            const contentNext = document.getElementById('content-next');
-
-            // Classes pour l'état ACTIF des boutons
-            const activeClasses = ['text-black', 'border-black'];
-            // Classes pour l'état INACTIF des boutons
-            const inactiveClasses = ['text-black/40', 'border-transparent'];
-
-            if (tab === 'total') {
-                btnTotal.classList.add(...activeClasses);
-                btnTotal.classList.remove(...inactiveClasses);
-                
-                btnNext.classList.add(...inactiveClasses);
-                btnNext.classList.remove(...activeClasses);
-
-                contentTotal.classList.remove('opacity-0', 'pointer-events-none');
-                contentNext.classList.add('opacity-0', 'pointer-events-none');
-
-            } else {
-                // 1. Mise à jour des BOUTONS
-                btnNext.classList.add(...activeClasses);
-                btnNext.classList.remove(...inactiveClasses);
-
-                btnTotal.classList.add(...inactiveClasses);
-                btnTotal.classList.remove(...activeClasses);
-
-                // 2. Mise à jour du CONTENU
-                contentNext.classList.remove('opacity-0', 'pointer-events-none');
-                contentTotal.classList.add('opacity-0', 'pointer-events-none');
-            }
-        }
-    </script>
+    <!-- Javascript -->
+    <script src="js/main.js"></script>
 </body>
 </html>

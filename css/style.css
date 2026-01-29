@@ -1,0 +1,19 @@
+/* Effet de trait dégradé pour les séparateurs de colonnes */
+.column-divider {
+    border-right: 1px solid transparent;
+    border-image: linear-gradient(to bottom, transparent, black, transparent) 1;
+}
+/* Masquage de la scrollbar */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Enlève les flèches des input number sur Chrome/Safari/Edge */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
+/* Pareil pour Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}

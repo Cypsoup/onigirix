@@ -65,7 +65,7 @@ Contient les informations globales d'une commande.
 - `id` (INT, PK) : Numéro de commande unique.
 - `user_id` (FK -> users.id) : Référence à l'étudiant qui commande.
 - `event_id` (FK -> events.id) : Référence à l'évènement lié.
-- `statut` (ENUM) : 'attente', 'prepa', 'pret', 'retire', 'annule'.
+- `statut` (ENUM) : 'attente', 'prepa', 'pret', 'archive', 'annule'.
 - `montant_total` (DECIMAL) : Prix total payé.
 - `created_at` (TIMESTAMP) : Heure de la commande.
 
