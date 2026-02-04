@@ -105,3 +105,115 @@ function updateOrderStatus(orderId, currentStatus) {
         }
     });
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Le navigateur vient de se recharger, on vérifie s'il y a un message en attente
+    const flashMessage = sessionStorage.getItem('successMessage');
+    
+    if (flashMessage) {
+        // On affiche le message
+        showSuccessToast(flashMessage);
+        // On supprime le message pour qu'il ne réapparaisse pas si on recharge la page
+        sessionStorage.removeItem('successMessage'); 
+    }
+
+    // Gestion du formulaire
+    const orderForm = document.getElementById('orderForm');
+    if (orderForm) {
+        orderForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // On empêche le comportement par défaut du formulaire (rechargement de la page)
+
+            // new FormData(this) capture tout (Trigramme + Tableau items[])
+            const formData = new FormData(this);
+            
+            // Envoyer la requête au PHP
+            fetch('create_order.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json()) // On transforme la réponse res (qui est une réponse HTTP) en JSON
+            .then(data => {
+                console.log(data);
+                if (data.success) {
+                    sessionStorage.setItem('successMessage', "Commande validée et en attente !"); // On enregistre le message
+                    window.location.reload(); // On recharge la page
+
+                } else {
+                    alert("Erreur : " + (data.message || "Vérifie le trigramme."));
+                }
+            })
+            .catch(err => console.error("Erreur technique :", err));
+        });
+    }
+});
+
+
+function showSuccessToast(message) {
+    const toast = document.createElement('div');
+    
+    // Style Brutaliste Vert (Même design que le reste de ton site)
+    toast.className = `
+        fixed top-5 left-1/2 -translate-x-1/2 
+        bg-[#22C55E] text-white px-8 py-4 
+        border-2 border-black font-black uppercase tracking-widest text-sm
+        shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+        z-[9999] transition-all duration-300 transform -translate-y-24 opacity-0
+    `;
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    // Animation d'entrée (On le fait descendre)
+    // Le petit délai permet au navigateur de calculer le CSS avant d'animer
+    requestAnimationFrame(() => {
+        toast.classList.remove('-translate-y-24', 'opacity-0');
+    });
+
+    // Animation de sortie après 3 SECONDES
+    setTimeout(() => {
+        // On le fait remonter
+        toast.classList.add('-translate-y-24', 'opacity-0');
+        
+        // On le supprime proprement du HTML une fois l'animation finie
+        setTimeout(() => {
+            toast.remove();
+        }, 300); // 300ms correspond à la durée de 'transition-all duration-300'
+    }, 3000);
+}
+
+// --- FONCTION POUR LE POP-UP (A copier aussi dans ton JS) ---
+// function showSuccessToast(text) {
+//     const toast = document.createElement('div');
+    
+//     // Style Brutaliste Vert (assorti à ton design)
+//     toast.className = "fixed top-5 left-1/2 -translate-x-1/2 bg-[#22C55E] text-white border-2 border-black px-6 py-3 font-bold uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50 transition-all duration-300 transform translate-y-[-100px]";
+//     // Style Brutaliste Vert
+//     // toast.className = `
+//     //     fixed top-5 left-1/2 -translate-x-1/2 
+//     //     bg-[#22C55E] text-white px-6 py-3 
+//     //     border-2 border-black font-bold uppercase tracking-widest text-sm
+//     //     shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+//     //     z-[9999] transition-all duration-300 transform -translate-y-20 opacity-0
+//     // `;
+//     toast.innerText = text;
+
+//     document.body.appendChild(toast);
+
+//     // Animation d'entrée (On attend 10ms pour que le CSS prenne en compte la transition)
+//     setTimeout(() => {
+//         toast.classList.remove('-translate-y-20', 'opacity-0');
+//     }, 100);
+
+//     // Animation de sortie après 3 SECONDES
+//     setTimeout(() => {
+//         // On le fait remonter et disparaître
+//         toast.classList.add('-translate-y-20', 'opacity-0');
+        
+//         // On le supprime du HTML une fois l'animation finie
+//         setTimeout(() => {
+//             toast.remove();
+//         }, 300);
+//     }, 3000);
+// }

@@ -36,9 +36,9 @@ $activePage = 'dashboard';
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
                     <?php
-                        foreach ($pendingOrders as $order) {
-                            renderOrderCard($pdo, $order);
-                        }
+                    foreach ($pendingOrders as $order) {
+                        renderOrderCard($pdo, $order);
+                    }
                     ?>
                 </div>
             </section>
@@ -70,9 +70,9 @@ $activePage = 'dashboard';
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
                     <?php
-                        foreach ($pendingOrders as $order) {
-                            renderOrderCard($pdo, $order);
-                        }
+                    foreach ($pendingOrders as $order) {
+                        renderOrderCard($pdo, $order);
+                    }
                     ?>
                 </div>
             </section>
@@ -92,15 +92,15 @@ $activePage = 'dashboard';
                     <div id="stats-container">
                         <div id="content-next" class="space-y-2 text-sm overflow-y-auto">
                             <?php
-                                $stats = getStatsByStatus($pdo, 'prepa');
-                                renderStats($stats);
+                            $stats = getStatsByStatus($pdo, 'prepa');
+                            renderStats($stats);
                             ?>
                         </div>
 
                         <div id="content-total" class="hidden space-y-2 text-sm overflow-y-auto">
                             <?php
-                                $stats = getStatsByStatus($pdo, 'attente');
-                                renderStats($stats);
+                            $stats = getStatsByStatus($pdo, 'attente');
+                            renderStats($stats);
                             ?>
                         </div>
                     </div>
@@ -114,12 +114,12 @@ $activePage = 'dashboard';
                     </button>
                     <div id="archiveList" class="hidden text-xs text-black/40 space-y-2 overflow-y-auto mt-4">
                         <?php
-                            $archivedOrders = getOrdersByStatus($pdo, 'archive');
-                            if ($archivedOrders) {
-                                foreach ($archivedOrders as $order) {
-                                    renderArchivedOrder($order);
-                                }
-                            }  
+                        $archivedOrders = getOrdersByStatus($pdo, 'archive');
+                        if ($archivedOrders) {
+                            foreach ($archivedOrders as $order) {
+                                renderArchivedOrder($order);
+                            }
+                        }  
                         ?>
                     </div>
                 </div>
@@ -148,41 +148,19 @@ $activePage = 'dashboard';
         <form id="orderForm" class="space-y-8">
             <div>
                 <label class="block text-xs font-bold uppercase mb-2">Trigramme</label>
-                <input id="trigramme" type="text" maxlength="3" required class="w-full border-b-2 border-black text-3xl font-black focus:outline-none focus:border-[#E60012] uppercase placeholder-black/20" placeholder="ABC">
+                <input id="trigramme" name="trigramme" type="text" maxlength="3" required class="w-full border-b-2 border-black text-3xl font-black focus:outline-none focus:border-[#E60012] uppercase placeholder-black/20" placeholder="ABC">
             </div>
 
             <div class="space-y-4">
                 <label class="block text-xs font-bold uppercase">Onigiris</label>
+
+                <?php 
+                $recipes = getAllRecipes($pdo);
                 
-                <div class="flex justify-between items-center py-2 border-b border-black/5 text-sm">
-                    <span>Thon Mayo</span>
-                    <div class="flex items-center gap-4">
-                        <button type="button" onclick="document.getElementById('qty-thon').stepDown()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors">-</button>
-                        
-                        <input type="number" id="qty-thon" value="0" min="0" class="w-4 text-center font-bold outline-none appearance-none m-0 bg-transparent">
-                        
-                        <button type="button" onclick="document.getElementById('qty-thon').stepUp()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors">+</button>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center py-2 border-b border-black/5 text-sm">
-                    <span>Poulet Teriyaki</span>
-                    <div class="flex items-center gap-4">
-                        <button type="button" onclick="document.getElementById('qty-poulet').stepDown()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white">-</button>
-                        <input type="number" id="qty-poulet" value="0" min="0" class="w-4 text-center font-bold outline-none appearance-none m-0 bg-transparent">
-                        <button type="button" onclick="document.getElementById('qty-poulet').stepUp()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white">+</button>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center py-2 border-b border-black/5 text-sm">
-                    <span>Boeuf Gyudon</span>
-                    <div class="flex items-center gap-4">
-                        <button type="button" onclick="document.getElementById('qty-boeuf').stepDown()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white">-</button>
-                        <input type="number" id="qty-boeuf" value="0" min="0" class="w-4 text-center font-bold outline-none appearance-none m-0 bg-transparent">
-                        <button type="button" onclick="document.getElementById('qty-boeuf').stepUp()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white">+</button>
-                    </div>
-                </div>
-
+                foreach($recipes as $id => $recipe) {
+                    echo renderRecipeRow($id, $recipe);
+                }
+                ?>
             </div>
 
             <button type="submit" class="w-full py-4 bg-black text-white font-bold tracking-widest mt-10 hover:bg-[#E60012] transition-colors">

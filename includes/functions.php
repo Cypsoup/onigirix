@@ -1,4 +1,8 @@
 <?php
+session_start();
+$_SESSION['event_id'] = 1; // ID de l'événement en cours, )pour l'instant 1 mais il faudra gérer ça plus tard
+
+
 // Récupère les commandes selon un statut
 function getOrdersByStatus($pdo, $status) {
     $requete = $pdo->prepare("
@@ -43,10 +47,15 @@ function getStatsByStatus($pdo, $status) {
 
 
 // Récupère la liste des prix de toutes les recettes (retourne un tableau : [id => prix])
-function getRecipePrices($pdo) {
-    $stmt = $pdo->query("SELECT id, prix FROM recipes");
-    // PDO::FETCH_KEY_PAIR crée directement le tableau [id => prix]
-    return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+function getAllRecipes($pdo) {
+    $stmt = $pdo->query("SELECT * FROM recipes");
+    return $stmt->fetchAll(PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC); // Retourne un tableau associatif avec l'ID de la recette comme clé
+    // Exemple
+    // $recipes = [
+    //     10 => ['nom' => 'Thon', ...],
+    //     12 => ['nom' => 'Poulet', ...],
+    //     15 => ['nom' => 'Bœuf', ...]
+    // ];
 }
 
 
@@ -148,10 +157,32 @@ function renderStats($stats) {
 }
 
 
+function renderRecipeRow($id, $recipe) {
+    $stock = $recipe['stock'] ?? 0;
+    $isAvailable = $stock > 0;
+
+    $disabled = $isAvailable ? '' : 'disabled';
+    $opacityClass = $isAvailable ? '' : 'opacity-40 pointer-events-none grayscale';
+
+    return <<<HTML
+    <div class="flex justify-between items-center py-2 border-b border-black/5 text-sm {$opacityClass}">
+        <span>{$recipe["nom"]}</span>
+        <div class="flex items-center gap-4">
+            <button type="button" onclick="document.getElementById('qty-{$id}').stepDown()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors {$disabledAttr}" {$disabled}>-</button>
+            
+            <input type="number" name="items[{$id}]" id="qty-{$id}" value="0" min="0" max="{$stock}" class="w-4 text-center font-bold outline-none appearance-none m-0 bg-transparent" {$disabled}>
+            
+            <button type="button" onclick="document.getElementById('qty-{$id}').stepUp()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors" {$disabled}>+</button>
+        </div>
+    </div>
+HTML;
+}
+
+
 // Fonction pour créer une commande
 function createOrder($pdo, $trigramme, $items) {
     try {
-        $pdo->beginTransaction();
+        $pdo->beginTransaction();  // Commence une transaction (= groupe d'opérations sur la base de données)
 
         // Trouver l'utilisateur
         $stmtUser = $pdo->prepare("SELECT id FROM users WHERE trigramme = ?");
@@ -160,22 +191,23 @@ function createOrder($pdo, $trigramme, $items) {
         if (!$userId) throw new Exception("Utilisateur introuvable");
 
         // CALCUL DU TOTAL
-        $prices = getRecipePrices($pdo);
+        $allRecipes = getAllRecipes($pdo);
         $montantTotal = 0;
-
+        
+        // items est un tableau [recipeId => qty]
         foreach ($items as $recipeId => $qty) {
             if ($qty > 0) {
-                $montantTotal += $prices[$recipeId] * $qty;
+                $montantTotal += $allRecipes[$recipeId]['prix'] * $qty;
             }
         }
 
         // Insertion de la commande
         $stmtOrder = $pdo->prepare("
             INSERT INTO orders (user_id, event_id, statut, montant_total, created_at) 
-            VALUES (?, 1, 'attente', ?, NOW())
+            VALUES (?, ?, 'attente', ?, NOW())
         ");
-        $stmtOrder->execute([$userId, $montantTotal]);
-        $orderId = $pdo->lastInsertId();
+        $stmtOrder->execute([$userId, $_SESSION['event_id'], $montantTotal]);
+        $orderId = $pdo->lastInsertId(); // récupère l'ID de la commande insérée
 
         // Insertion des articles
         $stmtItem = $pdo->prepare("INSERT INTO order_items (order_id, recipe_id, quantite) VALUES (?, ?, ?)");
@@ -185,10 +217,11 @@ function createOrder($pdo, $trigramme, $items) {
             }
         }
 
-        $pdo->commit();
+        $pdo->commit();  // on valide les changements
         return true;
-    } catch (Exception $e) {
-        $pdo->rollBack();
+    } 
+    catch (Exception $e) {
+        $pdo->rollBack(); // annule les modifications sur la base de données en cas d'erreur
         return false;
     }
 }
