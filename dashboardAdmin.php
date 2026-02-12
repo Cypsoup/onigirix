@@ -1,15 +1,18 @@
 <?php
+// Importation des fichiers
 require_once 'config/db.php';
 require_once 'includes/functions.php';
 require_once 'utils/pageGeneration.php';
+
+
 $activePage = 'dashboardAdmin';
 $user_access = 1;
 $user_connected = 1;
 
-# HTML Header
+// HTML Header
 generateHTMLHeader(getPageTitle($activePage));
 
-# Sidebar
+// Sidebar
 generateSidebar($activePage, $user_access, $user_connected)
 
     ?>
