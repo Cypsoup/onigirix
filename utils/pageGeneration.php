@@ -93,9 +93,9 @@ function generateSidebar($askedPage, $user_access, $isLogged)
             </div>
     end;
     if ($isLogged) {
-        echo '<a href="logout.php" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-out"></i></a>';
+        echo '<a href="?page=connexion" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-out"></i></a>';
     } else {
-        echo '<a href="login.php" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-in"></i></a>';
+        echo '<a href="?page=connexion" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-in"></i></a>';
     }
     echo "</aside>";
 }
