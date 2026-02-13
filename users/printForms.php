@@ -13,7 +13,8 @@ function printLoginForm($askedPage)
 
 function printLogoutForm($askedPage)
 {
-    echo "<form action=index.php?page=" . $askedPage . " method='post'>";
+    // $askedPage = "home";
+    echo "<form action='index.php?page=" . $askedPage . "&todo=logOut' method='post'>";
     echo <<<end
         <p><input type="submit" value="Se déconnecter" /></p>
         </form>

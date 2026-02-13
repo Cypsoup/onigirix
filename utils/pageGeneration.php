@@ -56,6 +56,15 @@ $page_list = array(
         "connected" => 0,
     ),
     array(
+        "name" => "deconnexion",
+        "title" => "Se Déconnecter",
+        "menutitle" => "Se Déconnecter",
+        "icon" => "",
+        "visibility" => false,
+        "access" => 0,
+        "connected" => 0,
+    ),
+    array(
         "name" => "errorPage",
         "title" => "Erreur de chargement",
         "menutitle" => "Erreur de page",
@@ -130,7 +139,7 @@ function generateSidebar($askedPage, $user_access, $isLogged)
             </div>
     end;
     if ($isLogged) {
-        echo '<a href="?page=connexion" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-out"></i></a>';
+        echo '<a href="?page=deconnexion" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-out"></i></a>';
     } else {
         echo '<a href="?page=connexion" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-in"></i></a>';
     }

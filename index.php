@@ -7,13 +7,13 @@ if (!isset($_SESSION['initiated'])) {
     session_regenerate_id();
     $_SESSION['initiated'] = true;
 }
-var_dump($_SESSION);
 
 // Importation des fichiers
 require_once 'config/db.php';
 require_once 'includes/functions.php';
 require_once 'utils/pageGeneration.php';
-require('users/printForms.php');
+require 'users/printForms.php';
+require 'users/logInOut.php';
 
 
 // Traitement de la connexion et déconnexion
@@ -23,9 +23,10 @@ if (isset($_POST['login']) && isset($_POST['mdp'])) {
 if (isset($_GET['todo']) && $_GET['todo'] == 'logOut') {
     logOut();
 }
+var_dump($_SESSION);
 
 $user_access = 0;
-$isLogged = 0;
+$isLogged = isset($_SESSION['loggedIn']) ? $_SESSION['loggedIn'] : 0;
 
 // Récupération de la page en fonction des accès
 $askedPage = array_key_exists("page", $_GET) ? $_GET["page"] : "home";

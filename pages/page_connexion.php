@@ -1,8 +1,8 @@
 <?php
+
+$askedPage = "connexion";
 // Affichage de formulaires
-if ($_SESSION["loggedIn"]) {
-    printLogoutForm($askedPage);
-} else {
+if (!isset($_SESSION["loggedIn"]) || $_SESSION["loggedIn"] == false) {
     printLoginForm($askedPage);
 }
 
