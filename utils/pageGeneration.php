@@ -2,7 +2,7 @@
 <?php
 $page_list = array(
     array(
-        "name" => "index",
+        "name" => "home",
         "title" => "Bienvenue chez Onigirix",
         "menutitle" => "Accueil",
         "icon" => "house",
@@ -43,6 +43,21 @@ $page_list = array(
     )
 );
 
+function checkAccess($page, $user_access, $isLogged)
+{
+    return ($page["access"] <= $user_access && $page["connected"] <= $isLogged);
+}
+
+function checkPage($askedPage, $user_access, $isLogged)
+{
+    global $page_list;
+    foreach ($page_list as $page) {
+        if ($page["name"] == $askedPage && checkAccess($page, $user_access, $isLogged))
+            return true;
+    }
+    return false;
+}
+
 function getPageTitle($askedPage)
 {
     global $page_list;
@@ -52,7 +67,7 @@ function getPageTitle($askedPage)
     }
 }
 
-function generateSidebar($askedPage, $user_access, $user_connected)
+function generateSidebar($askedPage, $user_access, $isLogged)
 {
     global $page_list;
     echo <<<end
@@ -65,9 +80,9 @@ function generateSidebar($askedPage, $user_access, $user_connected)
     end;
     foreach ($page_list as $page) {
         $active = ($askedPage == $page["name"]) ? 'text-[#E60012] bg-white/10' : 'text-white/50';
-        if ($page["access"] <= $user_access && $page["connected"] <= $user_connected) {
+        if (checkAccess($page, $user_access, $isLogged)) {
             echo <<<end
-            <a href="{$page["name"]}.php" class="{$active} p-2 rounded-lg transition-colors hover:text-white">
+            <a href="?page={$page["name"]}" class="{$active} p-2 rounded-lg transition-colors hover:text-white">
                 <i data-lucide="{$page["icon"]}"></i>
             </a>
             end;
@@ -77,7 +92,7 @@ function generateSidebar($askedPage, $user_access, $user_connected)
                 </nav>
             </div>
     end;
-    if ($user_connected) {
+    if ($isLogged) {
         echo '<a href="logout.php" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-out"></i></a>';
     } else {
         echo '<a href="login.php" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-in"></i></a>';
