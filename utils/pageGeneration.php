@@ -6,6 +6,7 @@ $page_list = array(
         "title" => "Bienvenue chez Onigirix",
         "menutitle" => "Accueil",
         "icon" => "house",
+        "visibility" => true,
         "access" => 0,
         "connected" => 0,
     ),
@@ -14,6 +15,7 @@ $page_list = array(
         "title" => "La carte",
         "menutitle" => "Menu",
         "icon" => "utensils",
+        "visibility" => true,
         "access" => 0,
         "connected" => 0,
     ),
@@ -22,6 +24,7 @@ $page_list = array(
         "title" => "Tableau de bord",
         "menutitle" => "Tableau de bord",
         "icon" => "layout-dashboard",
+        "visibility" => true,
         "access" => 1,
         "connected" => 1,
     ),
@@ -30,6 +33,7 @@ $page_list = array(
         "title" => "Inventaire nourriture",
         "menutitle" => "Inventaire",
         "icon" => "package",
+        "visibility" => true,
         "access" => 1,
         "connected" => 1,
     ),
@@ -38,21 +42,54 @@ $page_list = array(
         "title" => "Historique des commandes",
         "menutitle" => "Historique",
         "icon" => "history",
+        "visibility" => true,
         "access" => 1,
         "connected" => 1,
-    )
+    ),
+    array(
+        "name" => "connexion",
+        "title" => "Se connecter",
+        "menutitle" => "Se Connecter",
+        "icon" => "",
+        "visibility" => false,
+        "access" => 0,
+        "connected" => 0,
+    ),
+    array(
+        "name" => "errorPage",
+        "title" => "Erreur de chargement",
+        "menutitle" => "Erreur de page",
+        "icon" => "",
+        "visibility" => false,
+        "access" => 0,
+        "connected" => 0,
+    ),
+    array(
+        "name" => "errorAccess",
+        "title" => "Erreur d'accès",
+        "menutitle" => "Historique",
+        "icon" => "",
+        "visibility" => false,
+        "access" => 0,
+        "connected" => 0,
+    ),
 );
 
-function checkAccess($page, $user_access, $isLogged)
-{
-    return ($page["access"] <= $user_access && $page["connected"] <= $isLogged);
-}
-
-function checkPage($askedPage, $user_access, $isLogged)
+function checkAccess($askedPage, $user_access, $isLogged)
 {
     global $page_list;
     foreach ($page_list as $page) {
-        if ($page["name"] == $askedPage && checkAccess($page, $user_access, $isLogged))
+        if ($page["name"] == $askedPage && $page["access"] <= $user_access && $page["connected"] <= $isLogged)
+            return true;
+    }
+    return false;
+}
+
+function checkPage($askedPage)
+{
+    global $page_list;
+    foreach ($page_list as $page) {
+        if ($page["name"] == $askedPage)
             return true;
     }
     return false;
@@ -80,7 +117,7 @@ function generateSidebar($askedPage, $user_access, $isLogged)
     end;
     foreach ($page_list as $page) {
         $active = ($askedPage == $page["name"]) ? 'text-[#E60012] bg-white/10' : 'text-white/50';
-        if (checkAccess($page, $user_access, $isLogged)) {
+        if (checkAccess($page["name"], $user_access, $isLogged) && $page["visibility"]) {
             echo <<<end
             <a href="?page={$page["name"]}" class="{$active} p-2 rounded-lg transition-colors hover:text-white">
                 <i data-lucide="{$page["icon"]}"></i>
