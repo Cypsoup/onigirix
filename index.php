@@ -25,7 +25,7 @@ if (isset($_GET['todo']) && $_GET['todo'] == 'logOut') {
 }
 var_dump($_SESSION);
 
-$user_access = 0;
+$user_access = isset($_SESSION['role']) ? $_SESSION['role'] : "user";
 $isLogged = isset($_SESSION['loggedIn']) ? $_SESSION['loggedIn'] : 0;
 
 // Récupération de la page en fonction des accès

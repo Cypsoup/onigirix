@@ -7,7 +7,7 @@ $page_list = array(
         "menutitle" => "Accueil",
         "icon" => "house",
         "visibility" => true,
-        "access" => 0,
+        "access" => "user",
         "connected" => 0,
     ),
     array(
@@ -16,7 +16,7 @@ $page_list = array(
         "menutitle" => "Menu",
         "icon" => "utensils",
         "visibility" => true,
-        "access" => 0,
+        "access" => "user",
         "connected" => 0,
     ),
     array(
@@ -25,7 +25,7 @@ $page_list = array(
         "menutitle" => "Tableau de bord",
         "icon" => "layout-dashboard",
         "visibility" => true,
-        "access" => 1,
+        "access" => "admin",
         "connected" => 1,
     ),
     array(
@@ -34,7 +34,7 @@ $page_list = array(
         "menutitle" => "Inventaire",
         "icon" => "package",
         "visibility" => true,
-        "access" => 1,
+        "access" => "admin",
         "connected" => 1,
     ),
     array(
@@ -43,7 +43,7 @@ $page_list = array(
         "menutitle" => "Historique",
         "icon" => "history",
         "visibility" => true,
-        "access" => 1,
+        "access" => "admin",
         "connected" => 1,
     ),
     array(
@@ -52,7 +52,7 @@ $page_list = array(
         "menutitle" => "Se Connecter",
         "icon" => "",
         "visibility" => false,
-        "access" => 0,
+        "access" => "user",
         "connected" => 0,
     ),
     array(
@@ -61,7 +61,7 @@ $page_list = array(
         "menutitle" => "Se Déconnecter",
         "icon" => "",
         "visibility" => false,
-        "access" => 0,
+        "access" => "user",
         "connected" => 0,
     ),
     array(
@@ -70,7 +70,7 @@ $page_list = array(
         "menutitle" => "Erreur de page",
         "icon" => "",
         "visibility" => false,
-        "access" => 0,
+        "access" => "user",
         "connected" => 0,
     ),
     array(
@@ -79,7 +79,7 @@ $page_list = array(
         "menutitle" => "Historique",
         "icon" => "",
         "visibility" => false,
-        "access" => 0,
+        "access" => "user",
         "connected" => 0,
     ),
 );
@@ -88,7 +88,7 @@ function checkAccess($askedPage, $user_access, $isLogged)
 {
     global $page_list;
     foreach ($page_list as $page) {
-        if ($page["name"] == $askedPage && $page["access"] <= $user_access && $page["connected"] <= $isLogged)
+        if ($page["name"] == $askedPage && ($page["access"] == $user_access || $user_access == "admin") && $page["connected"] <= $isLogged)
             return true;
     }
     return false;

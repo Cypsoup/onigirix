@@ -26,16 +26,16 @@ class User
 
     public static function insererUtilisateur($dbh, $login, $password, $trigramme, $nom, $email, $role)
     {
-        if (Utilisateur::getUtilisateur($dbh, $login) == null) {
+        if (User::getUtilisateur($dbh, $login) == null) {
             $sth = $dbh->prepare('INSERT INTO `users` (`login`, `password`, `trigramme`, `nom`, `email`, `role`) VALUES(?,?,?,?,?,?,?,?)');
-            $sth->execute(array($login, password_hash($password, PASSWORD_DEFAULT), $trigramme, $nom, $email, $role));
+            $sth->execute(array($login, $password /*password_hash($password, PASSWORD_DEFAULT)*/ , $trigramme, $nom, $email, $role));
         }
     }
 
     public static function testMdp($user, $password)
     {
+        //return password_verify(password: $mdp, hash: $user->password);
         return ($password == $user->password);
-        return password_verify(password: $mdp, hash: $user->password);
     }
 }
 ?>

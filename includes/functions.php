@@ -4,7 +4,8 @@ $_SESSION['event_id'] = 1; // ID de l'événement en cours, )pour l'instant 1 ma
 
 
 // Récupère les commandes selon un statut
-function getOrdersByStatus($pdo, $status) {
+function getOrdersByStatus($pdo, $status)
+{
     $requete = $pdo->prepare("
         SELECT o.*, u.trigramme 
         FROM orders o 
@@ -17,7 +18,8 @@ function getOrdersByStatus($pdo, $status) {
 }
 
 // Récupère les items d'une commande
-function getOrderItems($pdo, $orderId) {
+function getOrderItems($pdo, $orderId)
+{
     $requete = $pdo->prepare("
         SELECT oi.quantite, r.nom 
         FROM order_items oi 
@@ -30,7 +32,8 @@ function getOrderItems($pdo, $orderId) {
 
 
 // Récupère le décompte total d'onigiris par recette pour un statut donné
-function getStatsByStatus($pdo, $status) {
+function getStatsByStatus($pdo, $status)
+{
     $requete = $pdo->prepare("
         SELECT r.nom, SUM(oi.quantite) as total_qty
         FROM order_items oi
@@ -47,7 +50,8 @@ function getStatsByStatus($pdo, $status) {
 
 
 // Récupère la liste des prix de toutes les recettes (retourne un tableau : [id => prix])
-function getAllRecipes($pdo) {
+function getAllRecipes($pdo)
+{
     $stmt = $pdo->query("SELECT * FROM recipes");
     return $stmt->fetchAll(PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC); // Retourne un tableau associatif avec l'ID de la recette comme clé
     // Exemple
@@ -60,7 +64,8 @@ function getAllRecipes($pdo) {
 
 
 // Fonction pour afficher une commande
-function renderOrderCard($pdo, $order, $showAction = true) {
+function renderOrderCard($pdo, $order, $showAction = true)
+{
     $items = getOrderItems($pdo, $order['id']);
     $timeAgo = round((time() - strtotime($order['created_at'])) / 60);
 
@@ -70,7 +75,7 @@ function renderOrderCard($pdo, $order, $showAction = true) {
     $itemTextClass = "text-black"; // Par défaut noir
     $showDelete = false;
     $isPret = false; // Flag pour le petit triangle
-    
+
     // Personnalisation selon le statut
     if ($order['statut'] === 'prepa') {
         $cardClasses = "border-2 border-black p-4 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative";
@@ -85,7 +90,7 @@ function renderOrderCard($pdo, $order, $showAction = true) {
 
     }
 
-    echo '<div class="'.$cardClasses.'">';
+    echo '<div class="' . $cardClasses . '">';
 
     // Affichage du petit triangle en haut à droite pour les commandes prêtes
     if ($isPret) {
@@ -96,19 +101,19 @@ function renderOrderCard($pdo, $order, $showAction = true) {
     if ($showDelete) {
         echo '  <button class="absolute top-2 right-2 text-black/20 hover:text-[#E60012] opacity-0 group-hover:opacity-100 transition-opacity duration-100"><i data-lucide="x" class="w-4 h-4"></i></button>';
     }
-    
+
     echo '  <div class="flex justify-between mb-3">';
-    echo '    <div class="text-2xl font-black '.$textClass.'">'.$order['trigramme'].'</div>';
-    echo '    <div class="text-xs text-black/40">'.$timeAgo.' min</div>';
+    echo '    <div class="text-2xl font-black ' . $textClass . '">' . $order['trigramme'] . '</div>';
+    echo '    <div class="text-xs text-black/40">' . $timeAgo . ' min</div>';
     echo '  </div>';
 
     echo '  <ul class="text-sm space-y-1 mb-5">';
     foreach ($items as $item) {
-        echo '    <li class="flex justify-between items-center '.$itemTextClass.'"><span>'.$item['nom'].'</span><span class="font-bold">x'.$item['quantite'].'</span></li>';
+        echo '    <li class="flex justify-between items-center ' . $itemTextClass . '"><span>' . $item['nom'] . '</span><span class="font-bold">x' . $item['quantite'] . '</span></li>';
     }
     echo '  </ul>';
-    
-    if($showAction) {
+
+    if ($showAction) {
         switch ($order['statut']) {
             case 'attente':
                 $btnLabel = 'Préparer';
@@ -120,32 +125,34 @@ function renderOrderCard($pdo, $order, $showAction = true) {
                 $btnClass = 'bg-green-500/20 hover:bg-green-500/70';
                 break;
 
-            default: 
+            default:
                 $btnLabel = 'ARCHIVER';
                 $btnClass = 'bg-black hover:bg-[#E60012] hover:border-[#E60012] text-white';
                 break;
         }
         // echo '<button class="uppercase w-full py-2 border border-black text-sm font-bold tracking-widest transition-colors '.$btnClass.'">'.$btnLabel.'</button>';
         echo '<button 
-                onclick="updateOrderStatus('.$order['id'].', \''.$order['statut'].'\')" 
-                class="uppercase w-full py-2 border border-black text-sm font-bold tracking-widest transition-colors '.$btnClass.'">
-                '.$btnLabel.'
+                onclick="updateOrderStatus(' . $order['id'] . ', \'' . $order['statut'] . '\')" 
+                class="uppercase w-full py-2 border border-black text-sm font-bold tracking-widest transition-colors ' . $btnClass . '">
+                ' . $btnLabel . '
             </button>';
-   }
+    }
     echo '</div>';
 }
 
 
-function renderArchivedOrder($order) {
+function renderArchivedOrder($order)
+{
     echo '<div class="flex justify-between border-b border-black/10 pb-1">';
-    echo '    <span>#'.$order['id'].' - '.$order['trigramme'].'</span><span>'.number_format($order['montant_total'], 2).'€</span>';
+    echo '    <span>#' . $order['id'] . ' - ' . $order['trigramme'] . '</span><span>' . number_format($order['montant_total'], 2) . '€</span>';
     echo '</div>';
 }
 
 
 
 // Affiche les lignes de statistiques pour les onigiris
-function renderStats($stats) {
+function renderStats($stats)
+{
     if ($stats) {
         foreach ($stats as $stat) {
             echo '<div class="flex justify-between items-center py-1 border-b border-black/5">';
@@ -153,11 +160,12 @@ function renderStats($stats) {
             echo '    <span class="font-bold text-base">' . $stat['total_qty'] . '</span>';
             echo '</div>';
         }
-    }    
+    }
 }
 
 
-function renderRecipeRow($id, $recipe) {
+function renderRecipeRow($id, $recipe)
+{
     $stock = $recipe['stock'] ?? 0;
     $isAvailable = $stock > 0;
 
@@ -180,7 +188,8 @@ HTML;
 
 
 // Fonction pour créer une commande
-function createOrder($pdo, $trigramme, $items) {
+function createOrder($pdo, $trigramme, $items)
+{
     try {
         $pdo->beginTransaction();  // Commence une transaction (= groupe d'opérations sur la base de données)
 
@@ -188,12 +197,13 @@ function createOrder($pdo, $trigramme, $items) {
         $stmtUser = $pdo->prepare("SELECT id FROM users WHERE trigramme = ?");
         $stmtUser->execute([strtoupper($trigramme)]);
         $userId = $stmtUser->fetchColumn();
-        if (!$userId) throw new Exception("Utilisateur introuvable");
+        if (!$userId)
+            throw new Exception("Utilisateur introuvable");
 
         // CALCUL DU TOTAL
         $allRecipes = getAllRecipes($pdo);
         $montantTotal = 0;
-        
+
         // items est un tableau [recipeId => qty]
         foreach ($items as $recipeId => $qty) {
             if ($qty > 0) {
@@ -219,8 +229,7 @@ function createOrder($pdo, $trigramme, $items) {
 
         $pdo->commit();  // on valide les changements
         return true;
-    } 
-    catch (Exception $e) {
+    } catch (Exception $e) {
         $pdo->rollBack(); // annule les modifications sur la base de données en cas d'erreur
         return false;
     }
