@@ -3,7 +3,7 @@
 class RecipeRenderer
 {
 
-    function displayList($recipes, $access)
+    public static function displayList($recipes, $access)
     {
         if (!is_array($recipes) || empty($recipes)) {
             echo "<p>Aucune recette à afficher !</p>";
@@ -17,7 +17,7 @@ class RecipeRenderer
         }
     }
 
-    function displayRecipe($recipe, $access)
+    public static function displayRecipe($recipe, $access)
     {
         if ($access == "admin") {
             self::renderAdminRow($recipe);
@@ -26,7 +26,7 @@ class RecipeRenderer
         }
     }
 
-    function renderUserCard($recipe)
+    private static function renderUserCard($recipe)
     {
         $price = number_format($recipe['prix'], 2, ',', ' ');
         $imagePath = "images/recipeImages/" . $recipe['fileName']; // À adapter selon ton dossier
@@ -53,7 +53,7 @@ class RecipeRenderer
     </div>';
     }
 
-    function renderAdminRow($recipe)
+    private static function renderAdminRow($recipe)
     {
         $imagePath = "images/recipeImages/" . $recipe['fileName'];
         $shortDesc = (strlen($recipe['description']) > 60) ? substr($recipe['description'], 0, 60) . "..." : $recipe['description'];
