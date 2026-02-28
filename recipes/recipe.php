@@ -3,7 +3,7 @@
 class Recipe
 {
     public $id;
-    public $name;
+    public $nom;
     public $fileName;
     public $description;
     public $prix;
@@ -12,60 +12,89 @@ class Recipe
 
     public static function getRecipeById($dbh, $id)
     {
-        $query = "SELECT * FROM `recipes` WHERE `id`=?";
-        $sth = $dbh->prepare($query);
-        $sth->setFetchMode(PDO::FETCH_CLASS, 'Recipe');
-        $sth->execute(array($id));
-        $recipe = $sth->fetch();
-        return $recipe;
+        try {
+            $query = "SELECT * FROM `recipes` WHERE `id`=?";
+            $sth = $dbh->prepare($query);
+            $sth->setFetchMode(PDO::FETCH_CLASS, 'Recipe');
+            $sth->execute(array($id));
+            $recipe = $sth->fetch();
+            return $recipe;
+        } catch (PDOException $e) {
+            error_log("Erreur dans la réception du nom de la recette : " . $e->getMessage());
+            return null;
+        }
+
     }
 
     public static function getRecipeByName($dbh, $name)
     {
-        $query = "SELECT * FROM `recipes` WHERE ìd=?`";
-        $sth = $dbh->prepare($query);
-        $sth->setFetchMode(PDO::FETCH_CLASS, 'Recipe');
-        $sth->execute(array($name));
-        $recipe = $sth->fetch();
-        return $recipe;
-    }
-
-    public static function displayRecipe($dbh, $name)
-    {
-        $recipe = Recipe::getRecipeByName($dbh, $name);
-        echo $recipe;
+        try {
+            $query = "SELECT * FROM `recipes` WHERE `name=?` LIMIT 1";
+            $sth = $dbh->prepare($query);
+            $sth->setFetchMode(PDO::FETCH_CLASS, 'Recipe');
+            $sth->execute(array($name));
+            $recipe = $sth->fetch();
+            return $recipe;
+        } catch (PDOException $e) {
+            error_log("Erreur dans la réception du nom de la recette : " . $e->getMessage());
+            return null;
+        }
     }
 
     public static function insertRecipe($dbh, $id, $nom, $fileName, $description, $prix, $stock, $available)
     {
         if (Recipe::getRecipeById($dbh, $id) == null) {
-            $sth = $dbh->prepare('INSERT INTO `recipes` (`id`, `nom`, `fileName`, `description`, `prix`, `stock`, `available`) VALUES(?,?,?,?,?,?,?,?,?)');
+            $sth = $dbh->prepare('INSERT INTO `recipes` (`id`, `nom`, `fileName`, `description`, `prix`, `stock`, `available`) VALUES(?,?,?,?,?,?,?)');
             $sth->execute(array($id, $nom, $fileName, $description, $prix, $stock, $available));
         }
     }
 
     public static function deleteRecipe($dbh, $id)
     {
-        $recipe = Recipe::getRecipeById($dbh, $id);
-        if ($recipe != null && $recipe->available == 0) {
-            $dbh->delete($recipe); // A vérifier la fonction !!
+        try {
+            $query = "DELETE FROM `recipes` WHERE `id`=?";
+            $sth = $dbh->prepare($query);
+            return $sth->execute(array($id));
+        } catch (PDOException $e) {
+            error_log("Erreur dans la supression d'une recette : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function getAllRecipes($dbh, $status)
+    {
+        try {
+            $query = "SELECT * FROM `recipes` WHERE `available` = ?";
+            $sth = $dbh->prepare($query);
+            $sth->execute(array($status));
+            return $sth->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur dans la réception des recettes : " . $e->getMessage());
+            echo "Recettes indisponibles pour le moment";
+            return null;
+        }
+    }
+
+    private static function updateAvailibilty($dbh, $id, $status)
+    {
+        try {
+            $query = "UPDATE `recipes` SET `available` = ? WHERE `id` = ?";
+            $sth = $dbh->prepare($query);
+            return $sth->execute([$status, $id]);
+        } catch (PDOException $e) {
+            error_log("Erreur lors de la mise à jour de la disponibilité : " . $e->getMessage());
+            return false;
         }
     }
 
     public static function archiveRecipe($dbh, $id)
     {
-        $recipe = Recipe::getRecipeById($dbh, $id);
-        if ($recipe != null && $recipe->available == 1) {
-            $recipe->available = 0;
-        }
+        return self::updateAvailibilty($dbh, $id, 0);
     }
 
     public static function unpackRecipe($dbh, $id)
     {
-        $recipe = Recipe::getRecipeById($dbh, $id);
-        if ($recipe != null && $recipe->available == 0) {
-            $recipe->available = 1;
-        }
+        return self::updateAvailibilty($dbh, $id, 1);
     }
 }
 
