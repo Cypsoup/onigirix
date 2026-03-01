@@ -28,58 +28,79 @@ class RecipeRenderer
 
     private static function renderUserCard($recipe)
     {
-        $price = number_format($recipe['prix'], 2, ',', ' ');
-        $imagePath = "images/recipeImages/" . $recipe['fileName']; // À adapter selon ton dossier
+        $nom = htmlspecialchars($recipe->nom);
+        $prix = number_format($recipe->prix, 2, ',', ' ');
+        $imagePath = "images/recipeImages/" . $recipe->fileName;
+        $desc = nl2br(htmlspecialchars($recipe->description));
 
-        echo '
-    <div class="border-2 border-black bg-white flex flex-col h-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-        <div class="border-b-2 border-black p-2 bg-black text-white text-center font-black uppercase tracking-tighter">
-            ' . htmlspecialchars($recipe['nom']) . '
-        </div>
-        
-        <div class="aspect-video w-full overflow-hidden border-b border-black bg-gray-100">
-            <img src="' . $imagePath . '" alt="' . $recipe['nom'] . '" class="w-full h-full object-cover">
-        </div>
+        echo <<<HTML
+        <div class="border-2 border-black bg-white flex flex-col h-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div class="border-b-2 border-black p-2 bg-black text-white text-center font-black uppercase tracking-tighter">
+                {$nom}
+            </div>
+            
+            <div class="aspect-video w-full overflow-hidden border-b border-black bg-gray-100">
+                <img src="{$imagePath}" alt="' . $recipe->nom . '" class="w-full h-full object-cover">
+            </div>
 
-        <div class="p-4 flex-grow text-sm leading-relaxed italic text-gray-700">
-            ' . nl2br(htmlspecialchars($recipe['description'])) . '
-        </div>
+            <div class="p-4 flex-grow text-sm leading-relaxed italic text-gray-700">
+                {$desc}
+            </div>
 
-        <div class="p-4 pt-0 text-right">
-            <span class="inline-block bg-yellow-300 border-2 border-black px-3 py-1 font-black text-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                ' . $price . ' €
-            </span>
-        </div>
-    </div>';
+            <div class="p-4 pt-0 text-right">
+                <span class="inline-block bg-yellow-300 border-2 border-black px-3 py-1 font-black text-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    {$prix}€
+                </span>
+            </div>
+        </div>';
+        HTML;
     }
 
     private static function renderAdminRow($recipe)
     {
-        $imagePath = "images/recipeImages/" . $recipe['fileName'];
-        $shortDesc = (strlen($recipe['description']) > 60) ? substr($recipe['description'], 0, 60) . "..." : $recipe['description'];
-        $isAvailable = $recipe['available'] == 1;
+        $id = (int) $recipe->id;
+        $nom = htmlspecialchars($recipe->nom);
+        $prix = number_format($recipe->prix, 2, ',', ' ');
+        $image = "images/recipeImages/" . $recipe->fileName;
 
-        echo '
-    <div class="flex items-center gap-4 bg-white border border-black p-2 mb-2 hover:bg-gray-50 transition-colors">
-        <img src="' . $imagePath . '" class="w-12 h-12 object-cover border border-black flex-shrink-0">
+        $shortDesc = (strlen($recipe->description) > 60)
+            ? substr($recipe->description, 0, 60) . "..."
+            : $recipe->description;
+        $desc = htmlspecialchars($shortDesc);
 
-        <div class="flex-grow min-w-0">
-            <div class="font-bold uppercase text-sm truncate">' . htmlspecialchars($recipe['nom']) . '</div>
-            <div class="text-xs text-gray-500 italic truncate">' . htmlspecialchars($shortDesc) . '</div>
-        </div>
-
-        <div class="font-black text-sm w-16 text-center">' . number_format($recipe['prix'], 2) . '€</div>
-
-        <div class="flex gap-2">
-            <button class="p-2 border border-black hover:bg-blue-100"><i data-lucide="edit-2" class="w-4 h-4"></i></button>';
-
-        if ($isAvailable) {
-            echo '<button onclick="archiveRecipe(' . $recipe['id'] . ')" class="px-3 py-1 bg-black text-white text-xs font-bold hover:bg-red-600 transition-colors uppercase">Archiver</button>';
+        if ($recipe->available == 1) {
+            $actionBtn = <<<HTML
+            <button onclick="archiveRecipe({$id})" class="px-3 py-1 bg-black text-white text-xs font-bold hover:bg-red-600 transition-colors uppercase">
+                Archiver
+            </button>
+        HTML;
         } else {
-            echo '<button onclick="restoreRecipe(' . $recipe['id'] . ')" class="px-3 py-1 border border-black text-xs font-bold hover:bg-green-500 hover:text-white transition-colors uppercase">Restaurer</button>';
+            $actionBtn = <<<HTML
+                    <button onclick="restoreRecipe({$id})" class="px-3 py-1 border border-black text-xs font-bold hover:bg-green-500 hover:text-white transition-colors uppercase">
+                        Restaurer
+                    </button>
+        HTML;
         }
 
-        echo '</div></div>';
+        echo <<<HTML
+            <div class="flex items-center gap-4 bg-white border border-black p-2 mb-2 hover:bg-gray-50 transition-colors">
+                <img src="{$image}" class="w-12 h-12 object-cover border border-black flex-shrink-0">
+
+                <div class="flex-grow min-w-0">
+                    <div class="font-bold uppercase text-sm truncate">{$nom}</div>
+                    <div class="text-xs text-gray-500 italic truncate">{$desc}</div>
+                </div>
+
+                <div class="font-black text-sm w-16 text-center">{$prix}€</div>
+
+                <div class="flex gap-2">
+                    <a href="index.php?page=edit_recipe&id={$id}" class="inline-block p-2 border border-black hover:bg-blue-100 transition-colors">
+                        <i data-lucide="edit-2" class="w-4 h-4"></i>
+                    </a>
+                    {$actionBtn}
+                </div>
+            </div>
+        HTML;
     }
 
 }
