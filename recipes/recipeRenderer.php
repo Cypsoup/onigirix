@@ -94,12 +94,56 @@ class RecipeRenderer
                 <div class="font-black text-sm w-16 text-center">{$prix}€</div>
 
                 <div class="flex gap-2">
-                    <a href="index.php?page=edit_recipe&id={$id}" class="inline-block p-2 border border-black hover:bg-blue-100 transition-colors">
+                    <a href="index.php?page=editRecipe&id={$id}" class="inline-block p-2 border border-black hover:bg-blue-100 transition-colors">
                         <i data-lucide="edit-2" class="w-4 h-4"></i>
                     </a>
                     {$actionBtn}
                 </div>
             </div>
+        HTML;
+    }
+
+    public static function renderEditForm($recipe)
+    {
+        $id = $recipe->id;
+        $nom = htmlspecialchars($recipe->nom);
+        $desc = htmlspecialchars($recipe->description);
+        $prix = $recipe->prix;
+        $img = "images/recipeImages/" . $recipe->fileName;
+
+        echo <<<HTML
+            <form action="actions/updateRecipe.php" method="POST" enctype="multipart/form-data" class="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <h2 class="text-2xl font-black uppercase mb-6 italic">Modifier : {$nom}</h2>
+                
+                <input type="hidden" name="id" value="{$id}">
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block font-black uppercase text-xs mb-1">Nom du produit</label>
+                        <input type="text" name="nom" value="{$nom}" class="w-full border-2 border-black p-2 font-bold focus:bg-yellow-50 outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-black uppercase text-xs mb-1">Prix (€)</label>
+                            <input type="number" step="0.01" name="prix" value="{$prix}" class="w-full border-2 border-black p-2 font-bold focus:bg-yellow-50 outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-black uppercase text-xs mb-1">Photo actuelle</label>
+                            <img src="{$img}" class="h-12 w-12 border border-black object-cover">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-black uppercase text-xs mb-1">Description</label>
+                        <textarea name="description" rows="4" class="w-full border-2 border-black p-2 italic focus:bg-yellow-50 outline-none">{$desc}</textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-black text-white font-black py-4 uppercase hover:bg-green-500 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]">
+                        Sauvegarder les modifications
+                    </button>
+                </div>
+            </form>
         HTML;
     }
 

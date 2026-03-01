@@ -82,6 +82,15 @@ $page_list = array(
         "access" => "user",
         "connected" => 0,
     ),
+    array(
+        "name" => "editRecipe",
+        "title" => "Modifier la recette",
+        "menutitle" => "Modifier",
+        "icon" => "",
+        "visibility" => false,
+        "access" => "admin",
+        "connected" => 1,
+    ),
 );
 
 function checkAccess($askedPage, $user_access, $isLogged)

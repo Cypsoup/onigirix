@@ -61,6 +61,25 @@ class Recipe
         }
     }
 
+    public static function updateRecipe($dbh, $id, $nom, $fileName, $description, $prix)
+    {
+        try {
+            if ($fileName) {
+                $query = "UPDATE `recipes` SET `nom`=?, `fileName`=?, `description`=?, `prix`=? WHERE `id`=?";
+                $params = [$nom, $fileName, $description, $prix, $id];
+            } else {
+                $query = "UPDATE `recipes` SET `nom`=?, `description`=?, `prix`=? WHERE `id`=?";
+                $params = [$nom, $description, $prix, $id];
+            }
+
+            $sth = $dbh->prepare($query);
+            return $sth->execute($params);
+        } catch (PDOException $e) {
+            error_log("Erreur dans la modification de la recette :" . $e->getMessage());
+            return false;
+        }
+    }
+
     public static function getAllRecipes($dbh, $status)
     {
         try {

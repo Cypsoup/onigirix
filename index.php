@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 // Démarrage de session
 session_name("SessionOnigirix");
@@ -10,7 +11,6 @@ if (!isset($_SESSION['initiated'])) {
 
 // Importation des fichiers
 require_once 'config/db.php';
-require_once 'includes/functions.php';
 require_once 'utils/pageGeneration.php';
 require 'users/printForms.php';
 require 'users/logInOut.php';
@@ -24,8 +24,8 @@ if (isset($_GET['todo']) && $_GET['todo'] == 'logOut') {
 }
 var_dump($_SESSION);
 
-$access = isset($_SESSION['role']) ? $_SESSION['role'] : "user";
-$isLogged = isset($_SESSION['loggedIn']) ? $_SESSION['loggedIn'] : 0;
+$access = $_SESSION['role'] ?? "user";
+$isLogged = $_SESSION['loggedIn'] ?? 0;
 
 // Récupération de la page en fonction des accès
 $askedPage = array_key_exists("page", $_GET) ? $_GET["page"] : "home";
