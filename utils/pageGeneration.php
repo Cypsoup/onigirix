@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 $page_list = array(
     array(
@@ -171,6 +170,8 @@ function generateHTMLHeader($pageTitle)
             <link rel="stylesheet" href="css/style.css">
             <!-- Lucide Icons -->
             <script src="https://unpkg.com/lucide@latest"></script>
+            <!-- Javascript -->
+            <script type="module" src="js/main.js"></script>
         </head>
 
         <body class="h-full bg-white text-black font-sans">
@@ -182,8 +183,6 @@ function generateHTMLHeader($pageTitle)
 function generateHTMLFooter()
 {
     echo <<<end
-        <!-- Javascript -->
-        <script src="js/main.js"></script>
             </body>
         </html>
     end;

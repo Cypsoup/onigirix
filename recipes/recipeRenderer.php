@@ -1,5 +1,4 @@
 <?php
-
 class RecipeRenderer
 {
 
@@ -69,21 +68,17 @@ class RecipeRenderer
         $desc = htmlspecialchars($shortDesc);
 
         if ($recipe->available == 1) {
-            $actionBtn = <<<HTML
-            <button onclick="archiveRecipe({$id})" class="px-3 py-1 bg-black text-white text-xs font-bold hover:bg-red-600 transition-colors uppercase">
-                Archiver
-            </button>
-        HTML;
+            $btnText = "Archiver";
+            $btnClass = "bg-black text-white hover:bg-red-600";
+            $todo = "archive";
         } else {
-            $actionBtn = <<<HTML
-                    <button onclick="restoreRecipe({$id})" class="px-3 py-1 border border-black text-xs font-bold hover:bg-green-500 hover:text-white transition-colors uppercase">
-                        Restaurer
-                    </button>
-        HTML;
+            $btnText = "Restaurer";
+            $btnClass = "border-2 border-black hover:bg-green-500 hover:text-white";
+            $todo = "restore";
         }
 
         echo <<<HTML
-            <div class="flex items-center gap-4 bg-white border border-black p-2 mb-2 hover:bg-gray-50 transition-colors">
+            <div id="recipe-row-{$id}" class="flex items-center gap-4 bg-white border border-black p-2 mb-2 hover:bg-gray-50 transition-colors">
                 <img src="{$image}" class="w-12 h-12 object-cover border border-black flex-shrink-0">
 
                 <div class="flex-grow min-w-0">
@@ -97,7 +92,11 @@ class RecipeRenderer
                     <a href="index.php?page=editRecipe&id={$id}" class="inline-block p-2 border border-black hover:bg-blue-100 transition-colors">
                         <i data-lucide="edit-2" class="w-4 h-4"></i>
                     </a>
-                    {$actionBtn}
+                    <button id="btn-{$id}" 
+                        onclick="handleRecipeStatus({$id}, '{$todo}')" 
+                        class="px-3 py-1 font-bold text-xs uppercase transition-all {$btnClass}">
+                        {$btnText}
+                    </button>
                 </div>
             </div>
         HTML;

@@ -94,7 +94,7 @@ class Recipe
         }
     }
 
-    private static function updateAvailibilty($dbh, $id, $status)
+    public static function updateAvailability($dbh, $id, $status)
     {
         try {
             $query = "UPDATE `recipes` SET `available` = ? WHERE `id` = ?";
@@ -104,16 +104,6 @@ class Recipe
             error_log("Erreur lors de la mise à jour de la disponibilité : " . $e->getMessage());
             return false;
         }
-    }
-
-    public static function archiveRecipe($dbh, $id)
-    {
-        return self::updateAvailibilty($dbh, $id, 0);
-    }
-
-    public static function unpackRecipe($dbh, $id)
-    {
-        return self::updateAvailibilty($dbh, $id, 1);
     }
 }
 
