@@ -92,9 +92,11 @@ class RecipeRenderer
                     <a href="index.php?page=editRecipe&id={$id}" class="inline-block p-2 border border-black hover:bg-blue-100 transition-colors">
                         <i data-lucide="edit-2" class="w-4 h-4"></i>
                     </a>
-                    <button id="btn-{$id}" 
-                        onclick="handleRecipeStatus({$id}, '{$todo}')" 
-                        class="px-3 py-1 font-bold text-xs uppercase transition-all {$btnClass}">
+                    <button 
+                        id="btn-{$id}"
+                        data-recipe-id="{$id}"
+                        data-todo="{$todo}"
+                        class="js-archive-btn px-3 py-1 font-bold text-xs uppercase transition-all {$btnClass}">
                         {$btnText}
                     </button>
                 </div>

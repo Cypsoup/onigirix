@@ -1,5 +1,18 @@
 import { handleRecipeStatus } from "./recipe.js";
 
+document.addEventListener("click", (event) => {
+    const archiveBtn = event.target.closest(".js-archive-btn");
+
+    if (archiveBtn) {
+        // Récupération des données depuis les attributs data-
+        const id = archiveBtn.dataset.recipeId;
+        const todo = archiveBtn.dataset.todo;
+
+        // Appel de ta fonction de traitement
+        handleRecipeStatus(id, todo);
+    }
+});
+
 // Initialisation des icônes
 lucide.createIcons();
 
