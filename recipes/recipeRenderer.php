@@ -104,17 +104,67 @@ class RecipeRenderer
         HTML;
     }
 
-    public static function renderEditForm($recipe)
+    public static function renderAddRecipeBtn()
     {
-        $id = $recipe->id;
-        $nom = htmlspecialchars($recipe->nom);
-        $desc = htmlspecialchars($recipe->description);
-        $prix = $recipe->prix;
-        $img = "images/recipeImages/" . $recipe->fileName;
+        echo <<<HTML
+        <div class="mb-8">
+            <a 
+                href="index.php?page=editRecipe&id=0"
+                class="jw-full md:w-auto bg-yellow-400 text-black border-4 border-black px-6 py-4 font-black uppercase italic tracking-widest hover:bg-black hover:text-white transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-3">
+                <i data-lucide="plus-circle" class="w-6 h-6"></i>
+                Créer une nouvelle recette
+            </a>
+        </div>
+        HTML;
+    }
+
+    public static function renderDeleteRecipeBtn($id, $nom)
+    {
+        echo <<<HTML
+        <div class="bg-red-50 border-4 border-red-600 p-6 shadow-[8px_8px_0px_0px_rgba(220,38,38,1)]">
+                <button 
+                    data-recipe-id="{$id}" 
+                    data-recipe-name="{$nom}"
+                    class="js-delete-recipe-btn w-full bg-red-600 text-white font-black py-3 uppercase hover:bg-black transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    Supprimer définitivement la recette
+                </button>
+            </div>
+        </div>
+        HTML;
+    }
+
+    public static function renderBackMenuBtn()
+    {
+        echo <<<HTML
+        <div class="mb-6">
+            <a href="index.php?page=menu" 
+            class="inline-flex items-center gap-2 bg-white border-2 border-black px-4 py-2 font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Retour aux recettes
+            </a>
+        </div>
+        HTML;
+    }
+
+    public static function renderRecipeForm($recipe = null)
+    {
+        $isEdit = ($recipe !== null);
+
+        $id = $isEdit ? $recipe->id : "new";
+        $nom = $isEdit ? htmlspecialchars($recipe->nom) : '';
+        $desc = $isEdit ? htmlspecialchars($recipe->description) : '';
+        $prix = $isEdit ? $recipe->prix : '';
+        $img = $isEdit ? "images/recipeImages/" . $recipe->fileName : "images/recipeImages/default.jpg";
+
+        $title = $isEdit ? "Modifier : {$nom}" : "Créer une nouvelle recette";
+        $btnLabel = $isEdit ? "Sauverger les modifications" : "Créer la recette";
+        $action = "actions/saveRecipe.php";
 
         echo <<<HTML
-            <form action="actions/updateRecipe.php" method="POST" enctype="multipart/form-data" class="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <h2 class="text-2xl font-black uppercase mb-6 italic">Modifier : {$nom}</h2>
+        <div class="space-y-6">
+            <form action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                <h2 class="text-2xl font-black uppercase mb-6 italic">{$title}</h2>
                 
                 <input type="hidden" name="id" value="{$id}">
 
@@ -141,11 +191,18 @@ class RecipeRenderer
                     </div>
                     
                     <button type="submit" class="w-full bg-black text-white font-black py-4 uppercase hover:bg-green-500 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]">
-                        Sauvegarder les modifications
+                        {$btnLabel}
                     </button>
                 </div>
             </form>
         HTML;
+
+        if ($isEdit) {
+            RecipeRenderer::renderDeleteRecipeBtn($id, $nom);
+        } else {
+            RecipeRenderer::renderBackMenuBtn();
+        }
+        echo "</div>";
     }
 
 }

@@ -13,16 +13,16 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 $id = $_POST['id'] ?? null;
-$nom = $_POST['nom'] ?? '';
-$prix = $_POST['prix'] ?? 0;
-$description = $_POST['description'] ?? '';
-$available = isset($_POST['available']) ? 1 : 0;
 
-if (!$id) {
+if ($id == null) {
     header('Location: ../index.php?page=menu');
     exit;
 }
 
+$isEdit = ($id == "new") ? false : true;
+$nom = $_POST['nom'] ?? '';
+$prix = $_POST['prix'] ?? 0;
+$description = $_POST['description'] ?? '';
 $fileName = null;
 if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
     $tempName = $_FILES['image']['tmp_name'];
@@ -30,7 +30,11 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
     move_uploaded_file($tempName, "../images/recipeImages/" . $fileName);
 }
 
-$success = Recipe::updateRecipe($pdo, $id, $nom, $fileName, $description, $prix);
+if ($isEdit) {
+    $success = Recipe::updateRecipe($pdo, $id, $nom, $fileName, $description, $prix);
+} else if (!Recipe::getRecipeByName($pdo, $nom)) {
+    $success = Recipe::insertRecipe($pdo, $nom, $fileName, $description, $prix);
+}
 
 if ($success) {
     header("Location: ../index.php?page=menu&status=updated");

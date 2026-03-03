@@ -1,16 +1,26 @@
 import { handleRecipeStatus } from "./recipe.js";
 
 document.addEventListener("click", (event) => {
-    const archiveBtn = event.target.closest(".js-archive-btn");
+  const archiveBtn = event.target.closest(".js-archive-btn");
+  const deleteRecipeBtn = event.target.closest(".js-delete-recipe-btn");
 
-    if (archiveBtn) {
-        // Récupération des données depuis les attributs data-
-        const id = archiveBtn.dataset.recipeId;
-        const todo = archiveBtn.dataset.todo;
+  if (archiveBtn) {
+    const id = archiveBtn.dataset.recipeId;
+    const todo = archiveBtn.dataset.todo;
 
-        // Appel de ta fonction de traitement
-        handleRecipeStatus(id, todo);
+    handleRecipeStatus(id, todo);
+  } else if (deleteRecipeBtn) {
+    const id = deleteRecipeBtn.dataset.recipeId;
+    const name = deleteRecipeBtn.dataset.recipeName;
+
+    if (
+      confirm(
+        `Es-tu sûr de vouloir supprimer la recette "${name}" ? Cette action est irréversible.`,
+      )
+    ) {
+      handleDeleteRecipe(id);
     }
+  }
 });
 
 // Initialisation des icônes

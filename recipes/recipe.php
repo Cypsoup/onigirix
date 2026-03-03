@@ -41,11 +41,15 @@ class Recipe
         }
     }
 
-    public static function insertRecipe($dbh, $id, $nom, $fileName, $description, $prix, $stock, $available)
+    public static function insertRecipe($dbh, $nom, $fileName, $description, $prix, $stock = 0, $available = 1)
     {
-        if (Recipe::getRecipeById($dbh, $id) == null) {
-            $sth = $dbh->prepare('INSERT INTO `recipes` (`id`, `nom`, `fileName`, `description`, `prix`, `stock`, `available`) VALUES(?,?,?,?,?,?,?)');
-            $sth->execute(array($id, $nom, $fileName, $description, $prix, $stock, $available));
+        try {
+            $query = 'INSERT INTO `recipes` (`nom`, `fileName`, `description`, `prix`, `stock`, `available`) VALUES(?,?,?,?,?,?)';
+            $sth = $dbh->prepare($query);
+            return $sth->execute(array($nom, $fileName, $description, $prix, $stock, $available));
+        } catch (PDOException $e) {
+            error_log("Erreur lors de l'insertion : " . $e->getMessage());
+            return false;
         }
     }
 

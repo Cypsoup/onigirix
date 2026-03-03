@@ -10,6 +10,10 @@ if ($access == "admin") {
     $availableRecipes = Recipe::getAllRecipes($pdo, 1);
 }
 
+if ($access == "admin") {
+    RecipeRenderer::renderAddRecipeBtn();
+}
+
 echo '<h2 class="text-xl font-bold mb-4">DISPONIBLES</h2>';
 echo '<div id="list-available" class="space-y-2">';
 RecipeRenderer::displayList($availableRecipes, $access);
