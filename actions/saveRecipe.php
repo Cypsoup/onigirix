@@ -6,6 +6,7 @@ session_start();
 
 require_once '../config/db.php';
 require_once '../Recipes/Recipe.php';
+require_once '../utils/flash.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../index.php?page=menu&error=access_denied');
@@ -37,11 +38,12 @@ if ($isEdit) {
 }
 
 if ($success) {
-    header("Location: ../index.php?page=menu&status=updated");
+    Flash::success("Recette mise à jour !");
 } else {
-    header("Location: ../index.php?page=menu&status=updateError");
+    Flash::error("Erreur lors de la mise à jour.");
 }
 
+header("Location: ../index.php?page=menu");
 exit;
 
 ?>

@@ -14,6 +14,7 @@ require_once 'config/db.php';
 require_once 'utils/pageGeneration.php';
 require 'users/printForms.php';
 require 'users/logInOut.php';
+require 'utils/flash.php';
 
 // Traitement de la connexion et déconnexion
 if (isset($_POST['login']) && isset($_POST['mdp'])) {
@@ -24,6 +25,7 @@ if (isset($_GET['todo']) && $_GET['todo'] == 'logOut') {
 }
 var_dump($_SESSION);
 
+// Récupération des accès et de la connexion
 $access = $_SESSION['role'] ?? "user";
 $isLogged = $_SESSION['loggedIn'] ?? 0;
 
@@ -33,11 +35,13 @@ $askedPage = checkPage($askedPage) ? $askedPage : "errorPage";
 $authorized = checkAccess($askedPage, $access, $isLogged);
 $askedPage = $authorized ? $askedPage : "errorAccess";
 
+// Récupération des affichages nécessaires : titre de la page et message flash si existant
+$flash = Flash::get();
 $pageTitle = getPageTitle($askedPage);
 
 
 // HTML Header
-generateHTMLHeader($pageTitle);
+generateHTMLHeader($pageTitle, $flash);
 
 // Sidebar
 generateSidebar($askedPage, $access, $isLogged);

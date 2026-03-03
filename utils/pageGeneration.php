@@ -154,8 +154,11 @@ function generateSidebar($askedPage, $user_access, $isLogged)
     echo "</aside>";
 }
 
-function generateHTMLHeader($pageTitle)
+function generateHTMLHeader($pageTitle, $flash = "")
 {
+    $message = htmlspecialchars($flash['message'] ?? '', ENT_QUOTES, 'UTF-8');
+    $type = htmlspecialchars($flash['type'] ?? '', ENT_QUOTES, 'UTF-8');
+
     echo <<<end
         <!DOCTYPE html>
         <html lang="fr" class="h-full">
@@ -163,7 +166,7 @@ function generateHTMLHeader($pageTitle)
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>$pageTitle</title>
+            <title>{$pageTitle}</title>
             <!-- Tailwind CSS -->
             <script src="https://cdn.tailwindcss.com"></script>
             <!-- Custom CSS -->
@@ -174,8 +177,10 @@ function generateHTMLHeader($pageTitle)
             <script type="module" src="js/main.js"></script>
         </head>
 
-        <body class="h-full bg-white text-black font-sans">
-
+        <body
+            data-flash-message="{$message}"
+            data-flash-type="{$type}"
+            class="h-full bg-white text-black font-sans">
             <div class="flex h-full w-full">
     end;
 }

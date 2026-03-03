@@ -1,30 +1,16 @@
-import { handleRecipeStatus, handleDeleteRecipe } from "./recipe.js";
+import { initEventListeners } from "./listeners.js";
+import { showToast } from "./utils.js";
 
-document.addEventListener("click", (event) => {
-  const archiveBtn = event.target.closest(".js-archive-btn");
-  const deleteRecipeBtn = event.target.closest(".js-delete-recipe-btn");
+document.addEventListener("DOMContentLoaded", () => {
+  initEventListeners();
 
-  if (archiveBtn) {
-    const id = archiveBtn.dataset.recipeId;
-    const todo = archiveBtn.dataset.todo;
+  const msg = document.body.dataset.flashMessage;
+  const type = document.body.dataset.flashType;
+  if (msg) showToast(msg, type);
 
-    handleRecipeStatus(id, todo);
-  } else if (deleteRecipeBtn) {
-    const id = deleteRecipeBtn.dataset.recipeId;
-    const name = deleteRecipeBtn.dataset.recipeName;
-
-    if (
-      confirm(
-        `Es-tu sûr de vouloir supprimer la recette "${name}" ? Cette action est irréversible.`,
-      )
-    ) {
-      handleDeleteRecipe(id);
-    }
-  }
+  // Initialisation des icônes
+  if (window.lucide) lucide.createIcons();
 });
-
-// Initialisation des icônes
-lucide.createIcons();
 
 // Logique d'ouverture du panel
 function togglePanel() {
@@ -130,7 +116,7 @@ function updateOrderStatus(orderId, currentStatus) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+/* document.addEventListener("DOMContentLoaded", () => {
   // Le navigateur vient de se recharger, on vérifie s'il y a un message en attente
   const flashMessage = sessionStorage.getItem("successMessage");
 
@@ -240,3 +226,5 @@ function showSuccessToast(message) {
 //         }, 300);
 //     }, 3000);
 // }
+
+*/

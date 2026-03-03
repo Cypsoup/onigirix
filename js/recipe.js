@@ -38,18 +38,3 @@ export async function handleRecipeStatus(id, todo) {
     console.error("Erreur fatale:", error);
   }
 }
-
-export async function handleDeleteRecipe(id) {
-  try {
-    const response = await fetch(`actions/deleteRecipe.php?id=${id}`);
-    const data = await response.json();
-
-    if (data.success) {
-      window.location.href = "index.php?page=menu&deleteStatus=success";
-    } else {
-      alert("Erreur lors de la suppression : " + (data.message || "Inconnue"));
-    }
-  } catch (error) {
-    console.error("Erreur fatale:", error);
-  }
-}
