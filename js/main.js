@@ -1,4 +1,4 @@
-import { handleRecipeStatus } from "./recipe.js";
+import { handleRecipeStatus, handleDeleteRecipe } from "./recipe.js";
 
 document.addEventListener("click", (event) => {
   const archiveBtn = event.target.closest(".js-archive-btn");
