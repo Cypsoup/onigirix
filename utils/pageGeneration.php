@@ -1,4 +1,7 @@
 <?php
+
+require_once 'users/printForms.php';
+
 $page_list = array(
     array(
         "name" => "home",
@@ -46,18 +49,9 @@ $page_list = array(
         "connected" => 1,
     ),
     array(
-        "name" => "connexion",
+        "name" => "login",
         "title" => "Se connecter",
         "menutitle" => "Se Connecter",
-        "icon" => "",
-        "visibility" => false,
-        "access" => "user",
-        "connected" => 0,
-    ),
-    array(
-        "name" => "deconnexion",
-        "title" => "Se Déconnecter",
-        "menutitle" => "Se Déconnecter",
         "icon" => "",
         "visibility" => false,
         "access" => "user",
@@ -147,9 +141,9 @@ function generateSidebar($askedPage, $user_access, $isLogged)
             </div>
     end;
     if ($isLogged) {
-        echo '<a href="?page=deconnexion" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-out"></i></a>';
+        printLogoutForm();
     } else {
-        echo '<a href="?page=connexion" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-in"></i></a>';
+        echo '<a href="?page=login" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-in"></i></a>';
     }
     echo "</aside>";
 }

@@ -10,12 +10,17 @@ class User
 
     public static function getUtilisateur($dbh, $login)
     {
-        $query = "SELECT * FROM `users` WHERE `login`=?";
-        $sth = $dbh->prepare($query);
-        $sth->setFetchMode(PDO::FETCH_CLASS, 'User');
-        $sth->execute(array($login));
-        $user = $sth->fetch();
-        return $user;
+        try {
+            $query = "SELECT * FROM `users` WHERE `login`=?";
+            $sth = $dbh->prepare($query);
+            $sth->setFetchMode(PDO::FETCH_CLASS, 'User');
+            $sth->execute(array($login));
+            $user = $sth->fetch();
+            return $user;
+        } catch (PDOException $e) {
+            error_log("Erreur dans la récupération de l'utilisateur : " . $e->getMessage());
+            return null;
+        }
     }
 
     public static function afficheUtilisateur($dbh, $login)
@@ -26,9 +31,14 @@ class User
 
     public static function insererUtilisateur($dbh, $login, $password, $trigramme, $nom, $email, $role)
     {
-        if (User::getUtilisateur($dbh, $login) == null) {
-            $sth = $dbh->prepare('INSERT INTO `users` (`login`, `password`, `trigramme`, `nom`, `email`, `role`) VALUES(?,?,?,?,?,?,?,?)');
-            $sth->execute(array($login, $password /*password_hash($password, PASSWORD_DEFAULT)*/ , $trigramme, $nom, $email, $role));
+        try {
+            if (User::getUtilisateur($dbh, $login) == null) {
+                $sth = $dbh->prepare('INSERT INTO `users` (`login`, `password`, `trigramme`, `nom`, `email`, `role`) VALUES(?,?,?,?,?,?)');
+                $sth->execute(array($login, $password /*password_hash($password, PASSWORD_DEFAULT)*/ , $trigramme, $nom, $email, $role));
+            }
+        } catch (PDOException $e) {
+            error_log("Erreur dans la création d'un utilisateur : " . $e->getMessage());
+            return null;
         }
     }
 

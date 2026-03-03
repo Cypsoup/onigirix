@@ -12,17 +12,9 @@ if (!isset($_SESSION['initiated'])) {
 // Importation des fichiers
 require_once 'config/db.php';
 require_once 'utils/pageGeneration.php';
-require 'users/printForms.php';
-require 'users/logInOut.php';
 require 'utils/flash.php';
 
-// Traitement de la connexion et déconnexion
-if (isset($_POST['login']) && isset($_POST['mdp'])) {
-    logIn($pdo);
-}
-if (isset($_GET['todo']) && $_GET['todo'] == 'logOut') {
-    logOut();
-}
+
 var_dump($_SESSION);
 
 // Récupération des accès et de la connexion
