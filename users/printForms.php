@@ -59,7 +59,7 @@ function printCreateUserForm()
                 </div>
 
                 <div>
-                    <label class="block font-black uppercase text-xs mb-1">Trigramme (Identifiant unique)</label>
+                    <label class="block font-black uppercase text-xs mb-1">Trigramme (Identifiant)</label>
                     <input type="text" name="trigramme" maxlength="3" minlength="3" placeholder="ABC" required 
                         class="w-full border-2 border-black p-3 font-black text-2xl tracking-widest focus:bg-yellow-50 outline-none uppercase text-center">
                     <p class="text-[10px] mt-1 font-bold italic">3 lettres exactement.</p>
@@ -70,12 +70,18 @@ function printCreateUserForm()
                     <input type="email" name="email" placeholder="chef@onigirix.fr" required 
                         class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
                 </div>
-            </div>
 
-            <div>
-                <label class="block font-black uppercase text-xs mb-1">Mot de passe</label>
-                <input type="password" name="password" placeholder="••••••••" required 
-                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                <div>
+                    <label class="block font-black uppercase text-xs mb-1">Mot de passe</label>
+                    <input type="password" name="password" placeholder="••••••••" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-black uppercase text-xs mb-1">Validez le mot de passe</label>
+                    <input type="password" name="passwordConfirm" placeholder="••••••••" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
             </div>
 
             <input type="hidden" name="role" value="user">
