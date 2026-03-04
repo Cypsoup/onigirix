@@ -93,7 +93,7 @@ function printCreateUserBtn()
 {
     echo <<<HTML
     <div class="mt-8 text-center">
-        <a href="index.php?page=createUser.php" 
+        <a href="index.php?page=createUser" 
         class="inline-flex items-center gap-3 bg-white text-black border-4 border-black px-6 py-4 font-black uppercase italic tracking-widest hover:bg-yellow-400 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
             <i data-lucide="user-plus" class="w-6 h-6"></i>
             Nouveau ? Créer un compte

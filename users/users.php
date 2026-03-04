@@ -44,12 +44,16 @@ class User
         echo $user;
     }
 
-    public static function insererUtilisateur($dbh, $tri, $nom, $email, $password, $role)
+    public static function createUser($dbh, $trigramme, $nom, $email, $password, $role = 'user')
     {
         try {
-            if (User::getUtilisateurByTrigramme($dbh, $tri) == null) {
-                $sth = $dbh->prepare('INSERT INTO `users` (`id`, `trigramme`, `nom`, `email`, `password`, `role`) VALUES(?,?,?,?,?)');
-                $sth->execute(array($tri, $nom, $email, $password /*password_hash($password, PASSWORD_DEFAULT)*/ , $role));
+            if (self::getUtilisateurByTrigramme($dbh, $trigramme) == null) {
+                $trigramme = strtoupper($trigramme);
+                $hashedPassword = /*password_hash($password, PASSWORD_DEFAULT)*/ $password;
+                $sth = $dbh->prepare('INSERT INTO `users` (`trigramme`, `nom`, `email`, `password`, `role`) VALUES(?,?,?,?,?)');
+                return $sth->execute(array($trigramme, $nom, $email, $hashedPassword, $role));
+            } else {
+                return false;
             }
         } catch (PDOException $e) {
             error_log("Erreur dans la création d'un utilisateur : " . $e->getMessage());
