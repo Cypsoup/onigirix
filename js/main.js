@@ -1,8 +1,9 @@
-import { initEventListeners } from "./listeners.js";
+import { initEventListeners, initCreateUserListeners } from "./listeners.js";
 import { showToast } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initEventListeners();
+  initCreateUserListeners();
 
   const msg = document.body.dataset.flashMessage;
   const type = document.body.dataset.flashType;

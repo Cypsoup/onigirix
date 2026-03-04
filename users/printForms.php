@@ -45,7 +45,7 @@ function printCreateUserForm()
     $action = "actions/processCreateUser.php";
     echo <<<HTML
     <div class="max-w-2xl mx-auto my-10">
-        <form action="{$action}" method="post" class="bg-white border-4 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] space-y-6">
+        <form id="createUserForm" action="{$action}" method="post" class="bg-white border-4 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] space-y-6">
             <div class="border-b-4 border-black pb-4 mb-6">
                 <h2 class="text-3xl font-black uppercase italic">Inscrivez-vous</h2>
                 <p class="text-xs font-bold text-gray-500 uppercase">Le trigramme sera votre identifiant de connexion.</p>
@@ -73,13 +73,13 @@ function printCreateUserForm()
 
                 <div>
                     <label class="block font-black uppercase text-xs mb-1">Mot de passe</label>
-                    <input type="password" name="password" placeholder="••••••••" required 
+                    <input type="password" name="password" id="password" placeholder="••••••••" required 
                         class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
                 </div>
 
                 <div>
                     <label class="block font-black uppercase text-xs mb-1">Validez le mot de passe</label>
-                    <input type="password" name="passwordConfirm" placeholder="••••••••" required 
+                    <input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="••••••••" required 
                         class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
                 </div>
             </div>
