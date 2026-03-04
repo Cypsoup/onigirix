@@ -1,20 +1,20 @@
 <?php
 class User
 {
-    public $login;
-    public $password;
+    public $id;
     public $trigramme;
     public $nom;
     public $email;
+    public $password;
     public $role;
 
-    public static function getUtilisateur($dbh, $login)
+    public static function getUtilisateurById($dbh, $id)
     {
         try {
-            $query = "SELECT * FROM `users` WHERE `login`=?";
+            $query = "SELECT * FROM `users` WHERE `id`=?";
             $sth = $dbh->prepare($query);
             $sth->setFetchMode(PDO::FETCH_CLASS, 'User');
-            $sth->execute(array($login));
+            $sth->execute(array($id));
             $user = $sth->fetch();
             return $user;
         } catch (PDOException $e) {
@@ -23,18 +23,33 @@ class User
         }
     }
 
-    public static function afficheUtilisateur($dbh, $login)
+    public static function getUtilisateurByTrigramme($dbh, $tri)
     {
-        $user = User::getUtilisateur($dbh, $login);
+        try {
+            $query = "SELECT * FROM `users` WHERE `trigramme`=?";
+            $sth = $dbh->prepare($query);
+            $sth->setFetchMode(PDO::FETCH_CLASS, 'User');
+            $sth->execute(array($tri));
+            $user = $sth->fetch();
+            return $user;
+        } catch (PDOException $e) {
+            error_log("Erreur dans la récupération de l'utilisateur : " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public static function afficheUtilisateur($dbh, $id)
+    {
+        $user = User::getUtilisateurByID($dbh, $id);
         echo $user;
     }
 
-    public static function insererUtilisateur($dbh, $login, $password, $trigramme, $nom, $email, $role)
+    public static function insererUtilisateur($dbh, $tri, $nom, $email, $password, $role)
     {
         try {
-            if (User::getUtilisateur($dbh, $login) == null) {
-                $sth = $dbh->prepare('INSERT INTO `users` (`login`, `password`, `trigramme`, `nom`, `email`, `role`) VALUES(?,?,?,?,?,?)');
-                $sth->execute(array($login, $password /*password_hash($password, PASSWORD_DEFAULT)*/ , $trigramme, $nom, $email, $role));
+            if (User::getUtilisateurByTrigramme($dbh, $tri) == null) {
+                $sth = $dbh->prepare('INSERT INTO `users` (`id`, `trigramme`, `nom`, `email`, `password`, `role`) VALUES(?,?,?,?,?)');
+                $sth->execute(array($tri, $nom, $email, $password /*password_hash($password, PASSWORD_DEFAULT)*/ , $role));
             }
         } catch (PDOException $e) {
             error_log("Erreur dans la création d'un utilisateur : " . $e->getMessage());

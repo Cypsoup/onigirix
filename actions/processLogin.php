@@ -7,10 +7,10 @@ require_once '../config/db.php';
 require_once '../users/users.php';
 require_once '../utils/flash.php';
 
-$login = $_POST['login'] ?? null;
+$tri = $_POST['trigramme'] ?? null;
 $mdp = $_POST['mdp'] ?? null;
 
-$user = User::getUtilisateur($pdo, $login);
+$user = User::getUtilisateurByTrigramme($pdo, $tri);
 
 if ($user && User::testMdp($user, $mdp)) {
     $_SESSION['loggedIn'] = true;
