@@ -1,5 +1,8 @@
 import { handleRecipeStatus } from "./recipe.js";
-import { showToast } from "./utils.js";
+import {
+  validatePasswordInput,
+  validatePasswordSubmit,
+} from "./passwordHandler.js";
 
 export function initEventListeners() {
   document.addEventListener("click", (event) => {
@@ -19,31 +22,37 @@ export function initCreateUserListeners() {
   const password = document.getElementById("password");
   const confirm = document.getElementById("passwordConfirm");
 
-  const validatePasswordInput = () => {
-    if (confirm.value === "") {
-      confirm.style.borderColor = "black";
-      return;
-    }
-
-    if (password.value === confirm.value) {
-      confirm.style.borderColor = "#22C55E"; // Vert OnigiriX
-    } else {
-      confirm.style.borderColor = "#EF4444"; // Rouge Alerte
-    }
-  };
-
-  const validatePasswordSubmit = (event) => {
-    if (password.value !== confirm.value) {
-      event.preventDefault();
-      showToast("Les mots de passe ne correspondent pas !", "error");
-      confirm.focus();
-    }
-  };
-
   // Vérification pendant l'entrée des mots de passe
-  password.addEventListener("input", validatePasswordInput);
-  confirm.addEventListener("input", validatePasswordInput);
+  password.addEventListener("input", () =>
+    validatePasswordInput(password, confirm),
+  );
+  confirm.addEventListener("input", () =>
+    validatePasswordInput(password, confirm),
+  );
 
   // Envoie du formulaire à condition d'égalité des mots de passe
-  form.addEventListener("submit", validatePasswordSubmit);
+  form.addEventListener("submit", (event) =>
+    validatePasswordSubmit(password, confirm, event),
+  );
+}
+
+export function initEditPasswordListeners() {
+  const form = document.getElementById("editUserPasswordForm");
+  if (!form) return;
+
+  const password = document.getElementById("password");
+  const confirm = document.getElementById("passwordConfirm");
+
+  // Vérification pendant l'entrée des mots de passe
+  password.addEventListener("input", () =>
+    validatePasswordInput(password, confirm),
+  );
+  confirm.addEventListener("input", () =>
+    validatePasswordInput(password, confirm),
+  );
+
+  // Envoie du formulaire à condition d'égalité des mots de passe
+  form.addEventListener("submit", (event) =>
+    validatePasswordSubmit(password, confirm, event),
+  );
 }

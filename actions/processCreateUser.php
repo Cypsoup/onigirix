@@ -11,7 +11,7 @@ require_once '../users/printForms.php';
 require_once '../utils/flash.php';
 
 // Vérification des mots de passe
-$password = $_POST['password'] ?? null;
+$password = $_POST['password'] ?? null; 
 $passwordConfirm = $_POST['passwordConfirm'] ?? null;
 
 if ($password !== $passwordConfirm) {

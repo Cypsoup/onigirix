@@ -108,4 +108,99 @@ function printCreateUserBtn()
     HTML;
 }
 
+function printEditUserForm($user)
+{
+    $id = $user->id;
+    $trigramme = htmlspecialchars($user->trigramme);
+    $nom = htmlspecialchars($user->nom);
+    $email = htmlspecialchars($user->email);
+    $role = htmlspecialchars($user->role);
+
+    $action = "actions/processEditUser.php";
+    echo <<<HTML
+    <div class="max-w-2xl mx-auto my-10">
+        <form action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white border-4 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] space-y-6">
+            <div class="border-b-4 border-black pb-4 mb-6">
+                <h2 class="text-3xl font-black uppercase italic">Vos informations : {$nom}</h2>
+                <p class="text-xs font-bold text-gray-500 uppercase">Votre trigramme est votre identifiant de connexion.</p>
+            </div>
+
+            <input type="hidden" name="id" value="{$id}">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block font-black uppercase text-xs mb-1">Nom Complet</label>
+                    <input type="text" name="nom" value="{$nom}" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-black uppercase text-xs mb-1">Trigramme (Identifiant)</label>
+                    <input type="text" name="trigramme" maxlength="3" minlength="3" value="{$trigramme}" required 
+                        class="w-full border-2 border-black p-3 font-black text-2xl tracking-widest focus:bg-yellow-50 outline-none uppercase text-center">
+                    <p class="text-[10px] mt-1 font-bold italic">3 lettres exactement.</p>
+                </div>
+
+                <div>
+                    <label class="block font-black uppercase text-xs mb-1">Adresse Email</label>
+                    <input type="email" name="email" value="{$email}" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
+            </div>
+
+            <input type="hidden" name="role" value="{$role}">
+
+            <button type="submit" class="w-full bg-black text-white font-black py-5 uppercase hover:bg-green-500 hover:text-black transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-3 text-lg">
+                <i data-lucide="pencil" class="w-6 h-6"></i>
+                Valider les modifications
+            </button>
+        </form>
+    </div>
+    HTML;
+}
+
+function printEditPasswordForm($user)
+{
+    $id = $user->id;
+    $nom = htmlspecialchars($user->nom);
+    $oldPassword = htmlspecialchars($user->password);
+
+    $action = "actions/processEditPassword.php";
+    echo <<<HTML
+    <div class="max-w-2xl mx-auto my-10">
+        <form id="editUserPasswordForm" action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white border-4 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] space-y-6">
+            <div class="border-b-4 border-black pb-4 mb-6">
+                <h2 class="text-3xl font-black uppercase italic">Vos informations : {$nom}</h2>
+                <p class="text-xs font-bold text-gray-500 uppercase">Votre trigramme est votre identifiant de connexion.</p>
+            </div>
+
+            <input type="hidden" name="id" value="{$id}">
+
+            <div>
+                <label class="block font-black uppercase text-xs mb-1">Ancien mot de passe</label>
+                <input type="password" name="oldPassword" id="oldPassword" placeholder="••••••••" required 
+                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+            </div>
+
+            <div>
+                <label class="block font-black uppercase text-xs mb-1">Nouveau mot de passe</label>
+                <input type="password" name="password" id="password" placeholder="••••••••" required 
+                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+            </div>
+
+            <div>
+                <label class="block font-black uppercase text-xs mb-1">Validez le nouveau mot de passe</label>
+                <input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="••••••••" required 
+                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+            </div>
+
+            <button type="submit" class="w-full bg-black text-white font-black py-5 uppercase hover:bg-green-500 hover:text-black transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-3 text-lg">
+                <i data-lucide="unlock" class="w-6 h-6"></i>
+                Valider les modifications
+            </button>
+        </form>
+    </div>
+    HTML;
+}
+
 ?>

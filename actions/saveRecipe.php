@@ -16,6 +16,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 $id = $_POST['id'] ?? null;
 
 if ($id == null) {
+    Flash::error("Erreur dans l'enregistrement de la recette.");
     header('Location: ../index.php?page=menu');
     exit;
 }

@@ -22,6 +22,24 @@ $page_list = array(
         "connected" => 0,
     ),
     array(
+        "name" => "login",
+        "title" => "Se connecter",
+        "menutitle" => "Se Connecter",
+        "icon" => "",
+        "visibility" => false,
+        "access" => "user",
+        "connected" => 0,
+    ),
+    array(
+        "name" => "userProfile",
+        "title" => "Mon Profil",
+        "menutitle" => "Mon Profil",
+        "icon" => "",
+        "visibility" => false,
+        "access" => "user",
+        "connected" => 1,
+    ),
+    array(
         "name" => "dashboardAdmin",
         "title" => "Tableau de bord",
         "menutitle" => "Tableau de bord",
@@ -48,6 +66,7 @@ $page_list = array(
         "access" => "admin",
         "connected" => 1,
     ),
+    // Pages d'erreurs
     array(
         "name" => "errorPage",
         "title" => "Erreur de chargement",
@@ -66,15 +85,7 @@ $page_list = array(
         "access" => "user",
         "connected" => 0,
     ),
-    array(
-        "name" => "login",
-        "title" => "Se connecter",
-        "menutitle" => "Se Connecter",
-        "icon" => "",
-        "visibility" => false,
-        "access" => "user",
-        "connected" => 0,
-    ),
+    // Pages d'actions
     array(
         "name" => "createUser",
         "title" => "Créer un compte",
@@ -83,6 +94,15 @@ $page_list = array(
         "visibility" => false,
         "access" => "user",
         "connected" => 0,
+    ),
+    array(
+        "name" => "editUser",
+        "title" => "Modifier l'utilisateur",
+        "menutitle" => "Modifier User",
+        "icon" => "",
+        "visibility" => false,
+        "access" => "user",
+        "connected" => 1,
     ),
     array(
         "name" => "editRecipe",
@@ -95,11 +115,11 @@ $page_list = array(
     ),
 );
 
-function checkAccess($askedPage, $user_access, $isLogged)
+function checkAccess($askedPage, $userAccess, $isLogged)
 {
     global $page_list;
     foreach ($page_list as $page) {
-        if ($page["name"] == $askedPage && ($page["access"] == $user_access || $user_access == "admin") && $page["connected"] <= $isLogged)
+        if ($page["name"] == $askedPage && ($page["access"] == $userAccess || $userAccess == "admin") && $page["connected"] <= $isLogged)
             return true;
     }
     return false;
@@ -124,7 +144,7 @@ function getPageTitle($askedPage)
     }
 }
 
-function generateSidebar($askedPage, $user_access, $isLogged)
+function generateSidebar($askedPage, $userAccess, $isLogged)
 {
     global $page_list;
     echo <<<end
@@ -133,11 +153,12 @@ function generateSidebar($askedPage, $user_access, $isLogged)
                 <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden">
                     <img src="images/logo.jpg" alt="Logo" class="object-cover w-full h-full">
                 </div>
+
                 <nav class="flex flex-col gap-6">
     end;
     foreach ($page_list as $page) {
         $active = ($askedPage == $page["name"]) ? 'text-[#E60012] bg-white/10' : 'text-white/50';
-        if (checkAccess($page["name"], $user_access, $isLogged) && $page["visibility"]) {
+        if (checkAccess($page["name"], $userAccess, $isLogged) && $page["visibility"]) {
             echo <<<end
             <a href="?page={$page["name"]}" class="{$active} p-2 rounded-lg transition-colors hover:text-white">
                 <i data-lucide="{$page["icon"]}"></i>
@@ -149,11 +170,28 @@ function generateSidebar($askedPage, $user_access, $isLogged)
                 </nav>
             </div>
     end;
+
+    echo '<div class="flex flex-col items-center gap-6 pb-2">';
+
+    if ($isLogged) {
+        $active = ($askedPage == "userProfile") ? 'text-[#E60012] bg-white/10' : 'text-white/50';
+        echo <<<end
+        <a href="?page=userProfile" class="{$active} hover:text-[#E60012] transition-colors">
+            <i data-lucide="circle-user-round"></i>
+            </a>
+        end;
+    }
+
     if ($isLogged) {
         printLogoutForm();
     } else {
-        echo '<a href="?page=login" class="text-white/50 hover:text-[#E60012] transition-colors"><i data-lucide="log-in"></i></a>';
+        echo <<<end
+            <a href="?page=login" class="text-white/50 hover:text-[#E60012] transition-colors">
+                <i data-lucide="log-in"></i>
+            </a>
+        end;
     }
+    echo "</div>";
     echo "</aside>";
 }
 

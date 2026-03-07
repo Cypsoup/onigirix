@@ -10,12 +10,12 @@ require_once '../utils/flash.php';
 $tri = $_POST['trigramme'] ?? null;
 $mdp = $_POST['mdp'] ?? null;
 
-$user = User::getUtilisateurByTrigramme($pdo, $tri);
+$user = User::getUserByTrigramme($pdo, $tri);
 
-if ($user && User::testMdp($user, $mdp)) {
+if ($user && User::testPassword($user, $mdp)) {
     $_SESSION['loggedIn'] = true;
     $_SESSION['role'] = $user->role;
-    $_SESSION['username'] = $user->nom;
+    $_SESSION['userId'] = $user->id;
     Flash::success("Heureux de vous revoir : $user->nom");
     header("Location: ../index.php?page=home");
 } else {

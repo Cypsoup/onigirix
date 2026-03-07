@@ -8,7 +8,7 @@ class User
     public $password;
     public $role;
 
-    public static function getUtilisateurById($dbh, $id)
+    public static function getUserById($dbh, $id)
     {
         try {
             $query = "SELECT * FROM `users` WHERE `id`=?";
@@ -23,7 +23,7 @@ class User
         }
     }
 
-    public static function getUtilisateurByTrigramme($dbh, $tri)
+    public static function getUserByTrigramme($dbh, $tri)
     {
         try {
             $query = "SELECT * FROM `users` WHERE `trigramme`=?";
@@ -38,16 +38,10 @@ class User
         }
     }
 
-    public static function afficheUtilisateur($dbh, $id)
-    {
-        $user = User::getUtilisateurByID($dbh, $id);
-        echo $user;
-    }
-
     public static function createUser($dbh, $trigramme, $nom, $email, $password, $role = 'user')
     {
         try {
-            if (self::getUtilisateurByTrigramme($dbh, $trigramme) == null) {
+            if (self::getUserByTrigramme($dbh, $trigramme) == null) {
                 $trigramme = strtoupper($trigramme);
                 $hashedPassword = /*password_hash($password, PASSWORD_DEFAULT)*/ $password;
                 $sth = $dbh->prepare('INSERT INTO `users` (`trigramme`, `nom`, `email`, `password`, `role`) VALUES(?,?,?,?,?)');
@@ -61,7 +55,33 @@ class User
         }
     }
 
-    public static function testMdp($user, $password)
+    public static function updateUserInfo($dbh, $id, $trigramme, $nom, $email)
+    {
+        try {
+            $query = "UPDATE `users` SET `trigramme`=?, `nom`=?, `email`=? WHERE `id`=?";
+            $params = [$trigramme, $nom, $email, $id];
+            $sth = $dbh->prepare($query);
+            return $sth->execute($params);
+        } catch (PDOException $e) {
+            error_log("Erreur dans la modification des informations :" . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function updateUserPassword($dbh, $id, $password)
+    {
+        try {
+            $query = "UPDATE `users` SET `password`=? WHERE `id`=?";
+            $params = [$password, $id]; /*password_hash($password, PASSWORD_DEFAULT)*/
+            $sth = $dbh->prepare($query);
+            return $sth->execute($params);
+        } catch (PDOException $e) {
+            error_log("Erreur dans la modification du mdp :" . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function testPassword($user, $password)
     {
         //return password_verify(password: $mdp, hash: $user->password);
         return ($password == $user->password);

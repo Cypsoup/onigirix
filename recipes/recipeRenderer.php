@@ -1,4 +1,5 @@
 <?php
+
 class RecipeRenderer
 {
 
@@ -20,8 +21,11 @@ class RecipeRenderer
     {
         if ($access == "admin") {
             self::renderAdminRow($recipe);
-        } else {
+        } else if ($recipe) {
             self::renderUserCard($recipe);
+        } else {
+            echo "<p>Aucune recette à afficher !</p>";
+            return null;
         }
     }
 
@@ -118,34 +122,6 @@ class RecipeRenderer
         HTML;
     }
 
-    public static function renderDeleteRecipeBtn($id, $nom)
-    {
-        echo <<<HTML
-        <div class="bg-red-50 border-4 border-red-600 p-6 shadow-[8px_8px_0px_0px_rgba(220,38,38,1)]">
-            <form action="actions/deleteRecipe.php" method="POST" onsubmit="return confirm('Supprimer définitivement {$nom} ?')">
-                <input type="hidden" name="id" value="{$id}">
-                <button type="submit" class="w-full bg-red-600 text-white font-black py-3 uppercase hover:bg-black transition-colors flex items-center justify-center gap-2">
-                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                    Supprimer définitivement la recette
-                </button>
-            </form>
-        </div>
-        HTML;
-    }
-
-    public static function renderBackMenuBtn()
-    {
-        echo <<<HTML
-        <div class="mb-6">
-            <a href="index.php?page=menu" 
-            class="inline-flex items-center gap-2 bg-white border-2 border-black px-4 py-2 font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                Retour aux recettes
-            </a>
-        </div>
-        HTML;
-    }
-
     public static function renderRecipeForm($recipe = null)
     {
         $isEdit = ($recipe !== null);
@@ -202,6 +178,34 @@ class RecipeRenderer
             RecipeRenderer::renderBackMenuBtn();
         }
         echo "</div>";
+    }
+
+    public static function renderDeleteRecipeBtn($id, $nom)
+    {
+        echo <<<HTML
+        <div class="bg-red-50 border-4 border-red-600 p-6 shadow-[8px_8px_0px_0px_rgba(220,38,38,1)]">
+            <form action="actions/deleteRecipe.php" method="POST" onsubmit="return confirm('Supprimer définitivement {$nom} ?')">
+                <input type="hidden" name="id" value="{$id}">
+                <button type="submit" class="w-full bg-red-600 text-white font-black py-3 uppercase hover:bg-black transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    Supprimer définitivement la recette
+                </button>
+            </form>
+        </div>
+        HTML;
+    }
+
+    public static function renderBackMenuBtn()
+    {
+        echo <<<HTML
+        <div class="mb-6">
+            <a href="index.php?page=menu" 
+            class="inline-flex items-center gap-2 bg-white border-2 border-black px-4 py-2 font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Retour aux recettes
+            </a>
+        </div>
+        HTML;
     }
 
 }
