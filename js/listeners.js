@@ -1,3 +1,4 @@
+import { showToast } from "./utils.js";
 import { handleRecipeStatus } from "./recipe.js";
 import {
   validatePasswordInput,
@@ -69,11 +70,12 @@ export function initTrigrammeListener() {
     input.value = trigramme;
 
     if (trigramme.length == 3) {
-      const isTaken = checkTrigrammeniqueness(trigramme, excludedId);
+      const isTaken = await checkTrigrammeniqueness(trigramme, excludedId);
+      console.log(isTaken, trigramme, excludedId);
 
       if (isTaken) {
         input.style.borderColor = "#EF4444";
-        showToast(`Le trigramme ${value} est déjà utilisé !`, "error");
+        showToast(`Le trigramme ${trigramme} est déjà utilisé !`, "error");
       } else {
         input.style.borderColor = "#22C55E";
       }
