@@ -20,3 +20,18 @@ export function validatePasswordSubmit(password, confirm, event) {
     confirm.focus();
   }
 }
+
+export async function checkTrigrammeniqueness(trigramme, excludedId = null) {
+  if (trigramme.length !== 3) return false;
+
+  try {
+    const response = await fetch(
+      `actions/checkTrigramme.php?trigramme=${trigramme}&excludeId=${excludedId}`,
+    );
+    const data = await response.json();
+    return data.exists;
+  } catch (error) {
+    console.error("Erreur de vérification de trigramme :", error);
+    return false;
+  }
+}

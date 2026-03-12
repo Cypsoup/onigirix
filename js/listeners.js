@@ -2,7 +2,8 @@ import { handleRecipeStatus } from "./recipe.js";
 import {
   validatePasswordInput,
   validatePasswordSubmit,
-} from "./passwordHandler.js";
+  checkTrigrammeniqueness,
+} from "./formHandler.js";
 
 export function initEventListeners() {
   document.addEventListener("click", (event) => {
@@ -55,4 +56,29 @@ export function initEditPasswordListeners() {
   form.addEventListener("submit", (event) =>
     validatePasswordSubmit(password, confirm, event),
   );
+}
+
+export function initTrigrammeListener() {
+  const input = document.getElementById("trigrammeInput");
+  if (!input) return;
+
+  const excludedId = document.getElementById("idInput")?.value;
+
+  input.addEventListener("input", async () => {
+    const trigramme = input.value.toUpperCase();
+    input.value = trigramme;
+
+    if (trigramme.length == 3) {
+      const isTaken = checkTrigrammeniqueness(trigramme, excludedId);
+
+      if (isTaken) {
+        input.style.borderColor = "#EF4444";
+        showToast(`Le trigramme ${value} est déjà utilisé !`, "error");
+      } else {
+        input.style.borderColor = "#22C55E";
+      }
+    } else {
+      input.style.borderColor = "black";
+    }
+  });
 }

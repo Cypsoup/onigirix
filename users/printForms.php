@@ -60,7 +60,7 @@ function printCreateUserForm()
 
                 <div>
                     <label class="block font-black uppercase text-xs mb-1">Trigramme (Identifiant)</label>
-                    <input type="text" name="trigramme" maxlength="3" minlength="3" placeholder="ABC" required 
+                    <input id="trigrammeInput" type="text" name="trigramme" maxlength="3" minlength="3" placeholder="ABC" required 
                         class="w-full border-2 border-black p-3 font-black text-2xl tracking-widest focus:bg-yellow-50 outline-none uppercase text-center">
                     <p class="text-[10px] mt-1 font-bold italic">3 lettres exactement.</p>
                 </div>
@@ -125,7 +125,7 @@ function printEditUserForm($user)
                 <p class="text-xs font-bold text-gray-500 uppercase">Votre trigramme est votre identifiant de connexion.</p>
             </div>
 
-            <input type="hidden" name="id" value="{$id}">
+            <input id="idInput" type="hidden" name="id" value="{$id}">
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
@@ -136,7 +136,7 @@ function printEditUserForm($user)
 
                 <div>
                     <label class="block font-black uppercase text-xs mb-1">Trigramme (Identifiant)</label>
-                    <input type="text" name="trigramme" maxlength="3" minlength="3" value="{$trigramme}" required 
+                    <input id="trigrammeInput" type="text" name="trigramme" maxlength="3" minlength="3" value="{$trigramme}" required 
                         class="w-full border-2 border-black p-3 font-black text-2xl tracking-widest focus:bg-yellow-50 outline-none uppercase text-center">
                     <p class="text-[10px] mt-1 font-bold italic">3 lettres exactement.</p>
                 </div>
@@ -174,7 +174,7 @@ function printEditPasswordForm($user)
                 <p class="text-xs font-bold text-gray-500 uppercase">Votre trigramme est votre identifiant de connexion.</p>
             </div>
 
-            <input type="hidden" name="id" value="{$id}">
+            <input id="idInput" type="hidden" name="id" value="{$id}">
 
             <div>
                 <label class="block font-black uppercase text-xs mb-1">Ancien mot de passe</label>

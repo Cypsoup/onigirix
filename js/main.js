@@ -2,6 +2,7 @@ import {
   initEventListeners,
   initCreateUserListeners,
   initEditPasswordListeners,
+  initTrigrammeListener,
 } from "./listeners.js";
 import { showToast } from "./utils.js";
 
@@ -9,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initEventListeners();
   initCreateUserListeners();
   initEditPasswordListeners();
+  initTrigrammeListener();
 
   const msg = document.body.dataset.flashMessage;
   const type = document.body.dataset.flashType;
