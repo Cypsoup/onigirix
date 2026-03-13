@@ -10,8 +10,17 @@ require_once '../users/users.php';
 require_once '../users/printForms.php';
 require_once '../utils/flash.php';
 
+// Vérification de l'unicité du trigramme
+$trigramme = $_POST['trigramme'] ?? null;
+$userTrigramme = User::getUserByTrigramme($pdo, $trigramme);
+if ($userTrigramme) {
+    Flash::error("Trigramme déjà utilisé !");
+    header("Location : ../index.php?page=createUser");
+    exit;
+}
+
 // Vérification des mots de passe
-$password = $_POST['password'] ?? null; 
+$password = $_POST['password'] ?? null;
 $passwordConfirm = $_POST['passwordConfirm'] ?? null;
 
 if ($password !== $passwordConfirm) {
@@ -21,7 +30,6 @@ if ($password !== $passwordConfirm) {
 }
 
 // Récupération des variables de connexion
-$trigramme = $_POST['trigramme'] ?? null;
 $nom = $_POST['nom'] ?? null;
 $email = $_POST['email'] ?? null;
 $role = $_POST['role'] ?? 'user';
