@@ -22,8 +22,9 @@ foreach ($allItems as $id => $qty) {
     }
 }
 
+$total = calculateOrderTotal($pdo, $itemsToOrder);
 // La fonction createOrder retourne true ou false
-$result = createOrder($pdo, $trigramme, $itemsToOrder, $eventId);
+$result = createOrder($pdo, $trigramme, $itemsToOrder, $total);
 
 if ($result) {
     echo json_encode(['success' => true]); // on renvoie un succès au format JSON
