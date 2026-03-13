@@ -103,6 +103,26 @@
                 </div>
             </section>
 
+            <section id="bloc-commande-recuperee" class="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden mb-8">
+                <!-- <span class="font-mono uppercase tracking-tighter text-[10px] text-zinc-400 mb-2 block">
+                    Merci
+                </span> -->
+
+                <div class="h-40 flex items-center justify-center relative">
+                    <img src="./images/logo.png" alt="Logo" class="max-h-full w-auto object-contain">
+                </div>
+
+                <div class="flex flex-col gap-6 p-4">
+                    <div class="text-center flex flex-col gap-1">
+                        <h3 class="text-2xl font-black italic uppercase">ITADAKIMASU !</h3>
+                        <p class="text-sm text-zinc-500">Votre commande vous a été remise. Bon appétit !</p>
+                    </div>
+                    <button class="w-full bg-black text-white py-4 font-bold uppercase tracking-widest text-xs hover:bg-zinc-800 transition-colors">
+                        Voir mon historique
+                    </button>
+                </div>
+            </section>
+
             <section class="mb-10">
                 <h3 class="font-black text-xl italic uppercase tracking-tighter mb-4">Vos statistiques</h3>
                 <div class="grid grid-cols-2 gap-4">
@@ -120,8 +140,10 @@
                             <span class="font-mono uppercase tracking-tighter text-[10px] text-zinc-400 uppercase">Onigiri préféré</span>
                             <h4 class="font-black text-lg italic uppercase">Saumon Spicy</h4>
                         </div>
-                        <div class="w-10 h-10 bg-[#E60012] flex items-center justify-center">
-                            <div class="w-4 h-4 bg-white rotate-45"></div>
+                        <div class="w-10 h-10 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#E60012" stroke="#E60012" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
                         </div>
                     </div>
                 </div>

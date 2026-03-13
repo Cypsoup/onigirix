@@ -14,7 +14,8 @@ $_SESSION['event_id'] = 1; // ID de l'événement en cours, )pour l'instant 1 ma
  * @param string $status - statut de la commande
  * @return array|false - Tableau des commandes ou false si erreur
  */
-function getOrdersByStatus($pdo, $status) {
+function getOrdersByStatus($pdo, $status)
+{
     try {
         $requete = $pdo->prepare("
             SELECT o.*, u.trigramme 
@@ -37,7 +38,8 @@ function getOrdersByStatus($pdo, $status) {
  * @param int $id - ID de la commande
  * @return array|false - Tableau des items de la commande ou false si erreur
  */
-function getOrderItems($pdo, $orderId) {
+function getOrderItems($pdo, $orderId)
+{
     try {
         $requete = $pdo->prepare("
             SELECT oi.quantite, r.nom 
@@ -59,7 +61,8 @@ function getOrderItems($pdo, $orderId) {
  * @param string $status - statut des commandes à prendre en compte (ex: 'attente', 'prepa', 'pret')
  * @return array|false - Tableau des recettes et leurs quantités ou false si erreur
  */
-function getStatsByStatus($pdo, $status) {
+function getStatsByStatus($pdo, $status)
+{
     $requete = $pdo->prepare("
         SELECT r.nom, SUM(oi.quantite) as total_qty
         FROM order_items oi
@@ -78,7 +81,8 @@ function getStatsByStatus($pdo, $status) {
  * @param PDO $pdo - Connexion à la base de données
  * @return array|false - Tableau des recettes [id => recette] ou false si erreur
  */
-function getAllRecipes($pdo) {
+function getAllRecipes($pdo)
+{
     $stmt = $pdo->query("SELECT * FROM recipes WHERE actif = 1");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     // Exemple
@@ -95,7 +99,8 @@ function getAllRecipes($pdo) {
  * @param int $id - ID de la recette
  * @return array|false - Données de la recette ou false
  */
-function getRecipeById($pdo, $id) {
+function getRecipeById($pdo, $id)
+{
     try {
         $stmt = $pdo->prepare("
             SELECT 
@@ -121,23 +126,24 @@ function getRecipeById($pdo, $id) {
  * @param PDO $pdo - Connexion à la base de données
  * @return string - JSON encodé des recettes
  */
-function getRecipesAsJSON($pdo) {
+function getRecipesAsJSON($pdo)
+{
     $recipes = getAllRecipes($pdo);
     if (!$recipes) {
         return '[]';
     }
-    
-    $formattedRecipes = array_map(function($recipe) {
+
+    $formattedRecipes = array_map(function ($recipe) {
         return [
-            'id' => (int)$recipe['id'],
+            'id' => (int) $recipe['id'],
             'name' => $recipe['nom'],
-            'price' => (float)$recipe['prix'],
+            'price' => (float) $recipe['prix'],
             'description' => $recipe['description'] ?? '',
-            'stock' => (int)$recipe['stock'],
+            'stock' => (int) $recipe['stock'],
             'image' => 'images/onigiri.png'
         ];
     }, $recipes);
-    
+
     return json_encode($formattedRecipes, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); // Encode en JSON avec échappement pour éviter les problèmes de sécurité lors de l'injection dans JavaScript
 }
 
@@ -151,7 +157,8 @@ function getRecipesAsJSON($pdo) {
  * @param array $order - Données de la commande à afficher
  * return string - HTML de la carte de commande
  */
-function renderOrderCard($pdo, $order) {
+function renderOrderCard($pdo, $order)
+{
     $items = getOrderItems($pdo, $order['id']);
     $timeAgo = round((time() - strtotime($order['created_at'])) / 60);
 
@@ -161,7 +168,7 @@ function renderOrderCard($pdo, $order) {
     $itemTextClass = "text-black"; // Par défaut noir
     $showDelete = false;
     $isPret = false; // Flag pour le petit triangle
-    
+
     // Personnalisation selon le statut
     if ($order['statut'] === 'prepa') {
         $cardClasses = "border-2 border-black p-4 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative";
@@ -176,7 +183,7 @@ function renderOrderCard($pdo, $order) {
 
     }
 
-    echo '<div class="'.$cardClasses.'">';
+    echo '<div class="' . $cardClasses . '">';
 
     // Affichage du petit triangle en haut à droite pour les commandes prêtes
     if ($isPret) {
@@ -187,18 +194,18 @@ function renderOrderCard($pdo, $order) {
     if ($showDelete) {
         echo '  <button class="absolute top-2 right-2 text-black/20 hover:text-[#E60012] opacity-0 group-hover:opacity-100 transition-opacity duration-100"><i data-lucide="x" class="w-4 h-4"></i></button>';
     }
-    
+
     echo '  <div class="flex justify-between mb-3">';
-    echo '    <div class="text-2xl font-black '.$textClass.'">'.$order['trigramme'].'</div>';
-    echo '    <div class="text-xs text-black/40">'.$timeAgo.' min</div>';
+    echo '    <div class="text-2xl font-black ' . $textClass . '">' . $order['trigramme'] . '</div>';
+    echo '    <div class="text-xs text-black/40">' . $timeAgo . ' min</div>';
     echo '  </div>';
 
     echo '  <ul class="text-sm space-y-1 mb-5">';
     foreach ($items as $item) {
-        echo '    <li class="flex justify-between items-center '.$itemTextClass.'"><span>'.$item['nom'].'</span><span class="font-bold">x'.$item['quantite'].'</span></li>';
+        echo '    <li class="flex justify-between items-center ' . $itemTextClass . '"><span>' . $item['nom'] . '</span><span class="font-bold">x' . $item['quantite'] . '</span></li>';
     }
     echo '  </ul>';
-    
+
     switch ($order['statut']) {
         case 'attente':
             $btnLabel = 'Préparer';
@@ -210,16 +217,16 @@ function renderOrderCard($pdo, $order) {
             $btnClass = 'bg-green-500/20 hover:bg-green-500/70';
             break;
 
-        default: 
+        default:
             $btnLabel = 'ARCHIVER';
             $btnClass = 'bg-black hover:bg-[#E60012] hover:border-[#E60012] text-white';
             break;
     }
     // echo '<button class="uppercase w-full py-2 border border-black text-sm font-bold tracking-widest transition-colors '.$btnClass.'">'.$btnLabel.'</button>';
     echo '<button 
-            onclick="updateOrderStatus('.$order['id'].', \''.$order['statut'].'\')" 
-            class="uppercase w-full py-2 border border-black text-sm font-bold tracking-widest transition-colors '.$btnClass.'">
-            '.$btnLabel.'
+            onclick="updateOrderStatus(' . $order['id'] . ', \'' . $order['statut'] . '\')" 
+            class="uppercase w-full py-2 border border-black text-sm font-bold tracking-widest transition-colors ' . $btnClass . '">
+            ' . $btnLabel . '
         </button>';
     echo '</div>';
 }
@@ -229,9 +236,10 @@ function renderOrderCard($pdo, $order) {
  * @param array $order - Données de la commande à afficher
  * return string - HTML de la ligne de commande archivée
  */
-function renderArchivedOrder($order) {
+function renderArchivedOrder($order)
+{
     echo '<div class="flex justify-between border-b border-black/10 pb-1">';
-    echo '    <span>#'.$order['id'].' - '.$order['trigramme'].'</span><span>'.number_format($order['montant_total'], 2).'€</span>';
+    echo '    <span>#' . $order['id'] . ' - ' . $order['trigramme'] . '</span><span>' . number_format($order['montant_total'], 2) . '€</span>';
     echo '</div>';
 }
 
@@ -240,7 +248,8 @@ function renderArchivedOrder($order) {
  * @param array $stats - Tableau des statistiques à afficher
  * return string - HTML des statistiques
  */
-function renderStats($stats) {
+function renderStats($stats)
+{
     if ($stats) {
         foreach ($stats as $stat) {
             echo '<div class="flex justify-between items-center py-1 border-b border-black/5">';
@@ -248,7 +257,7 @@ function renderStats($stats) {
             echo '    <span class="font-bold text-base">' . $stat['total_qty'] . '</span>';
             echo '</div>';
         }
-    }    
+    }
 }
 
 /**
@@ -256,8 +265,9 @@ function renderStats($stats) {
  * @param int $id - ID de la recette
  * @param array $recipe - Données de la recette (nom, stock, etc.)
  * return string - HTML de la ligne de recette
- */ 
-function renderRecipeRow($recipe) {
+ */
+function renderRecipeRow($recipe)
+{
     $id = $recipe['id'];
     $stock = $recipe['stock'] ?? 0;
     $isAvailable = $stock > 0;
@@ -269,7 +279,7 @@ function renderRecipeRow($recipe) {
     <div class="flex justify-between items-center py-2 border-b border-black/5 text-sm {$opacityClass}">
         <span>{$recipe["nom"]}</span>
         <div class="flex items-center gap-4">
-            <button type="button" onclick="document.getElementById('qty-{$id}').stepDown()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors {$disabledAttr}" {$disabled}>-</button>
+            <button type="button" onclick="document.getElementById('qty-{$id}').stepDown()" class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors {$$disabled}" {$disabled}>-</button>
             
             <input type="number" name="items[{$id}]" id="qty-{$id}" value="0" min="0" max="{$stock}" class="w-4 text-center font-bold outline-none appearance-none m-0 bg-transparent" {$disabled}>
             
@@ -279,12 +289,14 @@ function renderRecipeRow($recipe) {
 HTML;
 }
 
+
 /**
  * Affiche une carte de recette dans le menu de prise de commande de l'utilisateur
  * @param array $recipe - Données de la recette à afficher
  * return string - HTML de la carte de recette
  */
-function renderMenuCard($recipe) {
+function renderMenuCard($recipe)
+{
     // Préparation des données pour l'affichage
     $id = $recipe['id'];
     $name = htmlspecialchars($recipe['nom']);
@@ -295,28 +307,42 @@ function renderMenuCard($recipe) {
     // Gestion du stock
     $stock = $recipe['stock'] ?? 0;
     $isAvailable = $stock > 0;
-    $opacityClass = $isAvailable ? '' : 'opacity-40 pointer-events-none grayscale';
+
+    // Style Néo-Brutaliste pour l'état désactivé
+    $opacityClass = $isAvailable ? '' : 'opacity-50 grayscale pointer-events-none';
 
     echo '
-    <div class="flex flex-col bg-white border-[1.5px] border-black/20 rounded-xl p-4 active:scale-95 transition-transform cursor-pointer '.$opacityClass.'"
-         onclick="openDrawer(' . $id . ')">
+    <div class="flex flex-col bg-white border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-2 ' . $opacityClass . '">
         
-        <div class="w-full aspect-square bg-black/5 rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+        <div class="w-full aspect-square border-2 border-black bg-zinc-50 mb-4 flex items-center justify-center overflow-hidden cursor-pointer active:translate-y-1 transition-transform" onclick="openDrawer(' . $id . ')">
             <img src="' . $image . '" alt="' . $name . '" class="w-full h-full object-cover">
         </div>
         
-        <div class="mb-4">
-            <h3 class="text-base font-black text-black leading-tight mb-0.5">' . $name . '</h3>
-            <p class="text-xs text-black/50 font-medium">' . $description . '</p>
+        <div class="mb-4 cursor-pointer" onclick="openDrawer(' . $id . ')">
+            <h3 class="text-xl font-black italic uppercase text-black leading-none mb-1">' . $name . '</h3>
+            <p class="font-mono uppercase tracking-tighter text-[10px] text-zinc-500 line-clamp-2">' . $description . '</p>
         </div>
         
         <div class="flex items-center justify-between mt-auto">
-            <span class="text-lg font-black text-black">' . $price . '€</span>
+            <span class="text-xl font-mono font-black text-black">' . $price . '€</span>
             
-            <span class="text-lg font-black text-black">
-                0
-            </span>
+            <div class="flex items-center gap-3">
+                <button onclick="changeQty(' . $id . ', -1)" class="w-8 h-8 border-2 border-black bg-white flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform">
+                    <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"/>
+                    </svg>
+                </button>
+                
+                <span class="text-xl font-black font-mono italic text-black w-4 text-center" id="card-qty-' . $id . '">0</span>
+                
+                <button onclick="changeQty(' . $id . ', 1)" class="w-8 h-8 border-2 border-black bg-[#E60012] flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+            </div>
         </div>
+        
     </div>';
 }
 
@@ -334,7 +360,8 @@ function renderMenuCard($recipe) {
  * @param array $items - Tableau des items à commander [recipeId => quantity]
  * @return bool|int - l'ID de la commande créée si la commande a été créée avec succès, false sinon
  */
-function createOrder($pdo, $trigramme, $items, $montant_total) {
+function createOrder($pdo, $trigramme, $items, $montant_total)
+{
     try {
         $totalOnigiris = array_sum($items);
 
@@ -347,15 +374,16 @@ function createOrder($pdo, $trigramme, $items, $montant_total) {
         if (!isset($_SESSION['event_id'])) {
             throw new Exception("Session expirée ou event_id manquant.");
         }
-    
+
         $pdo->beginTransaction();  // Commence une transaction (= groupe d'opérations sur la base de données)
 
         // Trouver l'utilisateur
         $stmtUser = $pdo->prepare("SELECT id FROM users WHERE trigramme = ?");
         $stmtUser->execute([strtoupper($trigramme)]);
         $userId = $stmtUser->fetchColumn();
-        if (!$userId) throw new Exception("Utilisateur introuvable");
-        
+        if (!$userId)
+            throw new Exception("Utilisateur introuvable");
+
         // Insertion de la commande
         $stmtOrder = $pdo->prepare("
             INSERT INTO orders (user_id, event_id, statut, montant_total, created_at) 
@@ -374,20 +402,21 @@ function createOrder($pdo, $trigramme, $items, $montant_total) {
 
         $pdo->commit();  // on valide les changements
         return $orderId; // on retourne l'ID de la commande créée
-    } 
-    catch (Exception $e) {
+    } catch (Exception $e) {
         $pdo->rollBack(); // annule les modifications sur la base de données en cas d'erreur
         // On arrête tout et on affiche l'erreur exacte
         die(json_encode([
-            "success" => false, 
+            "success" => false,
             "error" => "Erreur détectée : " . $e->getMessage()
         ]));
         return false;
     }
 }
 
-function calculateOrderTotal($pdo, $items) {
-    if (empty($items)) return 0;
+function calculateOrderTotal($pdo, $items)
+{
+    if (empty($items))
+        return 0;
 
     // On récupère uniquement les IDs des produits dans le panier
     // $items est sous la forme [id => quantite]
@@ -407,9 +436,9 @@ function calculateOrderTotal($pdo, $items) {
         // On calcule le total en croisant les prix de la BDD et les quantités du panier
         foreach ($recipes as $recipe) {
             $id = $recipe['id'];
-            $prix = (float)$recipe['prix'];
-            $quantite = (int)$items[$id];
-            
+            $prix = (float) $recipe['prix'];
+            $quantite = (int) $items[$id];
+
             $total += $prix * $quantite;
         }
 
