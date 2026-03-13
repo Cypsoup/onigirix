@@ -1,4 +1,5 @@
 <?php
+
 $host = 'localhost';
 $dbname = 'onigirix';
 $user = 'root';

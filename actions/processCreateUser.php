@@ -15,7 +15,7 @@ $trigramme = $_POST['trigramme'] ?? null;
 $userTrigramme = User::getUserByTrigramme($pdo, $trigramme);
 if ($userTrigramme) {
     Flash::error("Trigramme déjà utilisé !");
-    header("Location : ../index.php?page=createUser");
+    header("Location: ../index.php?page=createUser");
     exit;
 }
 

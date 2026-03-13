@@ -208,6 +208,93 @@ class RecipeRenderer
         HTML;
     }
 
+    public static function renderAdminOrderRow($recipe)
+    {
+        // Préparation des données
+        $id = (int) $recipe->id;
+        $nom = htmlspecialchars($recipe->nom);
+        $stock = (int) ($recipe->stock ?? 0);
+        $isAvailable = $stock > 0 && $recipe->available;
+
+        // Gestion des styles
+        $disabled = $isAvailable ? '' : 'disabled';
+        $opacityClass = $isAvailable ? '' : 'opacity-40 pointer-events-none grayscale';
+
+        // Rendu
+        echo <<<HTML
+            <div class="flex justify-between items-center py-2 border-b border-black/5 text-sm {$opacityClass}">
+                <span class="font-medium">{$nom}</span>
+                
+                <div class="flex items-center gap-4">
+                    <button type="button" 
+                        onclick="document.getElementById('qty-{$id}').stepDown()" 
+                        class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors" 
+                        {$disabled}>
+                        -
+                    </button>
+                    
+                    <input type="number" 
+                        name="items[{$id}]" 
+                        id="qty-{$id}" 
+                        value="0" 
+                        min="0" 
+                        max="{$stock}" 
+                        class="w-6 text-center font-bold outline-none appearance-none m-0 bg-transparent" 
+                        {$disabled}>
+                    
+                    <button type="button" 
+                        onclick="document.getElementById('qty-{$id}').stepUp()" 
+                        class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors" 
+                        {$disabled}>
+                        +
+                    </button>
+                </div>
+            </div>            
+        HTML;
+    }
+
+    public static function renderUserMenuCard($recipe)
+    {
+        // Préparation des données
+        $id = (int) $recipe->id;
+        $name = htmlspecialchars($recipe->nom);
+        $description = htmlspecialchars($recipe->description ?? '');
+        $price = number_format((float) $recipe->prix, 2, '.', '');
+
+        $image = !empty($recipe->fileName)
+            ? "images/recipeImages/" . $recipe->fileName
+            : 'images/onigiri.png';
+
+        // Gestion du stock
+        $stock = (int) ($recipe->stock ?? 0);
+        $isAvailable = $stock > 0 && $recipe->available;
+        $opacityClass = $isAvailable ? '' : 'opacity-40 pointer-events-none grayscale';
+
+        // Rendu final
+        echo <<<HTML
+            <div class="flex flex-col bg-white border-[1.5px] border-black/20 rounded-xl p-4 active:scale-95 transition-transform cursor-pointer {$opacityClass}"
+                onclick="openDrawer({$id})">
+                
+                <div class="w-full aspect-square bg-black/5 rounded-xl flex items-center justify-center mb-3 overflow-hidden border border-black/5">
+                    <img src="{$image}" alt="{$name}" class="w-full h-full object-cover">
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="text-base font-black text-black leading-tight mb-0.5">{$name}</h3>
+                    <p class="text-xs text-black/50 font-medium">{$description}</p>
+                </div>
+                
+                <div class="flex items-center justify-between mt-auto">
+                    <span class="text-lg font-black text-black">{$price}€</span>
+                    
+                    <span class="text-lg font-black text-black">
+                        0
+                    </span>
+                </div>
+            </div>
+        HTML;
+    }
+
 }
 
 ?>

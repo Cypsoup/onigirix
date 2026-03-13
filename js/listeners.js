@@ -3,8 +3,9 @@ import { handleRecipeStatus } from "./recipe.js";
 import {
   validatePasswordInput,
   validatePasswordSubmit,
-  checkTrigrammeniqueness,
+  checkTrigrammeUniqueness,
 } from "./formHandler.js";
+import { switchStats, toggleArchivedOrders } from "./orderHandler.js";
 
 export function initEventListeners() {
   document.addEventListener("click", (event) => {
@@ -70,7 +71,7 @@ export function initTrigrammeListener() {
     input.value = trigramme;
 
     if (trigramme.length == 3) {
-      const isTaken = await checkTrigrammeniqueness(trigramme, excludedId);
+      const isTaken = await checkTrigrammeUniqueness(trigramme, excludedId);
       console.log(isTaken, trigramme, excludedId);
 
       if (isTaken) {
@@ -83,4 +84,24 @@ export function initTrigrammeListener() {
       input.style.borderColor = "black";
     }
   });
+}
+
+export function initStatsBtnListeners() {
+  // Récupération des éléments
+  const btnPrepa = document.getElementById("btn-prepa");
+  const btnAttente = document.getElementById("btn-attente");
+
+  if (!btnPrepa || !btnAttente) return;
+
+  btnPrepa.addEventListener("click", () => switchStats("prepa"));
+  btnAttente.addEventListener("click", () => switchStats("attente"));
+}
+
+export function initToggleArchivedOrdersBtnListener() {
+  // Récupération des éléments
+  const toggleBtn = document.getElementById("btn-toggle-archived-orders");
+
+  if (!toggleBtn) return;
+
+  toggleBtn.addEventListener("click", () => toggleArchivedOrders());
 }

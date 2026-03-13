@@ -21,7 +21,7 @@ export function validatePasswordSubmit(password, confirm, event) {
   }
 }
 
-export async function checkTrigrammeniqueness(trigramme, excludedId = null) {
+export async function checkTrigrammeUniqueness(trigramme, excludedId = null) {
   if (trigramme.length !== 3) return false;
 
   try {

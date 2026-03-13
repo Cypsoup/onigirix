@@ -3,6 +3,8 @@ import {
   initCreateUserListeners,
   initEditPasswordListeners,
   initTrigrammeListener,
+  initStatsBtnListeners,
+  initToggleArchivedOrdersBtnListener,
 } from "./listeners.js";
 import { showToast } from "./utils.js";
 
@@ -11,6 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initCreateUserListeners();
   initEditPasswordListeners();
   initTrigrammeListener();
+  initStatsBtnListeners();
+  initToggleArchivedOrdersBtnListener();
 
   const msg = document.body.dataset.flashMessage;
   const type = document.body.dataset.flashType;
@@ -34,65 +38,6 @@ function togglePanel() {
     panel.classList.add("translate-x-full");
     overlay.classList.remove("opacity-100");
     setTimeout(() => overlay.classList.add("hidden"), 300);
-  }
-}
-
-// Logique d'ouverture du menu déroulant des commandes archivées
-function toggleArchives() {
-  const container = document.getElementById("archiveContainer");
-  const list = document.getElementById("archiveList");
-  const icon = document.getElementById("archiveIcon");
-
-  // On bascule la visibilité de la liste
-  list.classList.toggle("hidden");
-
-  // On fait tourner l'icône
-  icon.classList.toggle("rotate-180");
-
-  // Si la liste est visible (donc menu ouvert), on donne toute la place disponible au conteneur (flex-1)
-  // Sinon, on le rend rigide (flex-none) pour qu'il ne prenne que la place du titre
-  if (!list.classList.contains("hidden")) {
-    container.classList.remove("flex-none");
-    container.classList.add("flex-1");
-    // Petit hack pour forcer le titre à garder sa marge quand c'est ouvert
-    // (optionnel selon tes préférences de design)
-  } else {
-    container.classList.remove("flex-1");
-    container.classList.add("flex-none");
-  }
-}
-
-// Fonction pour changer d'onglet de stats
-function switchStats(tab) {
-  // Récupération des éléments
-  const btnTotal = document.getElementById("btn-total");
-  const btnNext = document.getElementById("btn-next");
-  const contentTotal = document.getElementById("content-total");
-  const contentNext = document.getElementById("content-next");
-
-  // Classes pour l'état ACTIF des boutons
-  const activeClasses = ["text-black", "border-black"];
-  // Classes pour l'état INACTIF des boutons
-  const inactiveClasses = ["text-black/40", "border-transparent"];
-
-  if (tab === "total") {
-    contentTotal.classList.remove("hidden");
-    contentNext.classList.add("hidden");
-
-    btnTotal.classList.add(...activeClasses);
-    btnTotal.classList.remove(...inactiveClasses);
-
-    btnNext.classList.add(...inactiveClasses);
-    btnNext.classList.remove(...activeClasses);
-  } else {
-    contentNext.classList.remove("hidden");
-    contentTotal.classList.add("hidden");
-
-    btnNext.classList.add(...activeClasses);
-    btnNext.classList.remove(...inactiveClasses);
-
-    btnTotal.classList.add(...inactiveClasses);
-    btnTotal.classList.remove(...activeClasses);
   }
 }
 
@@ -124,7 +69,7 @@ function updateOrderStatus(orderId, currentStatus) {
     });
 }
 
-/* document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   // Le navigateur vient de se recharger, on vérifie s'il y a un message en attente
   const flashMessage = sessionStorage.getItem("successMessage");
 
@@ -140,6 +85,36 @@ function updateOrderStatus(orderId, currentStatus) {
   if (orderForm) {
     orderForm.addEventListener("submit", function (e) {
       e.preventDefault(); // On empêche le comportement par défaut du formulaire (rechargement de la page)
+
+      // On supprime l'éventuel message d'erreur précédent
+      const existingError = document.getElementById("error-msg");
+      if (existingError) existingError.remove();
+
+      // Calcul du total d'onigiris commandés (pour validation côté client)
+      const quantityInputs = document.querySelectorAll('input[name^="items"]'); // On sélectionne tous les inputs qui commencent par "items"
+      let total = 0;
+      quantityInputs.forEach((input) => {
+        total += parseInt(input.value) || 0; // parseInt pour convertir en nombre, et || 0 pour éviter les NaN si le champ est vide
+      });
+
+      if (total <= 0 || total > 4) {
+        // Création du message d'erreur
+        const errorDiv = document.createElement("div");
+        errorDiv.id = "error-msg";
+        errorDiv.className =
+          "italic mt-2 text-[11px] text-[#E60012] font-bold text-center uppercase tracking-wider";
+        errorDiv.innerText =
+          total <= 0
+            ? "Ton panier est vide !"
+            : "Maximum 4 onigiris par personne (Tu en as sélectionné " +
+              total +
+              ")";
+
+        // On l'affiche avant le bouton
+        this.querySelector('button[type="submit"]').after(errorDiv);
+
+        return; // on stoppe tout ici, le fetch ne sera pas exécuté
+      }
 
       // new FormData(this) capture tout (Trigramme + Tableau items[])
       const formData = new FormData(this);
@@ -234,5 +209,3 @@ function showSuccessToast(message) {
 //         }, 300);
 //     }, 3000);
 // }
-
-*/

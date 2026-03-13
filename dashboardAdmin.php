@@ -167,8 +167,8 @@ generateSidebar($activePage, $user_access, $user_connected)
             <?php
             $recipes = getAllRecipes($pdo);
 
-            foreach ($recipes as $id => $recipe) {
-                echo renderRecipeRow($id, $recipe);
+            foreach ($recipes as $recipe) {
+                echo renderRecipeRow($recipe);
             }
             ?>
         </div>
