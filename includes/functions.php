@@ -279,6 +279,7 @@ function renderRecipeRow($recipe) {
 HTML;
 }
 
+
 /**
  * Affiche une carte de recette dans le menu de prise de commande de l'utilisateur
  * @param array $recipe - Données de la recette à afficher
@@ -295,28 +296,42 @@ function renderMenuCard($recipe) {
     // Gestion du stock
     $stock = $recipe['stock'] ?? 0;
     $isAvailable = $stock > 0;
-    $opacityClass = $isAvailable ? '' : 'opacity-40 pointer-events-none grayscale';
+    
+    // Style Néo-Brutaliste pour l'état désactivé
+    $opacityClass = $isAvailable ? '' : 'opacity-50 grayscale pointer-events-none';
 
     echo '
-    <div class="flex flex-col bg-white border-[1.5px] border-black/20 rounded-xl p-4 active:scale-95 transition-transform cursor-pointer '.$opacityClass.'"
-         onclick="openDrawer(' . $id . ')">
+    <div class="flex flex-col bg-white border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-2 ' . $opacityClass . '">
         
-        <div class="w-full aspect-square bg-black/5 rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+        <div class="w-full aspect-square border-2 border-black bg-zinc-50 mb-4 flex items-center justify-center overflow-hidden cursor-pointer active:translate-y-1 transition-transform" onclick="openDrawer(' . $id . ')">
             <img src="' . $image . '" alt="' . $name . '" class="w-full h-full object-cover">
         </div>
         
-        <div class="mb-4">
-            <h3 class="text-base font-black text-black leading-tight mb-0.5">' . $name . '</h3>
-            <p class="text-xs text-black/50 font-medium">' . $description . '</p>
+        <div class="mb-4 cursor-pointer" onclick="openDrawer(' . $id . ')">
+            <h3 class="text-xl font-black italic uppercase text-black leading-none mb-1">' . $name . '</h3>
+            <p class="font-mono uppercase tracking-tighter text-[10px] text-zinc-500 line-clamp-2">' . $description . '</p>
         </div>
         
         <div class="flex items-center justify-between mt-auto">
-            <span class="text-lg font-black text-black">' . $price . '€</span>
+            <span class="text-xl font-mono font-black text-black">' . $price . '€</span>
             
-            <span class="text-lg font-black text-black">
-                0
-            </span>
+            <div class="flex items-center gap-3">
+                <button onclick="changeQty(' . $id . ', -1)" class="w-8 h-8 border-2 border-black bg-white flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform">
+                    <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"/>
+                    </svg>
+                </button>
+                
+                <span class="text-xl font-black font-mono italic text-black w-4 text-center" id="card-qty-' . $id . '">0</span>
+                
+                <button onclick="changeQty(' . $id . ', 1)" class="w-8 h-8 border-2 border-black bg-[#E60012] flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+            </div>
         </div>
+        
     </div>';
 }
 
