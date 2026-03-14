@@ -2,8 +2,6 @@
 
 // Importation des fichiers
 require_once 'config/db.php';
-require_once 'recipes/recipe.php';
-require_once 'recipes/recipeRenderer.php';
 require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
 require_once 'recipes/recipe.php';
@@ -24,7 +22,7 @@ foreach ($orderConfig as $status => $config) {
     $orderConfig[$status]['count'] = count($orders);
 }
 
-// Récupération des données affichées
+// Récupération des recettes
 $recipes = Recipe::getAllRecipes($pdo, 1);
 
 ?>
@@ -57,7 +55,7 @@ $recipes = Recipe::getAllRecipes($pdo, 1);
 
 </main>
 
-
+<!--- Affichage des statistiques sur les commandes --->
 <aside class="bg-gray-50 flex flex-col p-4 gap-4 h-full border-l border-black/5">
     <div class="bg-white border border-black p-4">
         <div class="flex gap-4 border-b border-black/10 mb-4 text-xs font-bold">
@@ -88,7 +86,7 @@ $recipes = Recipe::getAllRecipes($pdo, 1);
         </div>
     </div>
 
-
+    <!--- Affichage des commandes archivées --->
     <div id="archived-orders-container"
         class="bg-white border border-black p-4 flex-none overflow-hidden flex flex-col transition-all duration-300">
         <button id="btn-toggle-archived-orders"
@@ -106,6 +104,7 @@ $recipes = Recipe::getAllRecipes($pdo, 1);
         </div>
     </div>
 
+    <!--- Possibilité d'ajouter une commande depuis l'administrateur --->
     <div class="bg-white border border-black p-4 space-y-3">
         <button id="add-order-panel-open-btn"
             class="w-full py-3 bg-zinc-800 text-white font-bold text-sm rounded flex items-center justify-center gap-2 hover:bg-black transition-colors">
@@ -121,6 +120,7 @@ $recipes = Recipe::getAllRecipes($pdo, 1);
 </aside>
 </main>
 
+<!--- Panel d'ajout de la commande --->
 <div id="add-order-panel-overlay"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 hidden opacity-0 transition-opacity duration-300"></div>
 
