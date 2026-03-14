@@ -76,7 +76,7 @@ $recipesJSON = json_encode($recipes);
             <?php
             if (!empty($recipes)) {
                 foreach ($recipes as $recipe) {
-                    RecipeRenderer::renderUserMenuCard($recipe);
+                    RecipeRenderer::renderUserOrderCard($recipe);
                 }
             } else {
                 echo <<<end
@@ -145,7 +145,8 @@ $recipesJSON = json_encode($recipes);
         </div>
     </div>
 
-    <div id="cartFooter" class="cart-footer fixed bottom-20 left-0 right-0 bg-white border-t-2 border-black px-6 py-4 z-30">
+    <div id="cartFooter"
+        class="cart-footer fixed bottom-20 left-0 right-0 bg-white border-t-2 border-black px-6 py-4 z-30">
         <div class="flex items-center justify-between">
             <div class="flex flex-col gap-1">
                 <p class="font-mono uppercase tracking-tighter text-[10px] text-zinc-500" id="cartItemsCount">0 Onigiris
