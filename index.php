@@ -12,7 +12,7 @@ if (!isset($_SESSION['initiated'])) {
 // Importation des fichiers
 require_once 'config/db.php';
 require_once 'utils/pageGeneration.php';
-require 'utils/flash.php';
+require_once 'utils/flash.php';
 
 // Debug : à enlever
 var_dump($_SESSION);

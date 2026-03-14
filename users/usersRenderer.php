@@ -7,7 +7,7 @@ class UserRenderer
     {
         $user = User::getUserById($pdo, $id);
         if (!$user) {
-            echo "<p>Aucun utilisateur à afficher !</p>";
+            Flash::error("Aucun utilisateur à afficher !");
             return null;
         }
         echo <<<HTML
