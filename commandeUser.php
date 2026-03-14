@@ -5,6 +5,8 @@ require_once 'config/db.php';
 require_once 'recipes/recipe.php';
 require_once 'recipes/recipeRenderer.php';
 require_once 'includes/functions.php';
+require_once 'utils/NavigationRenderer.php';
+require_once 'utils/LayoutRenderer.php';
 
 $activePage = 'orderUser';
 $user_access = 1;
@@ -19,7 +21,7 @@ if ($recipes === null) {
 $recipesJSON = json_encode($recipes);
 
 // HTML Header
-generateHTMLHeader(getPageTitle($activePage));
+LayoutRenderer::generateHTMLHeader(LayoutRenderer::getPageTitle($activePage));
 
 // Sidebar
 // generateSidebar($activePage, $user_access, $user_connected)
@@ -493,6 +495,7 @@ generateHTMLHeader(getPageTitle($activePage));
         // ==========================================
         init();
     </script>
-</body>
 
-</html>
+<?php
+NavigationRenderer::renderBottomNav($activePage);
+?>

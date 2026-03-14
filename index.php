@@ -13,6 +13,8 @@ if (!isset($_SESSION['initiated'])) {
 require_once 'config/db.php';
 require_once 'utils/pageGeneration.php';
 require 'utils/flash.php';
+require_once 'utils/LayoutRenderer.php';
+
 
 // Debug : à enlever
 var_dump($_SESSION);
@@ -30,15 +32,13 @@ $askedPage = checkAccess($askedPage, $access, $isLogged) ? $askedPage : "errorAc
 $pageTitle = getPageTitle($askedPage);
 
 // HTML Header
-generateHTMLHeader($pageTitle);
-
+LayoutRenderer::generateHTMLHeader(LayoutRenderer::getPageTitle($activePage));
 // Sidebar
-generateSidebar($askedPage, $access, $isLogged);
+LayoutRenderer::generateSidebar($activePage, $user_access, $user_connected);
 
 // Chargement de la page
 require("pages/page_" . $askedPage . ".php");
 
 // HTML Footer
-generateHTMLFooter();
-
+LayoutRenderer::generateHTMLFooter();
 ?>

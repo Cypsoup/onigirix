@@ -119,12 +119,3 @@ function updateOrderStatus(orderId, currentStatus) {
       }
     });
 }
-
-// Exposer les fonctions dynamiques au HTML (car main.js est un module)
-window.updateOrderStatus = updateOrderStatus;
-window.switchStats = switchStats;
-window.toggleArchivedOrders = toggleArchivedOrders;
-
-// Note: J'ai commenté la ligne ci-dessous car la fonction togglePanel n'est plus dans ce fichier.
-// Si le panneau latéral ne s'ouvre plus, il faudra vérifier où elle est passée !
-// window.togglePanel = togglePanel;

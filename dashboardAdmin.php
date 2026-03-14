@@ -6,6 +6,8 @@ require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
 require_once 'recipes/recipe.php';
 require_once 'recipes/recipeRenderer.php';
+require_once 'utils/LayoutRenderer.php';
+
 
 
 $activePage = 'dashboardAdmin';
@@ -34,8 +36,7 @@ if ($allOrders) {
 }
 
 // HTML Header
-generateHTMLHeader(getPageTitle($activePage));
-
+LayoutRenderer::generateHTMLHeader(LayoutRenderer::getPageTitle($activePage));
 ?>
 <div class="flex h-full w-full">
     <?php generateSidebar($activePage, $user_access, $user_connected); ?>
@@ -98,15 +99,8 @@ generateHTMLHeader(getPageTitle($activePage));
         <aside class="bg-gray-50 flex flex-col p-4 gap-4 h-full border-l border-black/5">
             <div class="bg-white border border-black p-4">
                 <div class="flex gap-4 border-b border-black/10 mb-4 text-xs font-bold">
-                    <button id="btn-prepa" onclick="switchStats('prepa')"
-                        class="pb-2 text-black border-b-2 border-black transition-colors">
-                        À PRÉPARER
-                    </button>
-
-                    <button id="btn-attente" onclick="switchStats('attente')"
-                        class="pb-2 text-black/40 border-b-2 border-transparent hover:text-black transition-colors">
-                        EN ATTENTE
-                    </button>
+                    <button id="btn-prepa" class="pb-2 text-black border-b-2 border-black transition-colors">À PRÉPARER</button>
+                    <button id="btn-attente" class="pb-2 text-black/40 border-b-2 border-transparent hover:text-black transition-colors">EN ATTENTE</button>
                 </div>
 
                 <div id="stats-container">
@@ -127,14 +121,12 @@ generateHTMLHeader(getPageTitle($activePage));
             </div>
 
 
-            <div id="archiveContainer"
-                class="bg-white border border-black p-4 flex-none overflow-hidden flex flex-col transition-all duration-300">
-                <button onclick="toggleArchivedOrders()"
-                    class="flex justify-between items-center w-full font-bold text-xs uppercase mb-0 group">
+            <div id="archiveContainer" class="bg-white border border-black p-4 flex-none overflow-hidden flex flex-col transition-all duration-300">
+                <button id="btn-toggle-archived-orders" class="flex justify-between items-center w-full font-bold text-xs uppercase mb-0 group">
                     Commandes retirées
-                    <i id="archiveIcon" data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    <i id="archived-orders-icon" data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
                 </button>
-                <div id="archiveList" class="hidden text-xs text-black/40 space-y-2 overflow-y-auto mt-4">
+                <div id="archived-orders-list" class="hidden text-xs text-black/40 space-y-2 overflow-y-auto mt-4">
                     <?php
                     if ($ordersArchive) {
                         foreach ($ordersArchive as $order) {
@@ -146,8 +138,7 @@ generateHTMLHeader(getPageTitle($activePage));
             </div>
 
             <div class="bg-white border border-black p-4 space-y-3">
-                <button onclick="togglePanel()"
-                    class="w-full py-3 bg-zinc-800 text-white font-bold text-sm rounded flex items-center justify-center gap-2 hover:bg-black transition-colors">
+                <button id="add-order-panel-open-btn" class="w-full py-3 bg-zinc-800 text-white font-bold text-sm rounded flex items-center justify-center gap-2 hover:bg-black transition-colors">
                     <i data-lucide="plus-circle" class="w-4 h-4 mt-0.5"></i> AJOUTER COMMANDE
                 </button>
                 <div class="flex gap-2">
@@ -161,12 +152,11 @@ generateHTMLHeader(getPageTitle($activePage));
     </main>
 </div>
 
-<div id="overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 hidden opacity-0 transition-opacity duration-300"></div>
-    <div id="slideOver"
-        class="fixed top-0 right-0 h-full w-[400px] bg-white z-40 translate-x-full transition-transform duration-300 ease-in-out border-l-4 border-black shadow-2xl p-8">
+<div id="add-order-panel-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 hidden opacity-0 transition-opacity duration-300"></div>
+    <div id="add-order-panel" class="fixed top-0 right-0 h-full w-[400px] bg-white z-40 translate-x-full transition-transform duration-300 ease-in-out border-l-4 border-black shadow-2xl p-8">
         <div class="flex justify-between items-center mb-10">
             <h2 class="text-2xl font-black uppercase italic">Nouvelle Commande</h2>
-            <button onclick="togglePanel()" class="hover:rotate-90 transition-transform"><i data-lucide="x"></i></button>
+            <button id="add-order-panel-close-btn" class="hover:rotate-90 transition-transform"><i data-lucide="x"></i></button>
         </div>
 
         <form id="orderForm" class="space-y-8">
@@ -200,6 +190,5 @@ generateHTMLHeader(getPageTitle($activePage));
 <?php
 
 # HTML Footer
-generateHTMLFooter();
-
+LayoutRenderer::generateHTMLFooter();
 ?>
