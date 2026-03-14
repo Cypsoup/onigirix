@@ -5,56 +5,107 @@ import {
   initTrigrammeListener,
   initStatsBtnListeners,
   initToggleArchivedOrdersBtnListener,
+  initAddOrderPanelBtnListener,
 } from "./listeners.js";
 import { showToast } from "./utils.js";
 import { switchStats, toggleArchivedOrders } from "./orderHandler.js";
 
+// On regroupe tout ce qui doit se lancer au chargement de la page dans UN SEUL bloc
 document.addEventListener("DOMContentLoaded", () => {
+  // 1. Initialisation des écouteurs
   initEventListeners();
   initCreateUserListeners();
   initEditPasswordListeners();
   initTrigrammeListener();
   initStatsBtnListeners();
   initToggleArchivedOrdersBtnListener();
+  initAddOrderPanelBtnListener();
 
+  // 2. Gestion des messages Flash (PHP -> JS)
   const msg = document.body.dataset.flashMessage;
   const type = document.body.dataset.flashType;
   if (msg) showToast(msg, type);
 
-  // Initialisation des icônes
+  // 3. Initialisation des icônes
   if (window.lucide) lucide.createIcons();
+
+  // 4. Gestion du formulaire de commande
+  const orderForm = document.getElementById("orderForm");
+  if (orderForm) {
+    orderForm.addEventListener("submit", function (e) {
+      e.preventDefault(); 
+
+      const existingError = document.getElementById("error-msg");
+      if (existingError) existingError.remove();
+
+      // Calcul du total
+      const quantityInputs = document.querySelectorAll('input[name^="items"]');
+      let total = 0;
+      quantityInputs.forEach((input) => {
+        total += parseInt(input.value) || 0;
+      });
+
+      // Validation
+      if (total <= 0 || total > 4) {
+        const errorDiv = document.createElement("div");
+        errorDiv.id = "error-msg";
+        errorDiv.className = "italic mt-2 text-[11px] text-[#E60012] font-bold text-center uppercase tracking-wider";
+        errorDiv.innerText = total <= 0
+            ? "Ton panier est vide !"
+            : "Maximum 4 onigiris par personne (Tu en as sélectionné " + total + ")";
+
+        this.querySelector('button[type="submit"]').after(errorDiv);
+        return; 
+      }
+
+      const formData = new FormData(this);
+      const dataToSend = {
+        trigramme: formData.get("trigramme"),
+        items: {},
+      };
+
+      formData.forEach((value, key) => {
+        if (key.startsWith("items[")) {
+          const match = key.match(/\[(\d+)\]/);
+          if (match && parseInt(value) > 0) {
+            dataToSend.items[match[1]] = parseInt(value);
+          }
+        }
+      });
+
+      // Envoi au serveur
+      fetch("api/submit-order.php", {
+        method: "POST",
+        body: JSON.stringify(dataToSend),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            window.location.reload(); 
+          } else {
+            alert("Erreur : " + (data.error || data.message || "Erreur technique côté serveur."));
+          }
+        })
+        .catch((err) => console.error("Erreur technique :", err));
+    });
+  }
 });
 
-// Logique d'ouverture du panel
-function togglePanel() {
-  const panel = document.getElementById("slideOver");
-  const overlay = document.getElementById("overlay");
-
-  // Si le panneau est "caché", on l'ouvre
-  if (panel.classList.contains("translate-x-full")) {
-    panel.classList.remove("translate-x-full");
-    overlay.classList.remove("hidden");
-    setTimeout(() => overlay.classList.add("opacity-100"), 10); // on attend 10 ms pour laisser le temps au CSS de s'appliquer
-  } else {
-    panel.classList.add("translate-x-full");
-    overlay.classList.remove("opacity-100");
-    setTimeout(() => overlay.classList.add("hidden"), 300);
-  }
-}
+// --- FONCTIONS EXTERNES ---
 
 function updateOrderStatus(orderId, currentStatus) {
-  // Déterminer le prochain statut
   let nextStatus = "";
   if (currentStatus === "attente") nextStatus = "prepa";
   else if (currentStatus === "prepa") nextStatus = "pret";
   else if (currentStatus === "pret") nextStatus = "archive";
 
-  // Créer les données à envoyer
   const formData = new FormData();
   formData.append("orderId", orderId);
   formData.append("newStatus", nextStatus);
 
-  // Envoyer la requête au PHP
   fetch("update_status.php", {
     method: "POST",
     body: formData,
@@ -62,7 +113,6 @@ function updateOrderStatus(orderId, currentStatus) {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        // Recharger la page pour voir le changement dans les colonnes
         window.location.reload();
       } else {
         alert("Erreur lors de la mise à jour");
@@ -70,138 +120,11 @@ function updateOrderStatus(orderId, currentStatus) {
     });
 }
 
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    // // Le navigateur vient de se recharger, on vérifie s'il y a un message en attente
-    // const flashMessage = sessionStorage.getItem('successMessage');
-    
-    // if (flashMessage) {
-    //     // On affiche le message
-    //     showSuccessToast(flashMessage);
-    //     // On supprime le message pour qu'il ne réapparaisse pas si on recharge la page
-    //     sessionStorage.removeItem('successMessage'); 
-    // }
-
-    // Gestion du formulaire
-    const orderForm = document.getElementById('orderForm');
-    if (orderForm) {
-        orderForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // On empêche le comportement par défaut du formulaire (rechargement de la page)
-
-            // On supprime l'éventuel message d'erreur précédent
-            const existingError = document.getElementById('error-msg');
-            if (existingError) existingError.remove();
-            
-            // Calcul du total d'onigiris commandés (pour validation côté client)
-            const quantityInputs = document.querySelectorAll('input[name^="items"]'); // On sélectionne tous les inputs qui commencent par "items"
-            let total = 0;
-            quantityInputs.forEach(input => {
-                total += parseInt(input.value) || 0; // parseInt pour convertir en nombre, et || 0 pour éviter les NaN si le champ est vide
-            });
-
-            if (total <= 0 || total > 4) {
-                // Création du message d'erreur
-                const errorDiv = document.createElement('div');
-                errorDiv.id = 'error-msg';
-                errorDiv.className = 'italic mt-2 text-[11px] text-[#E60012] font-bold text-center uppercase tracking-wider';                
-                errorDiv.innerText = total <= 0 
-                    ? "Ton panier est vide !" 
-                    : "Maximum 4 onigiris par personne (Tu en as sélectionné " + total + ")";
-                
-                // On l'affiche avant le bouton
-                this.querySelector('button[type="submit"]').after(errorDiv);
-                
-                return; // on stoppe tout ici, le fetch ne sera pas exécuté
-            }
-
-            // new FormData(this) capture tout (Trigramme + Tableau items[])
-            const formData = new FormData(this);
-
-            // Conversion en JSON
-            const dataToSend = {
-                trigramme: formData.get('trigramme'),
-                items: {}
-            };
-
-            // On trie les inputs pour construire le panier proprement
-            formData.forEach((value, key) => {
-                if (key.startsWith('items[')) {
-                    // On extrait l'ID (ex: on transforme "items[3]" en "3")
-                    const match = key.match(/\[(\d+)\]/); // On cherche la partie entre les crochets
-                    if (match && parseInt(value) > 0) {
-                        dataToSend.items[match[1]] = parseInt(value);
-                    }
-                }
-            });
-            // dataToSend ressemble à : 
-            // {
-            //  trigramme: "ABC",
-            //  items: {
-            //      "3": 2, // 2 onigiris de l'item 3
-            //      "5": 1  // 1 onigiri de l'item 5
-            //  }
-            // }
-            
-            // Envoyer la requête au PHP
-            fetch('api/submit-order.php', {
-                method: 'POST',
-                body: JSON.stringify(dataToSend), // On envoie les données sous forme de JSON
-                headers: {
-                    'Content-Type': 'application/json' // On précise que c'est du JSON
-                 }
-            })
-            .then(res => res.json()) // On transforme la réponse res (qui est une réponse HTTP) en JSON
-            .then(data => {
-                if (data.success) {
-                    // sessionStorage.setItem('successMessage', "Commande validée et en attente !"); // On enregistre le message
-                    window.location.reload(); // On recharge la page
-
-                } else {
-                    alert("Erreur : " + (data.error || data.message || "Erreur technique côté serveur."));
-                }
-            })
-            .catch(err => console.error("Erreur technique :", err));
-        });
-    }
-});
-
-// function showSuccessToast(message) {
-//   const toast = document.createElement("div");
-
-//   // Style Brutaliste Vert (Même design que le reste de ton site)
-//   toast.className = `
-//         fixed top-5 left-1/2 -translate-x-1/2 
-//         bg-[#22C55E] text-white px-8 py-4 
-//         border-2 border-black font-black uppercase tracking-widest text-sm
-//         shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-//         z-[9999] transition-all duration-300 transform -translate-y-24 opacity-0
-//     `;
-//   toast.innerText = message;
-
-//   document.body.appendChild(toast);
-
-//   // Animation d'entrée (On le fait descendre)
-//   // Le petit délai permet au navigateur de calculer le CSS avant d'animer
-//   requestAnimationFrame(() => {
-//     toast.classList.remove("-translate-y-24", "opacity-0");
-//   });
-
-//   // Animation de sortie après 3 SECONDES
-//   setTimeout(() => {
-//     // On le fait remonter
-//     toast.classList.add("-translate-y-24", "opacity-0");
-
-//     // On le supprime proprement du HTML une fois l'animation finie
-//     setTimeout(() => {
-//       toast.remove();
-//     }, 300); // 300ms correspond à la durée de 'transition-all duration-300'
-//   }, 3000);
-// }
-
-
 // Exposer les fonctions dynamiques au HTML (car main.js est un module)
-window.togglePanel = togglePanel;
 window.updateOrderStatus = updateOrderStatus;
 window.switchStats = switchStats;
 window.toggleArchivedOrders = toggleArchivedOrders;
+
+// Note: J'ai commenté la ligne ci-dessous car la fonction togglePanel n'est plus dans ce fichier.
+// Si le panneau latéral ne s'ouvre plus, il faudra vérifier où elle est passée !
+// window.togglePanel = togglePanel;

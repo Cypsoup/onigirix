@@ -6,29 +6,36 @@ require_once 'recipes/recipe.php';
 require_once 'recipes/recipeRenderer.php';
 require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
-
+require_once 'recipes/recipe.php';
+require_once 'recipes/recipeRenderer.php';
 
 // Configuration des commandes de la session
 $orderConfig = [
     'attente' => ['title' => 'En Attente', 'class' => ''],
     'prepa' => ['title' => 'En Préparation', 'class' => ''],
-    'pret' => ['title' => 'Prêts', 'class' => 'text-[#E60012]']
+    'pret' => ['title' => 'Prêts', 'class' => 'text-[#E60012]'],
+    'archive' => ['title' => 'Archivées', 'class' => '']
 ];
 
+// Récupération des commandes
+foreach ($orderConfig as $status => $config) {
+    $orders = Order::getOrdersByStatus($pdo, $status);
+    $orderConfig[$status]['orders'] = $orders;
+    $orderConfig[$status]['count'] = count($orders);
+}
 
-$_SESSION['event_id'] = 1;
+// Récupération des données affichées
+$recipes = Recipe::getAllRecipes($pdo, 1);
 
 ?>
 
 <!--- Affichage des commandes --->
 <main class="flex-1 grid grid-cols-4 h-full">
 
-    <?php foreach ($orderConfig as $status => $config): ?>
-    <?php
-    // Récupération des données pour chaque statut
-    $orders = Order::getOrdersByStatus($pdo, $status);
-    $count = count($orders);
-    ?>
+    <?php foreach ($orderConfig as $status => $config):
+        if ($status === 'archive'):
+            continue;
+        endif ?>
 
     <section class="flex flex-col column-divider h-full min-h-0">
         <div class="p-4 flex justify-between items-center border-b border-black/5">
@@ -36,12 +43,12 @@ $_SESSION['event_id'] = 1;
                 <?= $config['title'] ?>
             </h2>
             <span class="font-black text-5xl <?= $config['class'] ?>">
-                <?= $count ?>
+                <?= $config['count'] ?>
             </span>
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
-            <?php foreach ($orders as $order): ?>
+            <?php foreach ($config['orders'] as $order): ?>
             <?php orderRenderer::renderOrderCard($pdo, $order); ?>
             <?php endforeach; ?>
         </div>
@@ -92,18 +99,15 @@ $_SESSION['event_id'] = 1;
         </button>
         <div id="archived-orders-list" class="hidden text-xs text-black/40 space-y-2 overflow-y-auto mt-4">
             <?php
-            $archivedOrders = Order::getOrdersByStatus($pdo, 'archive');
-            if ($archivedOrders) {
-                foreach ($archivedOrders as $order) {
-                    OrderRenderer::renderArchivedOrder($pdo, $order);
-                }
+            foreach ($orderConfig['archive']['orders'] as $order) {
+                OrderRenderer::renderArchivedOrder($pdo, $order);
             }
             ?>
         </div>
     </div>
 
     <div class="bg-white border border-black p-4 space-y-3">
-        <button onclick="togglePanel()"
+        <button id="add-order-panel-open-btn"
             class="w-full py-3 bg-zinc-800 text-white font-bold text-sm rounded flex items-center justify-center gap-2 hover:bg-black transition-colors">
             <i data-lucide="plus-circle" class="w-4 h-4 mt-0.5"></i> AJOUTER COMMANDE
         </button>
@@ -117,14 +121,15 @@ $_SESSION['event_id'] = 1;
 </aside>
 </main>
 
-<div id="overlay"
+<div id="add-order-panel-overlay"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 hidden opacity-0 transition-opacity duration-300"></div>
 
-<div id="slideOver"
+<div id="add-order-panel"
     class="fixed top-0 right-0 h-full w-[400px] bg-white z-40 translate-x-full transition-transform duration-300 ease-in-out border-l-4 border-black shadow-2xl p-8">
     <div class="flex justify-between items-center mb-10">
         <h2 class="text-2xl font-black uppercase italic">Nouvelle Commande</h2>
-        <button onclick="togglePanel()" class="hover:rotate-90 transition-transform"><i data-lucide="x"></i></button>
+        <button id="add-order-panel-close-btn" class="hover:rotate-90 transition-transform"><i
+                data-lucide="x"></i></button>
     </div>
 
     <form id="orderForm" class="space-y-8">
@@ -139,10 +144,8 @@ $_SESSION['event_id'] = 1;
             <label class="block text-xs font-bold uppercase">Onigiris</label>
 
             <?php
-            $recipes = getAllRecipes($pdo);
-
-            foreach ($recipes as $id => $recipe) {
-                echo renderRecipeRow($id, $recipe);
+            foreach ($recipes as $recipe) {
+                RecipeRenderer::renderAdminOrderRow($recipe);
             }
             ?>
         </div>

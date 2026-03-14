@@ -2,34 +2,33 @@
 
 class RecipeRenderer
 {
+    public static function displayRecipe($recipe, $access)
+    {
+        if (!$recipe) {
+            Flash::error("Aucune recette à afficher !");
+            return;
+        }
+        if ($access == "admin") {
+            self::renderAdminMenuRow($recipe);
+        } else {
+            self::renderUserMenuCard($recipe);
+        }
+    }
 
     public static function displayList($recipes, $access)
     {
         if (!is_array($recipes) || empty($recipes)) {
-            echo "<p>Aucune recette à afficher !</p>";
-            return null;
-        } else {
-            echo '<div class="recipe-container">';
-            foreach ($recipes as $recipe) {
-                self::displayRecipe($recipe, $access);
-            }
-            echo "</div>";
+            Flash::error("Aucune recette à afficher !");
+            return;
         }
+        echo '<div class="recipe-container">';
+        foreach ($recipes as $recipe) {
+            self::displayRecipe($recipe, $access);
+        }
+        echo "</div>";
     }
 
-    public static function displayRecipe($recipe, $access)
-    {
-        if ($access == "admin") {
-            self::renderAdminRow($recipe);
-        } else if ($recipe) {
-            self::renderUserCard($recipe);
-        } else {
-            echo "<p>Aucune recette à afficher !</p>";
-            return null;
-        }
-    }
-
-    private static function renderUserCard($recipe)
+    private static function renderUserMenuCard($recipe)
     {
         $name = htmlspecialchars($recipe->name);
         $price = number_format($recipe->price, 2, ',', ' ');
@@ -59,7 +58,7 @@ class RecipeRenderer
         HTML;
     }
 
-    private static function renderAdminRow($recipe)
+    private static function renderAdminMenuRow($recipe)
     {
         $id = (int) $recipe->id;
         $name = htmlspecialchars($recipe->name);
@@ -105,20 +104,6 @@ class RecipeRenderer
                     </button>
                 </div>
             </div>
-        HTML;
-    }
-
-    public static function renderAddRecipeBtn()
-    {
-        echo <<<HTML
-        <div class="mb-8">
-            <a 
-                href="index.php?page=editRecipe&id=0"
-                class="jw-full md:w-auto bg-yellow-400 text-black border-4 border-black px-6 py-4 font-black uppercase italic tracking-widest hover:bg-black hover:text-white transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-3">
-                <i data-lucide="plus-circle" class="w-6 h-6"></i>
-                Créer une nouvelle recette
-            </a>
-        </div>
         HTML;
     }
 
@@ -180,6 +165,20 @@ class RecipeRenderer
         echo "</div>";
     }
 
+    public static function renderAddRecipeBtn()
+    {
+        echo <<<HTML
+        <div class="mb-8">
+            <a 
+                href="index.php?page=editRecipe&id=0"
+                class="jw-full md:w-auto bg-yellow-400 text-black border-4 border-black px-6 py-4 font-black uppercase italic tracking-widest hover:bg-black hover:text-white transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-3">
+                <i data-lucide="plus-circle" class="w-6 h-6"></i>
+                Créer une nouvelle recette
+            </a>
+        </div>
+        HTML;
+    }
+
     public static function renderDeleteRecipeBtn($id, $name)
     {
         echo <<<HTML
@@ -226,12 +225,12 @@ class RecipeRenderer
                 <span class="font-medium">{$name}</span>
                 
                 <div class="flex items-center gap-4">
-                    <button type="button" 
-                        onclick="document.getElementById('qty-{$id}').stepDown()" 
-                        class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors" 
-                        {$disabled}>
-                        -
-                    </button>
+                        <button type="button" 
+                            onclick="document.getElementById('qty-{$id}').stepDown()" 
+                            class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors" 
+                            {$disabled}>
+                            -
+                        </button>
                     
                     <input type="number" 
                         name="items[{$id}]" 
@@ -253,7 +252,7 @@ class RecipeRenderer
         HTML;
     }
 
-    public static function renderUserMenuCard($recipe)
+    public static function renderUserOrderCard($recipe)
     {
         // Préparation des données
         $id = (int) $recipe->id;
