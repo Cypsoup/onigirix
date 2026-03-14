@@ -34,11 +34,12 @@ export function switchStats(toTab) {
 
 // Logique d'ouverture du menu déroulant des commandes archivées
 export function toggleArchivedOrders() {
-  const container = document.getElementById("archived-orders-container");
-  const list = document.getElementById("archived-orders-list");
-  const icon = document.getElementById("archived-orders-icon");
+  const list = document.getElementById("archiveList");
+  const icon = document.getElementById("archiveIcon");
 
   // Gestion de la visibilité de la liste
-  let hidden = list.classList.toggle("hidden");
-  icon.classList.toggle("rotate-180");
+  if (list && icon) {
+    list.classList.toggle("hidden");
+    icon.classList.toggle("rotate-180");
+  }
 }

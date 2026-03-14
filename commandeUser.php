@@ -2,15 +2,21 @@
 session_start();
 // Importation des fichiers
 require_once 'config/db.php';
+require_once 'recipes/recipe.php';
+require_once 'recipes/recipeRenderer.php';
 require_once 'includes/functions.php';
 
 $activePage = 'orderUser';
 $user_access = 1;
 $user_connected = 1;
 
-// Récupération des recettes depuis la base de données
-$recipes = getAllRecipes($pdo);
-$recipesJSON = getRecipesAsJSON($pdo);
+// Récupération des recettes actives depuis la base de données
+$recipes = Recipe::getAllRecipes($pdo, 1);
+if ($recipes === null) {
+    $recipes = [];
+}
+// $recipesJSON = getRecipesAsJSON($pdo);
+$recipesJSON = json_encode($recipes);
 
 // HTML Header
 // generateHTMLHeader(getPageTitle($activePage));
@@ -68,10 +74,9 @@ $recipesJSON = getRecipesAsJSON($pdo);
     <main class="p-8">
         <div class="flex flex-col gap-4" id="menuGrid">
             <?php
-            if ($recipes && count($recipes) > 0) {
+            if (!empty($recipes)) {
                 foreach ($recipes as $recipe) {
-                    // Attention : Assurez-vous d'adapter aussi le HTML généré par cette fonction dans 'includes/functions.php' !
-                    renderMenuCard($recipe);
+                    RecipeRenderer::renderUserMenuCard($recipe);
                 }
             } else {
                 echo <<<end

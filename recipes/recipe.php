@@ -3,10 +3,10 @@
 class Recipe
 {
     public $id;
-    public $nom;
+    public $name;
     public $fileName;
     public $description;
-    public $prix;
+    public $price;
     public $stock;
     public $available;
 
@@ -20,10 +20,35 @@ class Recipe
             $recipe = $sth->fetch();
             return $recipe;
         } catch (PDOException $e) {
-            error_log("Erreur dans la réception du nom de la recette : " . $e->getMessage());
+            error_log("Erreur dans la réception du name de la recette : " . $e->getMessage());
             return null;
         }
 
+    }
+
+    public static function getRecipesByIds($dbh, array $ids)
+    {
+        if (empty($ids)) return [];
+
+        try {
+            $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+            
+            $query = "SELECT * FROM `recipes` WHERE `id` IN ($placeholders)";
+            $sth = $dbh->prepare($query);
+            $sth->setFetchMode(PDO::FETCH_CLASS, 'Recipe');
+            $sth->execute($ids);
+            
+            // On range le résultat dans un tableau avec l'ID comme clé pour le retrouver facilement
+            $recipes = [];
+            while ($recipe = $sth->fetch()) {
+                $recipes[$recipe->id] = $recipe;
+            }
+            return $recipes;
+            
+        } catch (PDOException $e) {
+            error_log("Erreur getRecipesByIds : " . $e->getMessage());
+            return [];
+        }
     }
 
     public static function getRecipeByName($dbh, $name)
@@ -36,17 +61,17 @@ class Recipe
             $recipe = $sth->fetch();
             return $recipe;
         } catch (PDOException $e) {
-            error_log("Erreur dans la réception du nom de la recette : " . $e->getMessage());
+            error_log("Erreur dans la réception du name de la recette : " . $e->getMessage());
             return null;
         }
     }
 
-    public static function insertRecipe($dbh, $nom, $fileName, $description, $prix, $stock = 0, $available = 1)
+    public static function insertRecipe($dbh, $name, $fileName, $description, $price, $stock = 0, $available = 1)
     {
         try {
-            $query = 'INSERT INTO `recipes` (`nom`, `fileName`, `description`, `prix`, `stock`, `available`) VALUES(?,?,?,?,?,?)';
+            $query = 'INSERT INTO `recipes` (`name`, `fileName`, `description`, `price`, `stock`, `available`) VALUES(?,?,?,?,?,?)';
             $sth = $dbh->prepare($query);
-            return $sth->execute(array($nom, $fileName, $description, $prix, $stock, $available));
+            return $sth->execute(array($name, $fileName, $description, $price, $stock, $available));
         } catch (PDOException $e) {
             error_log("Erreur lors de l'insertion : " . $e->getMessage());
             return false;
@@ -65,15 +90,15 @@ class Recipe
         }
     }
 
-    public static function updateRecipe($dbh, $id, $nom, $fileName, $description, $prix)
+    public static function updateRecipe($dbh, $id, $name, $fileName, $description, $price)
     {
         try {
             if ($fileName) {
-                $query = "UPDATE `recipes` SET `nom`=?, `fileName`=?, `description`=?, `prix`=? WHERE `id`=?";
-                $params = [$nom, $fileName, $description, $prix, $id];
+                $query = "UPDATE `recipes` SET `name`=?, `fileName`=?, `description`=?, `price`=? WHERE `id`=?";
+                $params = [$name, $fileName, $description, $price, $id];
             } else {
-                $query = "UPDATE `recipes` SET `nom`=?, `description`=?, `prix`=? WHERE `id`=?";
-                $params = [$nom, $description, $prix, $id];
+                $query = "UPDATE `recipes` SET `name`=?, `description`=?, `price`=? WHERE `id`=?";
+                $params = [$name, $description, $price, $id];
             }
 
             $sth = $dbh->prepare($query);

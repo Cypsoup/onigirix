@@ -1,13 +1,37 @@
 <?php
 // Importation des fichiers
 require_once 'config/db.php';
-require_once 'includes/functions.php';
 require_once 'utils/pageGeneration.php';
+require_once 'orders/order.php';
+require_once 'orders/orderRenderer.php';
+require_once 'recipes/recipe.php';
+require_once 'recipes/recipeRenderer.php';
 
 
 $activePage = 'dashboardAdmin';
 $user_access = 1;
 $user_connected = 1;
+
+$allOrders = Order::getAllOrders($pdo);
+
+$ordersAttente = [];
+$ordersPrepa = [];
+$ordersPret = [];
+$ordersArchive = [];
+
+if ($allOrders) {
+    foreach ($allOrders as $order) {
+        if ($order->status === 'attente') {
+            $ordersAttente[] = $order;
+        } elseif ($order->status === 'prepa') {
+            $ordersPrepa[] = $order;
+        } elseif ($order->status === 'pret') {
+            $ordersPret[] = $order;
+        } else if ($order->status === 'archive') {
+            $ordersArchive[] = $order;
+        }
+    }
+}
 
 // HTML Header
 generateHTMLHeader(getPageTitle($activePage));
@@ -15,24 +39,23 @@ generateHTMLHeader(getPageTitle($activePage));
 // Sidebar
 generateSidebar($activePage, $user_access, $user_connected)
 
-    ?>
+?>
 
 <main class="flex-1 grid grid-cols-4 h-full"> <!-- flex-1 pour prendre tout l'espace disponible -->
 
     <section class="flex flex-col column-divider h-full min-h-0">
         <!-- min-h-0 car par défaut, min-height:auto et donc la colonne s'agrandit et on ne peut pas scroller -->
-        <?php
-        $pendingOrders = getOrdersByStatus($pdo, 'attente');
-        ?>
         <div class="p-4 flex justify-between items-center border-b border-black/5">
             <h2 class="font-bold uppercase tracking-widest text-sm">En Attente</h2>
             <!-- tracking-widest pour étirer le texte, text-sm pour reduire la taille -->
-            <span class="font-black text-5xl"><?= count($pendingOrders) ?></span>
+            <span class="font-black text-5xl"><?= count($ordersAttente) ?></span>
         </div>
         <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
             <?php
-            foreach ($pendingOrders as $order) {
-                renderOrderCard($pdo, $order);
+            if ($ordersAttente) {
+                foreach ($ordersAttente as $order) {
+                    OrderRenderer::renderOrderCard($pdo, $order);
+                }
             }
             ?>
         </div>
@@ -40,18 +63,17 @@ generateSidebar($activePage, $user_access, $user_connected)
 
     <section class="flex flex-col column-divider h-full min-h-0">
         <!-- min-h-0 car par défaut, min-height:auto et donc la colonne s'agrandit et on ne peut pas scroller -->
-        <?php
-        $pendingOrders = getOrdersByStatus($pdo, 'prepa');
-        ?>
         <div class="p-4 flex justify-between items-center border-b border-black/5">
             <h2 class="font-bold uppercase tracking-widest text-sm">En Préparation</h2>
             <!-- tracking-widest pour étirer le texte, text-sm pour reduire la taille -->
-            <span class="font-black text-5xl"><?= count($pendingOrders) ?></span>
+            <span class="font-black text-5xl"><?= count($ordersPrepa) ?></span>
         </div>
         <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
             <?php
-            foreach ($pendingOrders as $order) {
-                renderOrderCard($pdo, $order);
+            if ($ordersPrepa) {
+                foreach ($ordersPrepa as $order) {
+                    OrderRenderer::renderOrderCard($pdo, $order);
+                }
             }
             ?>
         </div>
@@ -59,18 +81,17 @@ generateSidebar($activePage, $user_access, $user_connected)
 
     <section class="flex flex-col column-divider h-full min-h-0">
         <!-- min-h-0 car par défaut, min-height:auto et donc la colonne s'agrandit et on ne peut pas scroller -->
-        <?php
-        $pendingOrders = getOrdersByStatus($pdo, 'pret');
-        ?>
         <div class="p-4 flex justify-between items-center border-b border-black/5">
             <h2 class="font-bold uppercase tracking-widest text-sm text-[#E60012]">Prêts</h2>
             <!-- tracking-widest pour étirer le texte, text-sm pour reduire la taille -->
-            <span class="font-black text-[#E60012] text-5xl"><?= count($pendingOrders) ?></span>
+            <span class="font-black text-[#E60012] text-5xl"><?= count($ordersPret) ?></span>
         </div>
         <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
             <?php
-            foreach ($pendingOrders as $order) {
-                renderOrderCard($pdo, $order);
+            if ($ordersPret) {
+                foreach ($ordersPret as $order) {
+                    OrderRenderer::renderOrderCard($pdo, $order);
+                }
             }
             ?>
         </div>
@@ -79,29 +100,29 @@ generateSidebar($activePage, $user_access, $user_connected)
     <aside class="bg-gray-50 flex flex-col p-4 gap-4 h-full border-l border-black/5">
         <div class="bg-white border border-black p-4">
             <div class="flex gap-4 border-b border-black/10 mb-4 text-xs font-bold">
-                <button id="btn-next" onclick="switchStats('next')"
+                <button id="btn-prepa" onclick="switchStats('prepa')"
                     class="pb-2 text-black border-b-2 border-black transition-colors">
                     À PRÉPARER
                 </button>
 
-                <button id="btn-total" onclick="switchStats('total')"
+                <button id="btn-attente" onclick="switchStats('attente')"
                     class="pb-2 text-black/40 border-b-2 border-transparent hover:text-black transition-colors">
                     EN ATTENTE
                 </button>
             </div>
 
             <div id="stats-container">
-                <div id="content-next" class="space-y-2 text-sm overflow-y-auto">
+                <div id="content-prepa" class="space-y-2 text-sm overflow-y-auto">
                     <?php
-                    $stats = getStatsByStatus($pdo, 'prepa');
-                    renderStats($stats);
+                    $stats = Order::getStatsByStatus($pdo, 'prepa');
+                    OrderRenderer::renderStats($stats);
                     ?>
                 </div>
 
-                <div id="content-total" class="hidden space-y-2 text-sm overflow-y-auto">
+                <div id="content-attente" class="hidden space-y-2 text-sm overflow-y-auto">
                     <?php
-                    $stats = getStatsByStatus($pdo, 'attente');
-                    renderStats($stats);
+                    $stats = Order::getStatsByStatus($pdo, 'attente');
+                    OrderRenderer::renderStats($stats);
                     ?>
                 </div>
             </div>
@@ -110,17 +131,16 @@ generateSidebar($activePage, $user_access, $user_connected)
 
         <div id="archiveContainer"
             class="bg-white border border-black p-4 flex-none overflow-hidden flex flex-col transition-all duration-300">
-            <button onclick="toggleArchives()"
+            <button onclick="toggleArchivedOrders()"
                 class="flex justify-between items-center w-full font-bold text-xs uppercase mb-0 group">
                 Commandes retirées
                 <i id="archiveIcon" data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
             </button>
             <div id="archiveList" class="hidden text-xs text-black/40 space-y-2 overflow-y-auto mt-4">
                 <?php
-                $archivedOrders = getOrdersByStatus($pdo, 'archive');
-                if ($archivedOrders) {
-                    foreach ($archivedOrders as $order) {
-                        renderArchivedOrder($order);
+                if ($ordersArchive) {
+                    foreach ($ordersArchive as $order) {
+                        OrderRenderer::renderArchivedOrder($pdo, $order);
                     }
                 }
                 ?>
@@ -165,10 +185,10 @@ generateSidebar($activePage, $user_access, $user_connected)
             <label class="block text-xs font-bold uppercase">Onigiris</label>
 
             <?php
-            $recipes = getAllRecipes($pdo);
+            $recipes = Recipe::getAllRecipes($pdo, 1);
 
             foreach ($recipes as $recipe) {
-                echo renderRecipeRow($recipe);
+                echo RecipeRenderer::renderAdminOrderRow($recipe);
             }
             ?>
         </div>

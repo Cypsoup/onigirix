@@ -1,6 +1,7 @@
 <?php
 
 require_once 'users/users.php';
+require_once 'utils/flash.php';
 
 class OrderRenderer
 {
@@ -51,11 +52,11 @@ class OrderRenderer
         $itemsHtml = "";
         foreach ($items as $item) {
             $recipe = Recipe::getRecipeById($dbh, $item->recipeId);
-            $nom = htmlspecialchars($recipe->nom ?? 'Produit');
-            $qty = (int) ($item->quantite ?? 1);
+            $name = htmlspecialchars($recipe->name ?? 'Produit');
+            $qty = (int) ($item->quantity ?? 1);
             $itemsHtml .= <<<HTML
                 <li class="flex justify-between items-center text-sm">
-                    <span class="font-medium">{$nom}</span>
+                    <span class="font-medium">{$name}</span>
                     <span class="font-black bg-gray-100 px-1.5 py-0.5 rounded text-xs ml-2">x{$qty}</span>
                 </li>
             HTML;
@@ -113,11 +114,11 @@ class OrderRenderer
     {
         if ($stats) {
             foreach ($stats as $stat) {
-                $nom = htmlspecialchars($stat['nom']);
+                $name = htmlspecialchars($stat['name']);
                 $qty = (int) $stat['totalQty'];
                 echo <<<HTML
                     <div class="flex justify-between items-center py-1 border-b border-black/5">
-                        <span class="text-black/80"> {$nom} </span>
+                        <span class="text-black/80"> {$name} </span>
                         <span class="font-bold text-base"> {$qty} </span>
                     </div>
                 HTML;

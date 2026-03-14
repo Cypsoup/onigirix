@@ -31,19 +31,19 @@ class RecipeRenderer
 
     private static function renderUserCard($recipe)
     {
-        $nom = htmlspecialchars($recipe->nom);
-        $prix = number_format($recipe->prix, 2, ',', ' ');
+        $name = htmlspecialchars($recipe->name);
+        $price = number_format($recipe->price, 2, ',', ' ');
         $imagePath = "images/recipeImages/" . $recipe->fileName;
         $desc = nl2br(htmlspecialchars($recipe->description));
 
         echo <<<HTML
         <div class="border-2 border-black bg-white flex flex-col h-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <div class="border-b-2 border-black p-2 bg-black text-white text-center font-black uppercase tracking-tighter">
-                {$nom}
+                {$name}
             </div>
             
             <div class="aspect-video w-full overflow-hidden border-b border-black bg-gray-100">
-                <img src="{$imagePath}" alt="' . $recipe->nom . '" class="w-full h-full object-cover">
+                <img src="{$imagePath}" alt="' . $recipe->name . '" class="w-full h-full object-cover">
             </div>
 
             <div class="p-4 flex-grow text-sm leading-relaxed italic text-gray-700">
@@ -52,7 +52,7 @@ class RecipeRenderer
 
             <div class="p-4 pt-0 text-right">
                 <span class="inline-block bg-yellow-300 border-2 border-black px-3 py-1 font-black text-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    {$prix}€
+                    {$price}€
                 </span>
             </div>
         </div>';
@@ -62,8 +62,8 @@ class RecipeRenderer
     private static function renderAdminRow($recipe)
     {
         $id = (int) $recipe->id;
-        $nom = htmlspecialchars($recipe->nom);
-        $prix = number_format($recipe->prix, 2, ',', ' ');
+        $name = htmlspecialchars($recipe->name);
+        $price = number_format($recipe->price, 2, ',', ' ');
         $image = "images/recipeImages/" . $recipe->fileName;
 
         $shortDesc = (strlen($recipe->description) > 60)
@@ -86,11 +86,11 @@ class RecipeRenderer
                 <img src="{$image}" class="w-12 h-12 object-cover border border-black flex-shrink-0">
 
                 <div class="flex-grow min-w-0">
-                    <div class="font-bold uppercase text-sm truncate">{$nom}</div>
+                    <div class="font-bold uppercase text-sm truncate">{$name}</div>
                     <div class="text-xs text-gray-500 italic truncate">{$desc}</div>
                 </div>
 
-                <div class="font-black text-sm w-16 text-center">{$prix}€</div>
+                <div class="font-black text-sm w-16 text-center">{$price}€</div>
 
                 <div class="flex gap-2">
                     <a href="index.php?page=editRecipe&id={$id}" class="inline-block p-2 border border-black hover:bg-blue-100 transition-colors">
@@ -127,12 +127,12 @@ class RecipeRenderer
         $isEdit = ($recipe !== null);
 
         $id = $isEdit ? $recipe->id : "new";
-        $nom = $isEdit ? htmlspecialchars($recipe->nom) : '';
+        $name = $isEdit ? htmlspecialchars($recipe->name) : '';
         $desc = $isEdit ? htmlspecialchars($recipe->description) : '';
-        $prix = $isEdit ? $recipe->prix : '';
+        $price = $isEdit ? $recipe->price : '';
         $img = $isEdit ? "images/recipeImages/" . $recipe->fileName : "images/recipeImages/default.jpg";
 
-        $title = $isEdit ? "Modifier : {$nom}" : "Créer une nouvelle recette";
+        $title = $isEdit ? "Modifier : {$name}" : "Créer une nouvelle recette";
         $btnLabel = $isEdit ? "Sauverger les modifications" : "Créer la recette";
         $action = "actions/saveRecipe.php";
 
@@ -146,13 +146,13 @@ class RecipeRenderer
                 <div class="space-y-4">
                     <div>
                         <label class="block font-black uppercase text-xs mb-1">Nom du produit</label>
-                        <input type="text" name="nom" value="{$nom}" class="w-full border-2 border-black p-2 font-bold focus:bg-yellow-50 outline-none">
+                        <input type="text" name="name" value="{$name}" class="w-full border-2 border-black p-2 font-bold focus:bg-yellow-50 outline-none">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block font-black uppercase text-xs mb-1">Prix (€)</label>
-                            <input type="number" step="0.01" name="prix" value="{$prix}" class="w-full border-2 border-black p-2 font-bold focus:bg-yellow-50 outline-none">
+                            <label class="block font-black uppercase text-xs mb-1">price (€)</label>
+                            <input type="number" step="0.01" name="price" value="{$price}" class="w-full border-2 border-black p-2 font-bold focus:bg-yellow-50 outline-none">
                         </div>
                         <div>
                             <label class="block font-black uppercase text-xs mb-1">Photo actuelle</label>
@@ -173,18 +173,18 @@ class RecipeRenderer
         HTML;
 
         if ($isEdit) {
-            RecipeRenderer::renderDeleteRecipeBtn($id, $nom);
+            RecipeRenderer::renderDeleteRecipeBtn($id, $name);
         } else {
             RecipeRenderer::renderBackMenuBtn();
         }
         echo "</div>";
     }
 
-    public static function renderDeleteRecipeBtn($id, $nom)
+    public static function renderDeleteRecipeBtn($id, $name)
     {
         echo <<<HTML
         <div class="bg-red-50 border-4 border-red-600 p-6 shadow-[8px_8px_0px_0px_rgba(220,38,38,1)]">
-            <form action="actions/deleteRecipe.php" method="POST" onsubmit="return confirm('Supprimer définitivement {$nom} ?')">
+            <form action="actions/deleteRecipe.php" method="POST" onsubmit="return confirm('Supprimer définitivement {$name} ?')">
                 <input type="hidden" name="id" value="{$id}">
                 <button type="submit" class="w-full bg-red-600 text-white font-black py-3 uppercase hover:bg-black transition-colors flex items-center justify-center gap-2">
                     <i data-lucide="trash-2" class="w-5 h-5"></i>
@@ -212,7 +212,7 @@ class RecipeRenderer
     {
         // Préparation des données
         $id = (int) $recipe->id;
-        $nom = htmlspecialchars($recipe->nom);
+        $name = htmlspecialchars($recipe->name);
         $stock = (int) ($recipe->stock ?? 0);
         $isAvailable = $stock > 0 && $recipe->available;
 
@@ -223,7 +223,7 @@ class RecipeRenderer
         // Rendu
         echo <<<HTML
             <div class="flex justify-between items-center py-2 border-b border-black/5 text-sm {$opacityClass}">
-                <span class="font-medium">{$nom}</span>
+                <span class="font-medium">{$name}</span>
                 
                 <div class="flex items-center gap-4">
                     <button type="button" 
@@ -257,10 +257,11 @@ class RecipeRenderer
     {
         // Préparation des données
         $id = (int) $recipe->id;
-        $name = htmlspecialchars($recipe->nom);
+        $name = htmlspecialchars($recipe->name);
         $description = htmlspecialchars($recipe->description ?? '');
-        $price = number_format((float) $recipe->prix, 2, '.', '');
+        $price = number_format((float) $recipe->price, 2, '.', '');
 
+        // Gestion de l'image
         $image = !empty($recipe->fileName)
             ? "images/recipeImages/" . $recipe->fileName
             : 'images/onigiri.png';
@@ -268,30 +269,42 @@ class RecipeRenderer
         // Gestion du stock
         $stock = (int) ($recipe->stock ?? 0);
         $isAvailable = $stock > 0 && $recipe->available;
-        $opacityClass = $isAvailable ? '' : 'opacity-40 pointer-events-none grayscale';
+        $opacityClass = $isAvailable ? '' : 'opacity-50 grayscale pointer-events-none';
 
-        // Rendu final
+        // Affichage
         echo <<<HTML
-            <div class="flex flex-col bg-white border-[1.5px] border-black/20 rounded-xl p-4 active:scale-95 transition-transform cursor-pointer {$opacityClass}"
-                onclick="openDrawer({$id})">
+        <div class="flex flex-col bg-white border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-2 {$opacityClass}">
+            
+            <div class="w-full aspect-square border-2 border-black bg-zinc-50 mb-4 flex items-center justify-center overflow-hidden cursor-pointer active:translate-y-1 transition-transform" onclick="openDrawer({$id})">
+                <img src="{$image}" alt="{$name}" class="w-full h-full object-cover">
+            </div>
+            
+            <div class="mb-4 cursor-pointer" onclick="openDrawer({$id})">
+                <h3 class="text-xl font-black italic uppercase text-black leading-none mb-1">{$name}</h3>
+                <p class="font-mono uppercase tracking-tighter text-[10px] text-zinc-500 line-clamp-2">{$description}</p>
+            </div>
+            
+            <div class="flex items-center justify-between mt-auto">
+                <span class="text-xl font-mono font-black text-black">{$price}€</span>
                 
-                <div class="w-full aspect-square bg-black/5 rounded-xl flex items-center justify-center mb-3 overflow-hidden border border-black/5">
-                    <img src="{$image}" alt="{$name}" class="w-full h-full object-cover">
-                </div>
-                
-                <div class="mb-4">
-                    <h3 class="text-base font-black text-black leading-tight mb-0.5">{$name}</h3>
-                    <p class="text-xs text-black/50 font-medium">{$description}</p>
-                </div>
-                
-                <div class="flex items-center justify-between mt-auto">
-                    <span class="text-lg font-black text-black">{$price}€</span>
+                <div class="flex items-center gap-3">
+                    <button onclick="changeQty({$id}, -1)" class="w-8 h-8 border-2 border-black bg-white flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform">
+                        <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"/>
+                        </svg>
+                    </button>
                     
-                    <span class="text-lg font-black text-black">
-                        0
-                    </span>
+                    <span class="text-xl font-black font-mono italic text-black w-4 text-center" id="card-qty-{$id}">0</span>
+                    
+                    <button onclick="changeQty({$id}, 1)" class="w-8 h-8 border-2 border-black bg-[#E60012] flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
+            
+        </div>
         HTML;
     }
 

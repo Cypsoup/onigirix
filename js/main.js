@@ -7,6 +7,7 @@ import {
   initToggleArchivedOrdersBtnListener,
 } from "./listeners.js";
 import { showToast } from "./utils.js";
+import { switchStats, toggleArchivedOrders } from "./orderHandler.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initEventListeners();
@@ -118,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(this);
             
             // Envoyer la requête au PHP
-            fetch('create_order.php', {
+            fetch('api/submit-order.php', {
                 method: 'POST',
                 body: formData
             })
@@ -171,39 +172,9 @@ function showSuccessToast(message) {
   }, 3000);
 }
 
-// --- FONCTION POUR LE POP-UP (A copier aussi dans ton JS) ---
-// function showSuccessToast(text) {
-//     const toast = document.createElement('div');
 
-//     // Style Brutaliste Vert (assorti à ton design)
-//     toast.className = "fixed top-5 left-1/2 -translate-x-1/2 bg-[#22C55E] text-white border-2 border-black px-6 py-3 font-bold uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50 transition-all duration-300 transform translate-y-[-100px]";
-//     // Style Brutaliste Vert
-//     // toast.className = `
-//     //     fixed top-5 left-1/2 -translate-x-1/2
-//     //     bg-[#22C55E] text-white px-6 py-3
-//     //     border-2 border-black font-bold uppercase tracking-widest text-sm
-//     //     shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-//     //     z-[9999] transition-all duration-300 transform -translate-y-20 opacity-0
-//     // `;
-//     toast.innerText = text;
-
-//     document.body.appendChild(toast);
-
-//     // Animation d'entrée (On attend 10ms pour que le CSS prenne en compte la transition)
-//     setTimeout(() => {
-//         toast.classList.remove('-translate-y-20', 'opacity-0');
-//     }, 100);
-
-//     // Animation de sortie après 3 SECONDES
-//     setTimeout(() => {
-//         // On le fait remonter et disparaître
-//         toast.classList.add('-translate-y-20', 'opacity-0');
-
-//         // On le supprime du HTML une fois l'animation finie
-//         setTimeout(() => {
-//             toast.remove();
-//         }, 300);
-//     }, 3000);
-// }
-
-
+// Exposer les fonctions dynamiques au HTML (car main.js est un module)
+window.togglePanel = togglePanel;
+window.updateOrderStatus = updateOrderStatus;
+window.switchStats = switchStats;
+window.toggleArchivedOrders = toggleArchivedOrders;

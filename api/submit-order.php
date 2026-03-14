@@ -5,6 +5,12 @@ session_start();
  * Endpoint pour la soumission de commandes via AJAX
  */
 
+require_once '../config/db.php';
+require_once '../recipes/recipe.php';
+require_once '../users/users.php';
+require_once '../orders/order.php';
+
+
 // Headers CORS et JSON
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -27,9 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Importation des dépendances
-require_once '../config/db.php';
-require_once '../includes/functions.php';
+
+
 try {
     // Récupération et décodage des données JSON
     $rawData = file_get_contents('php://input');
@@ -41,7 +46,7 @@ try {
     }
     
     if (!isset($data['trigramme']) || !isset($data['items'])){
-        throw new Exception('Données manquantes (trigramme, items ou total)');
+        throw new Exception('Données manquantes (trigramme ou items)');
     }
     
     // Validation du panier
@@ -49,23 +54,30 @@ try {
         throw new Exception('Le panier est vide');
     }
     
-    // Validation des items
+    // On nettoie les items pour enlever les quantités à 0
     $items = [];
-    foreach ($data['items'] as $recipeId => $quantity) {
-        $recipeId = (int)$recipeId;
-        $quantity = (int)$quantity;
-        
-        if ($quantity <= 0) {
-            continue;
+    foreach ($data['items'] as $id => $qty) {
+        if ((int)$qty > 0) {
+            $items[(int)$id] = (int)$qty;
+        }
+    }
+
+    if (empty($items)) {
+        throw new Exception('Aucun article valide dans le panier');
+    }
+
+    $recipeIds = array_keys($items); // Récupère juste les numéros [3, 5, etc.]
+    $recipes = Recipe::getRecipesByIds($pdo, $recipeIds);
+
+    // Validation finale et calcul du total
+    $calculatedTotal = 0;
+    foreach ($items as $recipeId => $quantity) {
+        if (!isset($recipes[$recipeId]) || $recipes[$recipeId]->available != 1) {
+            throw new Exception("Recette invalide ou épuisée (ID: {$recipeId})");
         }
         
-        // Vérifier que la recette existe
-        $recipe = getRecipeById($pdo, $recipeId);
-        if (!$recipe) {
-            throw new Exception("Recette invalide (ID: {$recipeId})");
-        }
-        
-        $items[$recipeId] = $quantity;
+        // Calcul du total
+        $calculatedTotal += $recipes[$recipeId]->price * $quantity;
     }
 
     // Validation du trigramme
@@ -73,16 +85,20 @@ try {
     if (empty($trigramme) || strlen($trigramme) > 3) {
         throw new Exception('Trigramme invalide');
     }
-    
-    if (empty($items)) {
-        throw new Exception('Aucun article valide dans le panier');
+
+    // Recupération de l'utilisateur
+    $user = User::getUserByTrigramme($pdo, $trigramme);
+    if (!$user) {
+        // C'est ce message qui déclenche l'alerte "Vérifie le trigramme" dans le JS
+        echo json_encode(['success' => false, 'message' => 'Utilisateur introuvable']);
+        exit;
+        //throw new Exception("Utilisateur introuvable");
     }
 
-    // Calcul du total côté serveur pour sécurité
-    $calculatedTotal = calculateOrderTotal($pdo, $items);
 
     // Création de la commande
-    $orderId = createOrder($pdo, $trigramme, $items, $calculatedTotal);
+    $eventId = $_SESSION['event_id'] ?? 1;
+    $orderId = Order::createOrder($pdo, $user->id, $eventId, $calculatedTotal, $items);
     
     if ($orderId === false) {
         throw new Exception('Erreur lors de la création de la commande en base de données');

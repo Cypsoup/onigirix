@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newStatus = $_POST['newStatus'] ?? null;
 
     if ($orderId && $newStatus) {
-        $stmt = $pdo->prepare("UPDATE orders SET statut = ? WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE `orders` SET `status` = ? WHERE `id` = ?");
         $success = $stmt->execute([$newStatus, $orderId]);
 
         echo json_encode(['success' => $success]);
