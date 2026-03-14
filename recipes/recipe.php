@@ -28,23 +28,24 @@ class Recipe
 
     public static function getRecipesByIds($dbh, array $ids)
     {
-        if (empty($ids)) return [];
+        if (empty($ids))
+            return [];
 
         try {
             $placeholders = str_repeat('?,', count($ids) - 1) . '?';
-            
+
             $query = "SELECT * FROM `recipes` WHERE `id` IN ($placeholders)";
             $sth = $dbh->prepare($query);
             $sth->setFetchMode(PDO::FETCH_CLASS, 'Recipe');
             $sth->execute($ids);
-            
+
             // On range le résultat dans un tableau avec l'ID comme clé pour le retrouver facilement
             $recipes = [];
             while ($recipe = $sth->fetch()) {
                 $recipes[$recipe->id] = $recipe;
             }
             return $recipes;
-            
+
         } catch (PDOException $e) {
             error_log("Erreur getRecipesByIds : " . $e->getMessage());
             return [];
@@ -54,14 +55,14 @@ class Recipe
     public static function getRecipeByName($dbh, $name)
     {
         try {
-            $query = "SELECT * FROM `recipes` WHERE `name=?` LIMIT 1";
+            $query = "SELECT * FROM `recipes` WHERE `name`=? LIMIT 1";
             $sth = $dbh->prepare($query);
             $sth->setFetchMode(PDO::FETCH_CLASS, 'Recipe');
             $sth->execute(array($name));
             $recipe = $sth->fetch();
             return $recipe;
         } catch (PDOException $e) {
-            error_log("Erreur dans la réception du name de la recette : " . $e->getMessage());
+            error_log("Erreur getRecipeByName : " . $e->getMessage());
             return null;
         }
     }
@@ -73,7 +74,7 @@ class Recipe
             $sth = $dbh->prepare($query);
             return $sth->execute(array($name, $fileName, $description, $price, $stock, $available));
         } catch (PDOException $e) {
-            error_log("Erreur lors de l'insertion : " . $e->getMessage());
+            error_log("Erreur insertRecipe : " . $e->getMessage());
             return false;
         }
     }

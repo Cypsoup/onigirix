@@ -5,6 +5,7 @@ import {
   initTrigrammeListener,
   initStatsBtnListeners,
   initToggleArchivedOrdersBtnListener,
+  initAddOrderPanelBtnListener,
 } from "./listeners.js";
 import { showToast } from "./utils.js";
 import { switchStats, toggleArchivedOrders } from "./orderHandler.js";
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTrigrammeListener();
   initStatsBtnListeners();
   initToggleArchivedOrdersBtnListener();
+  initAddOrderPanelBtnListener();
 
   const msg = document.body.dataset.flashMessage;
   const type = document.body.dataset.flashType;
@@ -24,23 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialisation des icônes
   if (window.lucide) lucide.createIcons();
 });
-
-// Logique d'ouverture du panel
-function togglePanel() {
-  const panel = document.getElementById("slideOver");
-  const overlay = document.getElementById("overlay");
-
-  // Si le panneau est "caché", on l'ouvre
-  if (panel.classList.contains("translate-x-full")) {
-    panel.classList.remove("translate-x-full");
-    overlay.classList.remove("hidden");
-    setTimeout(() => overlay.classList.add("opacity-100"), 10); // on attend 10 ms pour laisser le temps au CSS de s'appliquer
-  } else {
-    panel.classList.add("translate-x-full");
-    overlay.classList.remove("opacity-100");
-    setTimeout(() => overlay.classList.add("hidden"), 300);
-  }
-}
 
 function updateOrderStatus(orderId, currentStatus) {
   // Déterminer le prochain statut
@@ -70,73 +55,77 @@ function updateOrderStatus(orderId, currentStatus) {
     });
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  // Le navigateur vient de se recharger, on vérifie s'il y a un message en attente
+  const flashMessage = sessionStorage.getItem("successMessage");
 
-document.addEventListener('DOMContentLoaded', () => {
+  if (flashMessage) {
+    // On affiche le message
+    showSuccessToast(flashMessage);
+    // On supprime le message pour qu'il ne réapparaisse pas si on recharge la page
+    sessionStorage.removeItem("successMessage");
+  }
 
-    // Le navigateur vient de se recharger, on vérifie s'il y a un message en attente
-    const flashMessage = sessionStorage.getItem('successMessage');
-    
-    if (flashMessage) {
-        // On affiche le message
-        showSuccessToast(flashMessage);
-        // On supprime le message pour qu'il ne réapparaisse pas si on recharge la page
-        sessionStorage.removeItem('successMessage'); 
-    }
+  // Gestion du formulaire
+  const orderForm = document.getElementById("orderForm");
+  if (orderForm) {
+    orderForm.addEventListener("submit", function (e) {
+      e.preventDefault(); // On empêche le comportement par défaut du formulaire (rechargement de la page)
 
-    // Gestion du formulaire
-    const orderForm = document.getElementById('orderForm');
-    if (orderForm) {
-        orderForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // On empêche le comportement par défaut du formulaire (rechargement de la page)
+      // On supprime l'éventuel message d'erreur précédent
+      const existingError = document.getElementById("error-msg");
+      if (existingError) existingError.remove();
 
-            // On supprime l'éventuel message d'erreur précédent
-            const existingError = document.getElementById('error-msg');
-            if (existingError) existingError.remove();
-            
-            // Calcul du total d'onigiris commandés (pour validation côté client)
-            const quantityInputs = document.querySelectorAll('input[name^="items"]'); // On sélectionne tous les inputs qui commencent par "items"
-            let total = 0;
-            quantityInputs.forEach(input => {
-                total += parseInt(input.value) || 0; // parseInt pour convertir en nombre, et || 0 pour éviter les NaN si le champ est vide
-            });
+      // Calcul du total d'onigiris commandés (pour validation côté client)
+      const quantityInputs = document.querySelectorAll('input[name^="items"]'); // On sélectionne tous les inputs qui commencent par "items"
+      let total = 0;
+      quantityInputs.forEach((input) => {
+        total += parseInt(input.value) || 0; // parseInt pour convertir en nombre, et || 0 pour éviter les NaN si le champ est vide
+      });
 
-            if (total <= 0 || total > 4) {
-                // Création du message d'erreur
-                const errorDiv = document.createElement('div');
-                errorDiv.id = 'error-msg';
-                errorDiv.className = 'italic mt-2 text-[11px] text-[#E60012] font-bold text-center uppercase tracking-wider';                
-                errorDiv.innerText = total <= 0 
-                    ? "Ton panier est vide !" 
-                    : "Maximum 4 onigiris par personne (Tu en as sélectionné " + total + ")";
-                
-                // On l'affiche avant le bouton
-                this.querySelector('button[type="submit"]').after(errorDiv);
-                
-                return; // on stoppe tout ici, le fetch ne sera pas exécuté
-            }
+      if (total <= 0 || total > 4) {
+        // Création du message d'erreur
+        const errorDiv = document.createElement("div");
+        errorDiv.id = "error-msg";
+        errorDiv.className =
+          "italic mt-2 text-[11px] text-[#E60012] font-bold text-center uppercase tracking-wider";
+        errorDiv.innerText =
+          total <= 0
+            ? "Ton panier est vide !"
+            : "Maximum 4 onigiris par personne (Tu en as sélectionné " +
+              total +
+              ")";
 
-            // new FormData(this) capture tout (Trigramme + Tableau items[])
-            const formData = new FormData(this);
-            
-            // Envoyer la requête au PHP
-            fetch('api/submit-order.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json()) // On transforme la réponse res (qui est une réponse HTTP) en JSON
-            .then(data => {
-                console.log(data);
-                if (data.success) {
-                    sessionStorage.setItem('successMessage', "Commande validée et en attente !"); // On enregistre le message
-                    window.location.reload(); // On recharge la page
+        // On l'affiche avant le bouton
+        this.querySelector('button[type="submit"]').after(errorDiv);
 
-                } else {
-                    alert("Erreur : " + (data.message || "Vérifie le trigramme."));
-                }
-            })
-            .catch(err => console.error("Erreur technique :", err));
-        });
-    }
+        return; // on stoppe tout ici, le fetch ne sera pas exécuté
+      }
+
+      // new FormData(this) capture tout (Trigramme + Tableau items[])
+      const formData = new FormData(this);
+
+      // Envoyer la requête au PHP
+      fetch("api/submit-order.php", {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json()) // On transforme la réponse res (qui est une réponse HTTP) en JSON
+        .then((data) => {
+          console.log(data);
+          if (data.success) {
+            sessionStorage.setItem(
+              "successMessage",
+              "Commande validée et en attente !",
+            ); // On enregistre le message
+            window.location.reload(); // On recharge la page
+          } else {
+            alert("Erreur : " + (data.message || "Vérifie le trigramme."));
+          }
+        })
+        .catch((err) => console.error("Erreur technique :", err));
+    });
+  }
 });
 
 function showSuccessToast(message) {
@@ -171,7 +160,6 @@ function showSuccessToast(message) {
     }, 300); // 300ms correspond à la durée de 'transition-all duration-300'
   }, 3000);
 }
-
 
 // Exposer les fonctions dynamiques au HTML (car main.js est un module)
 window.togglePanel = togglePanel;

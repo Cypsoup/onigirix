@@ -226,12 +226,12 @@ class RecipeRenderer
                 <span class="font-medium">{$name}</span>
                 
                 <div class="flex items-center gap-4">
-                    <button type="button" 
-                        onclick="document.getElementById('qty-{$id}').stepDown()" 
-                        class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors" 
-                        {$disabled}>
-                        -
-                    </button>
+                        <button type="button" 
+                            onclick="document.getElementById('qty-{$id}').stepDown()" 
+                            class="w-8 h-8 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors" 
+                            {$disabled}>
+                            -
+                        </button>
                     
                     <input type="number" 
                         name="items[{$id}]" 

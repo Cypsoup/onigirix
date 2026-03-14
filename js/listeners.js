@@ -5,7 +5,11 @@ import {
   validatePasswordSubmit,
   checkTrigrammeUniqueness,
 } from "./formHandler.js";
-import { switchStats, toggleArchivedOrders } from "./orderHandler.js";
+import {
+  switchStats,
+  toggleArchivedOrders,
+  toggleAddOrderPanel,
+} from "./orderHandler.js";
 
 export function initEventListeners() {
   document.addEventListener("click", (event) => {
@@ -104,4 +108,17 @@ export function initToggleArchivedOrdersBtnListener() {
   if (!toggleBtn) return;
 
   toggleBtn.addEventListener("click", () => toggleArchivedOrders());
+}
+
+export function initAddOrderPanelBtnListener() {
+  // Récupération des éléments
+  const toggleOpenBtn = document.getElementById("add-order-panel-open-btn");
+  const toggleCloseBtn = document.getElementById("add-order-panel-close-btn");
+
+  if (toggleOpenBtn) {
+    toggleOpenBtn.addEventListener("click", () => toggleAddOrderPanel('open'));
+  }
+  if (toggleCloseBtn) {
+    toggleCloseBtn.addEventListener("click", () => toggleAddOrderPanel('close'));
+  }
 }

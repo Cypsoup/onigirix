@@ -34,12 +34,27 @@ export function switchStats(toTab) {
 
 // Logique d'ouverture du menu déroulant des commandes archivées
 export function toggleArchivedOrders() {
-  const list = document.getElementById("archiveList");
-  const icon = document.getElementById("archiveIcon");
+  const list = document.getElementById("archived-orders-list");
+  const icon = document.getElementById("archived-orders-icon");
 
   // Gestion de la visibilité de la liste
   if (list && icon) {
     list.classList.toggle("hidden");
     icon.classList.toggle("rotate-180");
+  }
+}
+
+export function toggleAddOrderPanel(todo) {
+  const panel = document.getElementById("add-order-panel");
+  const overlay = document.getElementById("add-order-panel-overlay");
+
+  if (todo === "open") {
+    panel.classList.remove("translate-x-full");
+    overlay.classList.remove("hidden");
+    setTimeout(() => overlay.classList.add("opacity-100"), 10);
+  } else {
+    panel.classList.add("translate-x-full");
+    overlay.classList.remove("opacity-100");
+    setTimeout(() => overlay.classList.add("hidden"), 10);
   }
 }
