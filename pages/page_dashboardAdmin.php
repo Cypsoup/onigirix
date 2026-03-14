@@ -46,78 +46,79 @@ $recipes = Recipe::getAllRecipes($pdo, 1);
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
-            <?php foreach ($config['orders'] as $order): ?>
-            <?php orderRenderer::renderOrderCard($pdo, $order); ?>
-            <?php endforeach; ?>
+            <?php foreach ($config['orders'] as $order) {
+                orderRenderer::renderOrderCard($pdo, $order);
+            }
+            ?>
         </div>
     </section>
     <?php endforeach; ?>
 
-</main>
 
-<!--- Affichage des statistiques sur les commandes --->
-<aside class="bg-gray-50 flex flex-col p-4 gap-4 h-full border-l border-black/5">
-    <div class="bg-white border border-black p-4">
-        <div class="flex gap-4 border-b border-black/10 mb-4 text-xs font-bold">
-            <button id="btn-prepa" class="pb-2 text-black border-b-2 border-black transition-colors">
-                EN PRÉPARATION
-            </button>
 
-            <button id="btn-attente"
-                class="pb-2 text-black/40 border-b-2 border-transparent hover:text-black transition-colors">
-                EN ATTENTE
-            </button>
-        </div>
+    <!--- Affichage des statistiques sur les commandes --->
+    <aside class="bg-gray-50 flex flex-col p-4 gap-4 h-full border-l border-black/5">
+        <div class="bg-white border border-black p-4">
+            <div class="flex gap-4 border-b border-black/10 mb-4 text-xs font-bold">
+                <button id="btn-prepa" class="pb-2 text-black border-b-2 border-black transition-colors">
+                    EN PRÉPARATION
+                </button>
 
-        <div id="stats-container">
-            <div id="content-prepa" class="space-y-2 text-sm overflow-y-auto">
-                <?php
-                $stats = Order::getStatsByStatus($pdo, 'prepa');
-                OrderRenderer::renderStats($stats);
-                ?>
+                <button id="btn-attente"
+                    class="pb-2 text-black/40 border-b-2 border-transparent hover:text-black transition-colors">
+                    EN ATTENTE
+                </button>
             </div>
 
-            <div id="content-attente" class="hidden space-y-2 text-sm overflow-y-auto">
+            <div id="stats-container">
+                <div id="content-prepa" class="space-y-2 text-sm overflow-y-auto">
+                    <?php
+                    $stats = Order::getStatsByStatus($pdo, 'prepa');
+                    OrderRenderer::renderStats($stats);
+                    ?>
+                </div>
+
+                <div id="content-attente" class="hidden space-y-2 text-sm overflow-y-auto">
+                    <?php
+                    $stats = Order::getStatsByStatus($pdo, 'attente');
+                    OrderRenderer::renderStats($stats);
+                    ?>
+                </div>
+            </div>
+        </div>
+
+        <!--- Affichage des commandes archivées --->
+        <div id="archived-orders-container"
+            class="bg-white border border-black p-4 flex-none overflow-hidden flex flex-col transition-all duration-300">
+            <button id="btn-toggle-archived-orders"
+                class="flex justify-between items-center w-full font-bold text-xs uppercase mb-0 group">
+                Commandes retirées
+                <i id="archived-orders-icon" data-lucide="chevron-down"
+                    class="w-5 h-5 transition-transform duration-300"></i>
+            </button>
+            <div id="archived-orders-list" class="hidden text-xs text-black/40 space-y-2 overflow-y-auto mt-4">
                 <?php
-                $stats = Order::getStatsByStatus($pdo, 'attente');
-                OrderRenderer::renderStats($stats);
+                foreach ($orderConfig['archive']['orders'] as $order) {
+                    OrderRenderer::renderArchivedOrder($pdo, $order);
+                }
                 ?>
             </div>
         </div>
-    </div>
 
-    <!--- Affichage des commandes archivées --->
-    <div id="archived-orders-container"
-        class="bg-white border border-black p-4 flex-none overflow-hidden flex flex-col transition-all duration-300">
-        <button id="btn-toggle-archived-orders"
-            class="flex justify-between items-center w-full font-bold text-xs uppercase mb-0 group">
-            Commandes retirées
-            <i id="archived-orders-icon" data-lucide="chevron-down"
-                class="w-5 h-5 transition-transform duration-300"></i>
-        </button>
-        <div id="archived-orders-list" class="hidden text-xs text-black/40 space-y-2 overflow-y-auto mt-4">
-            <?php
-            foreach ($orderConfig['archive']['orders'] as $order) {
-                OrderRenderer::renderArchivedOrder($pdo, $order);
-            }
-            ?>
+        <!--- Possibilité d'ajouter une commande depuis l'administrateur --->
+        <div class="bg-white border border-black p-4 space-y-3">
+            <button id="add-order-panel-open-btn"
+                class="w-full py-3 bg-zinc-800 text-white font-bold text-sm rounded flex items-center justify-center gap-2 hover:bg-black transition-colors">
+                <i data-lucide="plus-circle" class="w-4 h-4 mt-0.5"></i> AJOUTER COMMANDE
+            </button>
+            <div class="flex gap-2">
+                <button class="flex-1 py-2 border border-black flex justify-center hover:bg-gray-100"><i
+                        data-lucide="pause" class="w-4 h-4"></i></button>
+                <button class="flex-1 py-2 bg-black text-white flex justify-center hover:bg-zinc-800"><i
+                        data-lucide="power" class="w-4 h-4"></i></button>
+            </div>
         </div>
-    </div>
-
-    <!--- Possibilité d'ajouter une commande depuis l'administrateur --->
-    <div class="bg-white border border-black p-4 space-y-3">
-        <button id="add-order-panel-open-btn"
-            class="w-full py-3 bg-zinc-800 text-white font-bold text-sm rounded flex items-center justify-center gap-2 hover:bg-black transition-colors">
-            <i data-lucide="plus-circle" class="w-4 h-4 mt-0.5"></i> AJOUTER COMMANDE
-        </button>
-        <div class="flex gap-2">
-            <button class="flex-1 py-2 border border-black flex justify-center hover:bg-gray-100"><i data-lucide="pause"
-                    class="w-4 h-4"></i></button>
-            <button class="flex-1 py-2 bg-black text-white flex justify-center hover:bg-zinc-800"><i data-lucide="power"
-                    class="w-4 h-4"></i></button>
-        </div>
-    </div>
-</aside>
+    </aside>
 </main>
 
 <!--- Panel d'ajout de la commande --->

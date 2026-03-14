@@ -25,16 +25,16 @@ $isLogged = $_SESSION['loggedIn'] ?? 0;
 
 // Récupération de la page en fonction des accès
 $askedPage = $_GET["page"] ?? "home";
-$askedPage = checkPage($askedPage) ? $askedPage : "errorPage";
-$askedPage = checkAccess($askedPage, $access, $isLogged) ? $askedPage : "errorAccess";
+$askedPage = LayoutRenderer::checkPage($askedPage) ? $askedPage : "errorPage";
+$askedPage = LayoutRenderer::checkAccess($askedPage, $access, $isLogged) ? $askedPage : "errorAccess";
 
 // Récupération du titre de la page 
 $pageTitle = getPageTitle($askedPage);
 
 // HTML Header
-LayoutRenderer::generateHTMLHeader(LayoutRenderer::getPageTitle($activePage));
+LayoutRenderer::generateHTMLHeader(LayoutRenderer::getPageTitle($askedPage));
 // Sidebar
-LayoutRenderer::generateSidebar($activePage, $user_access, $user_connected);
+LayoutRenderer::generateSidebar($askedPage, $access, $isLogged);
 
 // Chargement de la page
 require("pages/page_" . $askedPage . ".php");
