@@ -17,3 +17,18 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+input[type="text"]:focus {
+    outline: none;
+}
+
+.cart-footer {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+.cart-footer.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+

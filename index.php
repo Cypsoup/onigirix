@@ -26,12 +26,11 @@ $askedPage = $_GET["page"] ?? "home";
 $askedPage = checkPage($askedPage) ? $askedPage : "errorPage";
 $askedPage = checkAccess($askedPage, $access, $isLogged) ? $askedPage : "errorAccess";
 
-// Récupération des affichages nécessaires : titre de la page et message flash si existant
-$flash = Flash::get();
+// Récupération du titre de la page 
 $pageTitle = getPageTitle($askedPage);
 
 // HTML Header
-generateHTMLHeader($pageTitle, $flash);
+generateHTMLHeader($pageTitle);
 
 // Sidebar
 generateSidebar($askedPage, $access, $isLogged);

@@ -19,13 +19,13 @@ if ($recipes === null) {
 $recipesJSON = json_encode($recipes);
 
 // HTML Header
-// generateHTMLHeader(getPageTitle($activePage));
+generateHTMLHeader(getPageTitle($activePage));
 
 // Sidebar
 // generateSidebar($activePage, $user_access, $user_connected)
 
 ?>
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="fr">
 
 <head>
@@ -41,25 +41,9 @@ $recipesJSON = json_encode($recipes);
         }
     </script>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .cart-footer {
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            transform: translateY(100%);
-            opacity: 0;
-        }
+</head> -->
 
-        .cart-footer.visible {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-        }
-    </style>
-</head>
-
-<body class="bg-white min-h-screen pb-20 font-sans">
+<!-- <body class="bg-white min-h-screen pb-20 font-sans"> -->
 
     <header class="sticky top-0 bg-white z-40 p-6 border-b-2 border-black flex items-center justify-between">
         <div class="flex flex-col gap-1">
@@ -473,7 +457,7 @@ $recipesJSON = json_encode($recipes);
 
             switch (type) {
                 case 'success':
-                    notification.classList.add('bg-green-500', 'text-black');
+                    notification.classList.add('bg-[#22C55E]', 'text-black');
                     break;
                 case 'error':
                     notification.classList.add('bg-[#E60012]', 'text-white');

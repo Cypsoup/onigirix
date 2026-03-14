@@ -9,6 +9,7 @@ require_once '../config/db.php';
 require_once '../recipes/recipe.php';
 require_once '../users/users.php';
 require_once '../orders/order.php';
+require_once '../utils/flash.php';
 
 
 // Headers CORS et JSON
@@ -103,18 +104,14 @@ try {
     if ($orderId === false) {
         throw new Exception('Erreur lors de la création de la commande en base de données');
     }
+
+    // Message flash pour la page d'accueil
+    Flash::success("Commande validée et en attente !");
     
     // Succès
     http_response_code(201);
     echo json_encode([
-        'success' => true,
-        'orderId' => $orderId,
-        'message' => 'Commande créée avec succès',
-        'data' => [
-            'trigramme' => $trigramme,
-            'total' => $calculatedTotal,
-            'itemsCount' => array_sum($items)
-        ]
+        'success' => true
     ]);
     
 } catch (Exception $e) {

@@ -132,6 +132,16 @@ class Order
         }
     }
 
+    public static function updateStatus($dbh, $orderId, $newStatus) {
+    try {
+        $stmt = $dbh->prepare("UPDATE `orders` SET `status` = ? WHERE `id` = ?");
+        return $stmt->execute([$newStatus, $orderId]);
+    } catch (PDOException $e) {
+        error_log("Erreur updateStatus : " . $e->getMessage());
+        return false;
+    }
 }
+}
+
 
 ?>

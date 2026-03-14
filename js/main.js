@@ -73,15 +73,15 @@ function updateOrderStatus(orderId, currentStatus) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Le navigateur vient de se recharger, on vérifie s'il y a un message en attente
-    const flashMessage = sessionStorage.getItem('successMessage');
+    // // Le navigateur vient de se recharger, on vérifie s'il y a un message en attente
+    // const flashMessage = sessionStorage.getItem('successMessage');
     
-    if (flashMessage) {
-        // On affiche le message
-        showSuccessToast(flashMessage);
-        // On supprime le message pour qu'il ne réapparaisse pas si on recharge la page
-        sessionStorage.removeItem('successMessage'); 
-    }
+    // if (flashMessage) {
+    //     // On affiche le message
+    //     showSuccessToast(flashMessage);
+    //     // On supprime le message pour qu'il ne réapparaisse pas si on recharge la page
+    //     sessionStorage.removeItem('successMessage'); 
+    // }
 
     // Gestion du formulaire
     const orderForm = document.getElementById('orderForm');
@@ -117,21 +117,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // new FormData(this) capture tout (Trigramme + Tableau items[])
             const formData = new FormData(this);
+
+            // Conversion en JSON
+            const dataToSend = {
+                trigramme: formData.get('trigramme'),
+                items: {}
+            };
+
+            // On trie les inputs pour construire le panier proprement
+            formData.forEach((value, key) => {
+                if (key.startsWith('items[')) {
+                    // On extrait l'ID (ex: on transforme "items[3]" en "3")
+                    const match = key.match(/\[(\d+)\]/); // On cherche la partie entre les crochets
+                    if (match && parseInt(value) > 0) {
+                        dataToSend.items[match[1]] = parseInt(value);
+                    }
+                }
+            });
+            // dataToSend ressemble à : 
+            // {
+            //  trigramme: "ABC",
+            //  items: {
+            //      "3": 2, // 2 onigiris de l'item 3
+            //      "5": 1  // 1 onigiri de l'item 5
+            //  }
+            // }
             
             // Envoyer la requête au PHP
             fetch('api/submit-order.php', {
                 method: 'POST',
-                body: formData
+                body: JSON.stringify(dataToSend), // On envoie les données sous forme de JSON
+                headers: {
+                    'Content-Type': 'application/json' // On précise que c'est du JSON
+                 }
             })
             .then(res => res.json()) // On transforme la réponse res (qui est une réponse HTTP) en JSON
             .then(data => {
-                console.log(data);
                 if (data.success) {
-                    sessionStorage.setItem('successMessage', "Commande validée et en attente !"); // On enregistre le message
+                    // sessionStorage.setItem('successMessage', "Commande validée et en attente !"); // On enregistre le message
                     window.location.reload(); // On recharge la page
 
                 } else {
-                    alert("Erreur : " + (data.message || "Vérifie le trigramme."));
+                    alert("Erreur : " + (data.error || data.message || "Erreur technique côté serveur."));
                 }
             })
             .catch(err => console.error("Erreur technique :", err));
@@ -139,38 +166,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function showSuccessToast(message) {
-  const toast = document.createElement("div");
+// function showSuccessToast(message) {
+//   const toast = document.createElement("div");
 
-  // Style Brutaliste Vert (Même design que le reste de ton site)
-  toast.className = `
-        fixed top-5 left-1/2 -translate-x-1/2 
-        bg-[#22C55E] text-white px-8 py-4 
-        border-2 border-black font-black uppercase tracking-widest text-sm
-        shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-        z-[9999] transition-all duration-300 transform -translate-y-24 opacity-0
-    `;
-  toast.innerText = message;
+//   // Style Brutaliste Vert (Même design que le reste de ton site)
+//   toast.className = `
+//         fixed top-5 left-1/2 -translate-x-1/2 
+//         bg-[#22C55E] text-white px-8 py-4 
+//         border-2 border-black font-black uppercase tracking-widest text-sm
+//         shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+//         z-[9999] transition-all duration-300 transform -translate-y-24 opacity-0
+//     `;
+//   toast.innerText = message;
 
-  document.body.appendChild(toast);
+//   document.body.appendChild(toast);
 
-  // Animation d'entrée (On le fait descendre)
-  // Le petit délai permet au navigateur de calculer le CSS avant d'animer
-  requestAnimationFrame(() => {
-    toast.classList.remove("-translate-y-24", "opacity-0");
-  });
+//   // Animation d'entrée (On le fait descendre)
+//   // Le petit délai permet au navigateur de calculer le CSS avant d'animer
+//   requestAnimationFrame(() => {
+//     toast.classList.remove("-translate-y-24", "opacity-0");
+//   });
 
-  // Animation de sortie après 3 SECONDES
-  setTimeout(() => {
-    // On le fait remonter
-    toast.classList.add("-translate-y-24", "opacity-0");
+//   // Animation de sortie après 3 SECONDES
+//   setTimeout(() => {
+//     // On le fait remonter
+//     toast.classList.add("-translate-y-24", "opacity-0");
 
-    // On le supprime proprement du HTML une fois l'animation finie
-    setTimeout(() => {
-      toast.remove();
-    }, 300); // 300ms correspond à la durée de 'transition-all duration-300'
-  }, 3000);
-}
+//     // On le supprime proprement du HTML une fois l'animation finie
+//     setTimeout(() => {
+//       toast.remove();
+//     }, 300); // 300ms correspond à la durée de 'transition-all duration-300'
+//   }, 3000);
+// }
 
 
 // Exposer les fonctions dynamiques au HTML (car main.js est un module)

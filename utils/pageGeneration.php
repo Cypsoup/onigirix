@@ -1,6 +1,7 @@
 <?php
 
 require_once 'users/printForms.php';
+require_once __DIR__ . '/flash.php';
 
 $page_list = array(
     array(
@@ -195,8 +196,9 @@ function generateSidebar($askedPage, $userAccess, $isLogged)
     echo "</aside>";
 }
 
-function generateHTMLHeader($pageTitle, $flash = "")
+function generateHTMLHeader($pageTitle)
 {
+    $flash = Flash::get();
     $message = htmlspecialchars($flash['message'] ?? '', ENT_QUOTES, 'UTF-8');
     $type = htmlspecialchars($flash['type'] ?? '', ENT_QUOTES, 'UTF-8');
 
@@ -210,6 +212,14 @@ function generateHTMLHeader($pageTitle, $flash = "")
             <title>{$pageTitle}</title>
             <!-- Tailwind CSS -->
             <script src="https://cdn.tailwindcss.com"></script>
+            <script>
+                tailwind.config = {
+                    safelist: [
+                        'bg-[#22C55E]',
+                    ]
+                }
+            </script>
+
             <!-- Custom CSS -->
             <link rel="stylesheet" href="css/style.css">
             <!-- Lucide Icons -->
@@ -222,7 +232,6 @@ function generateHTMLHeader($pageTitle, $flash = "")
             data-flash-message="{$message}"
             data-flash-type="{$type}"
             class="h-full bg-white text-black font-sans">
-            <div class="flex h-full w-full">
     end;
 }
 

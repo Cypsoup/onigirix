@@ -1,14 +1,13 @@
 <?php
 require_once 'config/db.php';
+require_once 'orders/order.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $orderId = $_POST['orderId'] ?? null;
     $newStatus = $_POST['newStatus'] ?? null;
 
     if ($orderId && $newStatus) {
-        $stmt = $pdo->prepare("UPDATE `orders` SET `status` = ? WHERE `id` = ?");
-        $success = $stmt->execute([$newStatus, $orderId]);
-
+        $success = Order::updateStatus($pdo, $orderId, $newStatus);
         echo json_encode(['success' => $success]);
         exit;
     }
