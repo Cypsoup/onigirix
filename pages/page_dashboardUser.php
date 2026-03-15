@@ -1,6 +1,5 @@
 <?php
 
-require_once 'config/db.php';
 require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
 require_once 'users/users.php';
@@ -10,7 +9,8 @@ $userId = $_SESSION['userId'] ?? null;
 $user = User::getUserById($pdo, $userId);
 
 if (!$user) {
-    include 'page_home.php';
+    // Si la session a expiré, on renvoie vers l'index qui redirigera vers login
+    header("Location: index.php");
     exit;
 }
 
@@ -33,7 +33,7 @@ $userStats = Order::getUserStats($pdo, $userId);
     </div>
 </header>
 
-<main class="p-6">
+<main class="p-6 pb-28">
     <?php
     // Affichage conditionnel de la commande en cours
     if ($activeOrder) {

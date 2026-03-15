@@ -58,3 +58,29 @@ export function toggleAddOrderPanel(todo) {
     setTimeout(() => overlay.classList.add("hidden"), 10);
   }
 }
+
+
+
+export function updateOrderStatus(orderId, currentStatus) {
+  let nextStatus = "";
+  if (currentStatus === "attente") nextStatus = "prepa";
+  else if (currentStatus === "prepa") nextStatus = "pret";
+  else if (currentStatus === "pret") nextStatus = "archive";
+
+  const formData = new FormData();
+  formData.append("orderId", orderId);
+  formData.append("newStatus", nextStatus);
+
+  fetch("update_status.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert("Erreur lors de la mise à jour");
+      }
+    });
+}

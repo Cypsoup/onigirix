@@ -1,7 +1,6 @@
 <?php
 
 // Importation des fichiers
-require_once 'config/db.php';
 require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
 require_once 'recipes/recipe.php';

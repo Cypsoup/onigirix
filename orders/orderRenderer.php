@@ -80,8 +80,9 @@ class OrderRenderer
                 </ul>
 
                 <button 
-                    onclick="updateOrderStatus({$orderId}, '{$status}')" 
-                    class="w-full py-2 border-2 border-black text-xs font-black uppercase tracking-widest transition-all {$btnClass}">
+                    data-order-id="{$orderId}" 
+                    data-status="{$status}" 
+                    class="js-status-btn w-full py-2 border-2 border-black text-xs font-black uppercase tracking-widest transition-all {$btnClass}">
                     {$btnLabel}
                 </button>
             </div>

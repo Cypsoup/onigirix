@@ -9,6 +9,7 @@ import {
   switchStats,
   toggleArchivedOrders,
   toggleAddOrderPanel,
+  updateOrderStatus,
 } from "./orderHandler.js";
 
 export function initEventListeners() {
@@ -18,6 +19,14 @@ export function initEventListeners() {
       const id = archiveBtn.dataset.recipeId;
       const todo = archiveBtn.dataset.todo;
       handleRecipeStatus(id, todo);
+    }
+
+    // ÉCOUTEUR POUR LES STATUTS DE COMMANDE
+    const statusBtn = event.target.closest(".js-status-btn");
+    if (statusBtn) {
+      const orderId = statusBtn.dataset.orderId;
+      const currentStatus = statusBtn.dataset.status;
+      updateOrderStatus(orderId, currentStatus);
     }
   });
 }
