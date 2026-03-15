@@ -33,7 +33,7 @@ if (!isset($_GET["page"])) {
         $askedPage = "login"; // Visiteur non connecté -> direct à la connexion
     } else {
         // Utilisateur connecté -> direct sur son tableau de bord respectif
-        $askedPage = ($access === 'admin') ? "dashboardAdmin" : "dashboardUser";
+        $askedPage = ($access === 'admin') ? "eventManager" : "dashboardUser";
     }
 } else {
     // Si l'utilisateur a cliqué sur un lien spécifique (ex: ?page=menu)
