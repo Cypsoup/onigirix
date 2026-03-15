@@ -11,7 +11,7 @@ session_name("SessionOnigirix");
 session_start();
 Flash::success("Vous avez été déconnecté. À bientôt !");
 
-header("Location: ../index.php?page=home");
+header("Location: ../index.php?page=dashboardUser");
 exit;
 
 ?>
