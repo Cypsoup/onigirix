@@ -11,6 +11,7 @@ class PagesManager
         ["name" => "dashboardUser", "title" => "Suivi - Onigirix", "access" => "user", "auth" => self::AUTH_ANY, "visibility" => true],
         ["name" => "menu", "title" => "La carte", "access" => "user", "auth" => self::AUTH_ANY, "visibility" => true],
         ["name" => "commandeUser", "title" => "Commander", "access" => "user", "auth" => self::AUTH_LOGGED, "visibility" => true],
+        ["name" => "historyUser", "title" => "Historique", "access" => "user", "auth" => self::AUTH_LOGGED, "visibility" => true],
 
         // PAGES ADMIN
         ["name" => "dashboardAdmin", "title" => "Tableau de bord", "access" => "admin", "auth" => self::AUTH_LOGGED, "visibility" => true],

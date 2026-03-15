@@ -3,6 +3,7 @@
 require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
 require_once 'users/users.php';
+require_once 'events/event.php';
 
 // Récupération de l'utilisateur
 $userId = $_SESSION['userId'] ?? null;
@@ -14,11 +15,22 @@ if (!$user) {
     exit;
 }
 
-// Récupération du service en cours
-$eventId = $_SESSION['eventId'];
+// Initialisation des états
+$activeEvent = Event::getOpenEvent($pdo);
+$activeOrder = null;
+$hasRetrievedOrder = false;
 
-// Récupération des données
-$activeOrder = $eventId ? Order::getUserActiveOrder($pdo, $userId, $eventId) : null;
+if ($activeEvent) {
+    // A-t-il une commande en cours de préparation ?
+    $activeOrder = Order::getUserActiveOrder($pdo, $userId, $activeEvent->id);
+    
+    // Si pas de commande en cours, a-t-il déjà récupéré sa commande aujourd'hui ?
+    if (!$activeOrder) {
+        $hasRetrievedOrder = Order::hasUserArchivedOrderForEvent($pdo, $userId, $activeEvent->id);
+    }
+}
+
+// Récupération des données indépendantes de l'événement (Stats et Historique)
 $recentOrders = Order::getUserRecentOrders($pdo, $userId, 3);
 $userStats = Order::getUserStats($pdo, $userId);
 
@@ -38,17 +50,25 @@ $userStats = Order::getUserStats($pdo, $userId);
 
 <main class="p-6 pb-28">
     <?php
-    // Affichage conditionnel de la commande en cours
-    if ($activeOrder) {
-        OrderRenderer::renderUserActiveOrder($activeOrder);
+    // Affichage conditionnel selon les 4 états possibles de l'utilisateur vis-à-vis de la session de vente en cours
+    if (!$activeEvent) {
+        // ÉTAT 1 : Fermé
+        OrderRenderer::renderServiceClosed();
     } else {
-        OrderRenderer::renderUserNoOrder();
+        if ($activeOrder) {
+            // ÉTAT 2 : A commandé, en attente de préparation
+            OrderRenderer::renderUserActiveOrder($activeOrder);
+        } elseif ($hasRetrievedOrder) {
+            // ÉTAT 3 : A commandé et a déjà récupéré son plat
+            OrderRenderer::renderUserOrderRetrieved();
+        } else {
+            // ÉTAT 4 : Ouvert, mais n'a pas encore commandé
+            OrderRenderer::renderUserNoOrder();
+        }
     }
 
-    // Affichage des statistiques
+    // Affichage des statistiques et de l'historique
     OrderRenderer::renderUserStats($userStats);
-
-    // Affichage de l'historique
     OrderRenderer::renderUserRecentOrders($pdo, $recentOrders);
     ?>
 </main>

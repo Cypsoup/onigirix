@@ -97,8 +97,14 @@ try {
     }
 
 
-    // Création de la commande
+    // Récupération de l'id de l'event
     $eventId = $_SESSION['eventId'] ?? null;
+    if (!$eventId) {
+        echo json_encode(['success' => false, 'error' => 'Session expirée ou événement terminé.']);
+        exit;
+    }
+
+    // Création de la commande
     $orderId = Order::createOrder($pdo, $user->id, $eventId, $calculatedTotal, $items);
 
     if ($orderId === false) {
