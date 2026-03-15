@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 // Démarrage de session
 session_name("SessionOnigirix");
@@ -15,16 +14,12 @@ require_once 'utils/flash.php';
 require_once 'pages/pagesManager.php';
 require_once 'pages/pagesRenderer.php';
 
-
-// Debug : à enlever
-var_dump($_SESSION);
-
 // Récupération des accès et de la connexion utilisateur
 $access = $_SESSION['role'] ?? "user";
 $isLogged = $_SESSION['loggedIn'] ?? 0;
 
 // Récupération de la page en fonction des accès
-$askedPage = $_GET["page"] ?? "home";
+$askedPage = $_GET["page"] ?? "dashboardUser";
 $askedPage = PagesManager::checkPageExists($askedPage) ? $askedPage : "errorPage";
 $askedPage = PagesManager::checkAccess($askedPage, $access, $isLogged) ? $askedPage : "errorAccess";
 
