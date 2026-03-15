@@ -1,10 +1,12 @@
 <?php
-
+//
 // Importation des fichiers
 require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
 require_once 'recipes/recipe.php';
 require_once 'recipes/recipeRenderer.php';
+require_once 'events/event.php';
+require_once 'utils/flash.php';
 
 // Configuration des commandes de la session
 $orderConfig = [
@@ -14,9 +16,17 @@ $orderConfig = [
     'archive' => ['title' => 'Archivées', 'class' => '']
 ];
 
+// Récupération de l'event ouvert
+$eventId = $_SESSION['eventId'];
+if (!$eventId) {
+    Flash::error("Il faut ouvrir un service !");
+    header("Location: index.php?page=eventManager");
+    exit;
+}
+
 // Récupération des commandes
 foreach ($orderConfig as $status => $config) {
-    $orders = Order::getOrdersByStatus($pdo, $status);
+    $orders = Order::getOrdersByStatus($pdo, $status, $eventId);
     $orderConfig[$status]['orders'] = $orders;
     $orderConfig[$status]['count'] = count($orders);
 }
@@ -72,14 +82,14 @@ $recipes = Recipe::getAllRecipes($pdo, 1);
             <div id="stats-container">
                 <div id="content-prepa" class="space-y-2 text-sm overflow-y-auto">
                     <?php
-                    $stats = Order::getStatsByStatus($pdo, 'prepa');
+                    $stats = Order::getStatsByStatus($pdo, 'prepa', $eventId);
                     OrderRenderer::renderStats($stats);
                     ?>
                 </div>
 
                 <div id="content-attente" class="hidden space-y-2 text-sm overflow-y-auto">
                     <?php
-                    $stats = Order::getStatsByStatus($pdo, 'attente');
+                    $stats = Order::getStatsByStatus($pdo, 'attente', $eventId);
                     OrderRenderer::renderStats($stats);
                     ?>
                 </div>

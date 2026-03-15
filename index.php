@@ -13,15 +13,19 @@ require_once 'config/db.php';
 require_once 'utils/flash.php';
 require_once 'pages/pagesManager.php';
 require_once 'pages/pagesRenderer.php';
-
+require_once 'events/event.php';
 
 // Debug : à enlever
 // var_dump($_SESSION);
 
-// --- RECUPERATION DES ACCES ---
+// --- RECUPERATION DES ACCES ET SESSION ---
 // Récupération des accès et de la connexion utilisateur
 $access = $_SESSION['role'] ?? "user";
 $isLogged = $_SESSION['loggedIn'] ?? 0;
+
+// Récupération de l'event en cours, s'il existe
+$openEvent = Event::getOpenEvent($pdo) ?? null;
+$_SESSION['eventId'] = $openEvent?->id ?? null;
 
 // Définition de la page par défaut si aucune page n'est demandée dans l'URL
 if (!isset($_GET["page"])) {

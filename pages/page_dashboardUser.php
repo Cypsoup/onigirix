@@ -14,8 +14,11 @@ if (!$user) {
     exit;
 }
 
+// Récupération du service en cours
+$eventId = $_SESSION['eventId'];
+
 // Récupération des données
-$activeOrder = Order::getUserActiveOrder($pdo, $userId);
+$activeOrder = $eventId ? Order::getUserActiveOrder($pdo, $userId, $eventId) : null;
 $recentOrders = Order::getUserRecentOrders($pdo, $userId, 3);
 $userStats = Order::getUserStats($pdo, $userId);
 

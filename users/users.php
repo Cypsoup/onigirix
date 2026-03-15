@@ -18,7 +18,7 @@ class User
             $user = $sth->fetch();
             return $user;
         } catch (PDOException $e) {
-            error_log("Erreur dans la récupération de l'utilisateur : " . $e->getMessage());
+            error_log("Erreur getUserById : " . $e->getMessage());
             return null;
         }
     }
@@ -33,7 +33,7 @@ class User
             $user = $sth->fetch();
             return $user;
         } catch (PDOException $e) {
-            error_log("Erreur dans la récupération de l'utilisateur : " . $e->getMessage());
+            error_log("Erreur getUserByTrigramme : " . $e->getMessage());
             return null;
         }
     }
@@ -50,7 +50,7 @@ class User
                 return false;
             }
         } catch (PDOException $e) {
-            error_log("Erreur dans la création d'un utilisateur : " . $e->getMessage());
+            error_log("Erreur createUser : " . $e->getMessage());
             return null;
         }
     }
@@ -63,7 +63,7 @@ class User
             $sth = $dbh->prepare($query);
             return $sth->execute($params);
         } catch (PDOException $e) {
-            error_log("Erreur dans la modification des informations :" . $e->getMessage());
+            error_log("Erreur updateUserInfo :" . $e->getMessage());
             return false;
         }
     }
@@ -77,7 +77,7 @@ class User
             $sth = $dbh->prepare($query);
             return $sth->execute($params);
         } catch (PDOException $e) {
-            error_log("Erreur dans la modification du mdp :" . $e->getMessage());
+            error_log("Erreur updateUserPassword :" . $e->getMessage());
             return false;
         }
     }

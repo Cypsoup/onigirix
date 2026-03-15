@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'error' => 'Méthode non autorisée. Utilisez POST.'
     ]);
     exit;
@@ -40,26 +40,26 @@ try {
     // Récupération et décodage des données JSON
     $rawData = file_get_contents('php://input');
     $data = json_decode($rawData, true);
-    
+
     // Validation des données reçues
     if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception('Format JSON invalide');
     }
-    
-    if (!isset($data['trigramme']) || !isset($data['items'])){
+
+    if (!isset($data['trigramme']) || !isset($data['items'])) {
         throw new Exception('Données manquantes (trigramme ou items)');
     }
-    
+
     // Validation du panier
     if (empty($data['items']) || !is_array($data['items'])) {
         throw new Exception('Le panier est vide');
     }
-    
+
     // On nettoie les items pour enlever les quantités à 0
     $items = [];
     foreach ($data['items'] as $id => $qty) {
-        if ((int)$qty > 0) {
-            $items[(int)$id] = (int)$qty;
+        if ((int) $qty > 0) {
+            $items[(int) $id] = (int) $qty;
         }
     }
 
@@ -76,7 +76,7 @@ try {
         if (!isset($recipes[$recipeId]) || $recipes[$recipeId]->available != 1) {
             throw new Exception("Recette invalide ou épuisée (ID: {$recipeId})");
         }
-        
+
         // Calcul du total
         $calculatedTotal += $recipes[$recipeId]->price * $quantity;
     }
@@ -98,22 +98,22 @@ try {
 
 
     // Création de la commande
-    $eventId = $_SESSION['event_id'] ?? 1;
+    $eventId = $_SESSION['eventId'] ?? null;
     $orderId = Order::createOrder($pdo, $user->id, $eventId, $calculatedTotal, $items);
-    
+
     if ($orderId === false) {
         throw new Exception('Erreur lors de la création de la commande en base de données');
     }
 
     // Message flash pour la page d'accueil
     Flash::success("Commande validée et en attente !");
-    
+
     // Succès
     http_response_code(201);
     echo json_encode([
         'success' => true
     ]);
-    
+
 } catch (Exception $e) {
     // Erreur
     http_response_code(400);
@@ -121,7 +121,7 @@ try {
         'success' => false,
         'error' => $e->getMessage()
     ]);
-    
+
     // Log de l'erreur
     error_log("API Submit Order Error: " . $e->getMessage());
 }

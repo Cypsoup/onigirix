@@ -40,20 +40,22 @@ class Order
         }
     }
 
-    public static function getAllOrders($dbh)
+    /*
+    public static function getAllOrders($dbh, $eventId)
     {
         try {
             // On cherche tout ce qui est en cours (attente, prepa, pret)
-            $query = "SELECT * FROM `orders` ORDER BY `createdAt` ASC";
+            $query = "SELECT * FROM `orders` WHERE `eventId` = ? ORDER BY `createdAt` ASC";
             $sth = $dbh->prepare($query);
             $sth->setFetchMode(PDO::FETCH_CLASS, 'Order');
-            $sth->execute();
+            $sth->execute(array($eventId));
             return $sth->fetchAll();
         } catch (PDOException $e) {
             error_log("Erreur getAllOrders : " . $e->getMessage());
             return [];
         }
     }
+        */
 
     public static function getOrderById($dbh, $id)
     {
@@ -69,13 +71,13 @@ class Order
         }
     }
 
-    public static function getOrdersByStatus($dbh, $status)
+    public static function getOrdersByStatus($dbh, $status, $eventId)
     {
         try {
-            $query = "SELECT * FROM `orders` WHERE `status`=? ORDER BY `createdAt` ASC";
+            $query = "SELECT * FROM `orders` WHERE `status`=? AND `eventId`=? ORDER BY `createdAt` ASC";
             $sth = $dbh->prepare($query);
             $sth->setFetchMode(PDO::FETCH_CLASS, 'Order');
-            $sth->execute(array($status));
+            $sth->execute(array($status, $eventId));
             return $sth->fetchAll();
         } catch (PDOException $e) {
             error_log("Erreur getOrderByStatus : " . $e->getMessage());
@@ -104,7 +106,7 @@ class Order
     public static function getAllRecipes($dbh)
     {
         try {
-            $sth = $dbh->query("SELECT * FROM recipes");
+            $sth = $dbh->query("SELECT * FROM `recipes`");
             return $sth->fetchAll(PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Erreur getAllRecipes: " . $e->getMessage());
@@ -112,7 +114,7 @@ class Order
         }
     }
 
-    public static function getStatsByStatus($dbh, $status)
+    public static function getStatsByStatus($dbh, $status, $eventId)
     {
         try {
             $query =
@@ -120,11 +122,11 @@ class Order
                 FROM `order_items` as oi
                 JOIN `recipes` r ON oi.recipeId = r.id
                 JOIN `orders` o ON oi.orderId = o.id
-                WHERE o.status = ?
+                WHERE o.status = ? AND o.eventId = ?
                 GROUP BY r.id, r.name
                 ORDER BY totalQty DESC";
             $sth = $dbh->prepare($query);
-            $sth->execute([$status]);
+            $sth->execute([$status, $eventId]);
             return $sth->fetchAll();
         } catch (PDOException $e) {
             error_log("Erreur getStatsByStatus: " . $e->getMessage());
@@ -143,11 +145,11 @@ class Order
         }
     }
 
-    public static function getUserActiveOrder($pdo, $userId)
+    public static function getUserActiveOrder($pdo, $userId, $eventId)
     {
         try {
-            $stmt = $pdo->prepare("SELECT * FROM `orders` WHERE `userId` = ? AND `status` != 'archive' ORDER BY `createdAt` DESC LIMIT 1");
-            $stmt->execute([$userId]);
+            $stmt = $pdo->prepare("SELECT * FROM `orders` WHERE `userId` = ? AND `status` != 'archive' AND `eventId`=? ORDER BY `createdAt` DESC LIMIT 1");
+            $stmt->execute([$userId, $eventId]);
             $stmt->setFetchMode(PDO::FETCH_CLASS, 'Order');
             return $stmt->fetch();
         } catch (PDOException $e) {
@@ -205,8 +207,5 @@ class Order
         }
     }
 }
-
-
-
 
 ?>
