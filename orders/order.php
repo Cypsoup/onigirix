@@ -64,7 +64,7 @@ class Order
             $sth->execute(array($id));
             return $sth->fetch();
         } catch (PDOException $e) {
-            error_log("Erreur dans la récupération de la commande : " . $e->getMessage());
+            error_log("Erreur getOrderById : " . $e->getMessage());
             return null;
         }
     }
@@ -132,7 +132,8 @@ class Order
         }
     }
 
-    public static function updateStatus($dbh, $orderId, $newStatus) {
+    public static function updateStatus($dbh, $orderId, $newStatus)
+    {
         try {
             $stmt = $dbh->prepare("UPDATE `orders` SET `status` = ? WHERE `id` = ?");
             return $stmt->execute([$newStatus, $orderId]);
@@ -142,26 +143,39 @@ class Order
         }
     }
 
-    // Récupère la commande en cours (statut différent de 'archive')
-    public static function getUserActiveOrder($pdo, $userId) {
-        $stmt = $pdo->prepare("SELECT * FROM `orders` WHERE `userId` = ? AND `status` != 'archive' ORDER BY `createdAt` DESC LIMIT 1");
-        $stmt->execute([$userId]);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'Order');
-        return $stmt->fetch() ?: null;
+    public static function getUserActiveOrder($pdo, $userId)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM `orders` WHERE `userId` = ? AND `status` != 'archive' ORDER BY `createdAt` DESC LIMIT 1");
+            $stmt->execute([$userId]);
+            $stmt->setFetchMode(PDO::FETCH_CLASS, 'Order');
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Erreur getUserActiveOrder : " . $e->getMessage());
+            return null;
+        }
+
     }
 
     // Récupère les dernières commandes terminées
-    public static function getUserRecentOrders($pdo, $userId, $limit = 3) {
-        $stmt = $pdo->prepare("SELECT * FROM `orders` WHERE `userId` = ? AND `status` = 'archive' ORDER BY `createdAt` DESC LIMIT ?");
-        // On lie le paramètre limit en tant qu'entier
-        $stmt->bindValue(1, $userId, PDO::PARAM_INT);
-        $stmt->bindValue(2, $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_CLASS, 'Order');
+    public static function getUserRecentOrders($pdo, $userId, $limit = 3)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM `orders` WHERE `userId` = ? AND `status` = 'archive' ORDER BY `createdAt` DESC LIMIT ?");
+            // On lie le paramètre limit en tant qu'entier
+            $stmt->bindValue(1, $userId, PDO::PARAM_INT);
+            $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_CLASS, 'Order');
+        } catch (PDOException $e) {
+            error_log("Erreur getUserRecentOrders : " . $e->getMessage());
+            return null;
+        }
     }
 
     // (Pour getUserStats, la requête SQL dépendra de comment sont structurées vos tables "orders" et "order_items")
-    public static function getUserStats($pdo, $userId) {
+    public static function getUserStats($pdo, $userId)
+    {
         // Exemple basique
         return [
             'totalOrders' => 4,
@@ -173,17 +187,22 @@ class Order
     /**
      * Récupère le détail des recettes (quantité + nom) pour une commande donnée
      */
-    public static function getOrderItemsDetails($pdo, $orderId) {
-        // On fait une jointure entre order_items et recipes pour récupérer le nom de la recette
-        // Note : Vérifiez bien le nom de vos colonnes (ici je suppose orderId, recipeId, quantity et name)
-        $stmt = $pdo->prepare("
+    public static function getOrderItemsDetails($pdo, $orderId)
+    {
+        try {
+            // On fait une jointure entre order_items et recipes pour récupérer le nom de la recette
+            $stmt = $pdo->prepare("
             SELECT oi.quantity, r.name 
             FROM `order_items` oi
             JOIN `recipes` r ON oi.recipeId = r.id
             WHERE oi.orderId = ?
         ");
-        $stmt->execute([$orderId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->execute([$orderId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur getOrderItemsDetails : " . $e->getMessage());
+            return null;
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 <?php
-// Démarrage de session
+// --- GESTION DE LA SESSION ---
 session_name("SessionOnigirix");
 session_start();
 
@@ -8,13 +8,14 @@ if (!isset($_SESSION['initiated'])) {
     $_SESSION['initiated'] = true;
 }
 
-// Importation des fichiers
+// --- IMPORTATION ---
 require_once 'config/db.php';
 require_once 'utils/flash.php';
 require_once 'pages/pagesManager.php';
 require_once 'pages/pagesRenderer.php';
 
-// Récupération des accès et de la connexion utilisateur
+// --- RECUPERATION DES ACCES ---
+// Récupération du rôle et de la connexion
 $access = $_SESSION['role'] ?? "user";
 $isLogged = $_SESSION['loggedIn'] ?? 0;
 
@@ -26,14 +27,12 @@ $askedPage = PagesManager::checkAccess($askedPage, $access, $isLogged) ? $askedP
 // Récupération du titre de la page 
 $pageTitle = PagesManager::getPageTitle($askedPage);
 
-// HTML Header
+// --- GENERATION DE LA PAGE ---
 PagesRenderer::generateHTMLHeader($pageTitle);
-// Sidebar
+
 PagesRenderer::generateMenu($askedPage, $access, $isLogged);
 
-// Chargement de la page
 require("pages/page_" . $askedPage . ".php");
 
-// HTML Footer
 PagesRenderer::generateHTMLFooter();
 ?>
