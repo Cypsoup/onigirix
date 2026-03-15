@@ -28,7 +28,7 @@ $userStats = Order::getUserStats($pdo, $userId);
     <div class="flex flex-col gap-1">
         <h3 class="text-[10px] text-black/50">BIENVENUE</h3>
         <h1 class="text-xl font-black italic text-black uppercase">KON'NICHIWA,
-            <?= htmlspecialchars($user->name) ?>!
+            <?= htmlspecialchars($user->firstname) ?> !
         </h1>
     </div>
     <div class="w-16 h-12 bg-white flex items-center justify-center">

@@ -27,7 +27,7 @@ $recipesJSON = json_encode($recipes);
     </div>
 </header>
 
-<main class="p-8">
+<main class="p-8 pb-24">
     <div class="flex flex-col gap-4" id="menuGrid">
         <?php
         if (!empty($recipes)) {

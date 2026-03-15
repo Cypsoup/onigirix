@@ -25,12 +25,13 @@ $trigramme = $_POST['trigramme'] ?? null;
 $userTrigramme = User::getUserByTrigramme($pdo, $trigramme);
 if ($userTrigramme && $userTrigramme->id !== $id) {
     Flash::error("Trigramme déjà utilisé !");
-    header("Location : ../index.php?page=createUser");
+    header("Location: ../index.php?page=editUser&todo=editInfo");
     exit;
 }
 
 // Récupération des données du formulaire
 $name = $_POST['name'] ?? '';
+$firstname = $_POST['firstname'] ?? '';
 $email = $_POST['email'] ?? '';
 
 // Mise à jour de la table
