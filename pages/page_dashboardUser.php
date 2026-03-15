@@ -1,7 +1,6 @@
 <?php
 
 require_once 'config/db.php';
-require_once 'utils/LayoutRenderer.php';
 require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
 require_once 'users/users.php';
@@ -50,9 +49,3 @@ $userStats = Order::getUserStats($pdo, $userId);
     OrderRenderer::renderUserRecentOrders($pdo, $recentOrders);
     ?>
 </main>
-
-<?php
-// Affichage du menu mobile
-LayoutRenderer::renderBottomNav($activePage);
-LayoutRenderer::generateHTMLFooter();
-?>
