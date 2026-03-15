@@ -18,6 +18,7 @@ require_once 'pages/pagesRenderer.php';
 // Debug : à enlever
 // var_dump($_SESSION);
 
+// --- RECUPERATION DES ACCES ---
 // Récupération des accès et de la connexion utilisateur
 $access = $_SESSION['role'] ?? "user";
 $isLogged = $_SESSION['loggedIn'] ?? 0;
@@ -41,7 +42,7 @@ $askedPage = PagesManager::checkPageExists($askedPage) ? $askedPage : "errorPage
 // Gestion des erreurs d'accès
 if (!PagesManager::checkAccess($askedPage, $access, $isLogged)) {
     // Si un visiteur essaie de forcer l'accès à une page privée, on le renvoie vers login
-    $askedPage = (!$isLogged) ? "login" : "errorAccess"; 
+    $askedPage = (!$isLogged) ? "login" : "errorAccess";
 }
 
 // Récupération du titre de la page 
