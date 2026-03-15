@@ -46,6 +46,12 @@ class PagesManager
                     self::AUTH_LOGGED => $isLogged, // Vrai si Connecté
                 };
 
+                // Restriction de la visibilité des pages inutiles pour l'admin
+                if ($page["access"] === "user" && $userAccess === "admin") {
+                    if ($askedPage === "dashboardUser" || $askedPage === "commandeUser")
+                        return false;
+                }
+
                 // Etat des droits
                 $hasRight = ($page["access"] == $userAccess || $userAccess == "admin");
                 return ($hasRight && $authCondition);
