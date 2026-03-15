@@ -23,7 +23,7 @@ if ($id == null) {
 // Vérification de l'unicité du trigramme
 $trigramme = $_POST['trigramme'] ?? null;
 $userTrigramme = User::getUserByTrigramme($pdo, $trigramme);
-if ($userTrigramme && $userTrigramme->id !== $id) {
+if ($userTrigramme && $userTrigramme->id != $id) {
     Flash::error("Trigramme déjà utilisé !");
     header("Location: ../index.php?page=editUser&todo=editInfo");
     exit;

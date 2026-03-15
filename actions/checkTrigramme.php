@@ -17,7 +17,7 @@ if (strlen($trigramme) !== 3) {
 
 $user = User::getUserByTrigramme($pdo, $trigramme);
 
-if ($user && $excludedId !== $user->id) {
+if ($user && $excludedId != $user->id) {
     echo json_encode(['exists' => true]);
 } else {
     echo json_encode(['exists' => false]);
