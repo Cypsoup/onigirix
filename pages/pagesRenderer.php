@@ -23,6 +23,11 @@ class PagesRenderer
         ],
 
         // PAGES ADMIN
+        'eventManager' => [
+            'label' => 'SERVICES',
+            'icon' => 'calendar-days',
+            'svgPath' => '<path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path>'
+        ],
         'dashboardAdmin' => [
             'label' => 'DASHBOARD',
             'icon' => 'layout-dashboard',
@@ -110,7 +115,7 @@ class PagesRenderer
     {
         // SI C'EST UN ADMIN, ON OUVRE LA DIV FLEX POUR ALIGNER LE MENU ET LE CONTENU
         if ($userAccess === 'admin' && $isLogged) {
-            echo '<div class="flex h-full w-full">'; 
+            echo '<div class="flex h-full w-full">';
             self::renderSidebar($askedPage, $userAccess, $isLogged);
         } else {
             self::renderBottomNav($askedPage, $userAccess, $isLogged);

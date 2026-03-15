@@ -13,6 +13,7 @@ class PagesManager
         ["name" => "commandeUser", "title" => "Commander", "access" => "user", "auth" => self::AUTH_LOGGED, "visibility" => true],
 
         // PAGES ADMIN
+        ["name" => "eventManager", "title" => "Gestion des Services", "access" => "admin", "auth" => self::AUTH_LOGGED, "visibility" => true],
         ["name" => "dashboardAdmin", "title" => "Tableau de bord", "access" => "admin", "auth" => self::AUTH_LOGGED, "visibility" => true],
         ["name" => "inventory", "title" => "Inventaire", "access" => "admin", "auth" => self::AUTH_LOGGED, "visibility" => true],
         ["name" => "history", "title" => "Historique", "access" => "admin", "auth" => self::AUTH_LOGGED, "visibility" => true],

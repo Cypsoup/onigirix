@@ -5,6 +5,7 @@ class Event
     public $id;
     public $name;
     public $isOpen;
+    public $canOrder;
     public $dateEvent;
 
     public static function getEventById($dbh, $id)
@@ -34,6 +35,20 @@ class Event
         } catch (PDOException $e) {
             error_log("Erreur getEventByName : " . $e->getMessage());
             return null;
+        }
+    }
+
+    public static function getAllEvents($dbh)
+    {
+        try {
+            $query = "SELECT * FROM `events` ORDER BY id DESC";
+            $sth = $dbh->prepare($query);
+            $sth->execute();
+            return $sth->fetchAll(PDO::FETCH_CLASS, 'Event');
+        } catch (PDOException $e) {
+
+            error_log("Erreur getAllEvents : " . $e->getMessage());
+            return [];
         }
     }
 
@@ -80,7 +95,41 @@ class Event
             $sth = $dbh->prepare($query);
             return $sth->execute(array($openEvent->id));
         } catch (PDOException $e) {
-            error_log("Erreur openEvent : " . $e->getMessage());
+            error_log("Erreur closeEvent : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function openOrder($dbh)
+    {
+        $openEvent = self::getOpenEvent($dbh);
+        if (!$openEvent) { // Vérification qu'il existe bien un event d'ouvert
+            error_log("Erreur openOrder : il n'existe aucun event ouvert !");
+            return false;
+        }
+        try {
+            $query = "UPDATE `events` SET `canOrder` = 1 WHERE `id` = ?";
+            $sth = $dbh->prepare($query);
+            return $sth->execute(array($openEvent->id));
+        } catch (PDOException $e) {
+            error_log("Erreur openOrder : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function closeOrder($dbh)
+    {
+        $openEvent = self::getOpenEvent($dbh);
+        if (!$openEvent) { // Vérification qu'il existe bien un event d'ouvert
+            error_log("Erreur closeOrder : il n'existe aucun event ouvert !");
+            return false;
+        }
+        try {
+            $query = "UPDATE `events` SET `canOrder` = 0 WHERE `id` = ?";
+            $sth = $dbh->prepare($query);
+            return $sth->execute(array($openEvent->id));
+        } catch (PDOException $e) {
+            error_log("Erreur closeOrder : " . $e->getMessage());
             return false;
         }
     }
