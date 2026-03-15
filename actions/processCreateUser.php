@@ -32,10 +32,11 @@ if ($password !== $passwordConfirm) {
 
 // Récupération des variables de connexion
 $name = $_POST['name'] ?? null;
+$firstname == $_POST['firstname'] ?? null;
 $email = $_POST['email'] ?? null;
 $role = $_POST['role'] ?? 'user';
 
-$success = User::createUser($pdo, $trigramme, $name, $email, $password, $role);
+$success = User::createUser($pdo, $trigramme, $name, $firstname, $email, $password, $role);
 
 if ($success) {
     Flash::success('Utilisateur créé, veuillez vous connecter !');

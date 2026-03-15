@@ -4,6 +4,7 @@ class User
     public $id;
     public $trigramme;
     public $name;
+    public $firstname;
     public $email;
     public $password;
     public $role;
@@ -38,14 +39,14 @@ class User
         }
     }
 
-    public static function createUser($dbh, $trigramme, $name, $email, $password, $role = 'user')
+    public static function createUser($dbh, $trigramme, $name, $firstname, $email, $password, $role = 'user')
     {
         try {
             if (self::getUserByTrigramme($dbh, $trigramme) == null) {
                 $trigramme = strtoupper($trigramme);
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-                $sth = $dbh->prepare('INSERT INTO `users` (`trigramme`, `name`, `email`, `password`, `role`) VALUES(?,?,?,?,?)');
-                return $sth->execute(array($trigramme, $name, $email, $hashedPassword, $role));
+                $sth = $dbh->prepare('INSERT INTO `users` (`trigramme`, `name`, `firstname`, `email`, `password`, `role`) VALUES(?,?,?,?,?,?)');
+                return $sth->execute(array($trigramme, $name, $firstname, $email, $hashedPassword, $role));
             } else {
                 return false;
             }
@@ -55,11 +56,11 @@ class User
         }
     }
 
-    public static function updateUserInfo($dbh, $id, $trigramme, $name, $email)
+    public static function updateUserInfo($dbh, $id, $trigramme, $name, $firstname, $email)
     {
         try {
-            $query = "UPDATE `users` SET `trigramme`=?, `name`=?, `email`=? WHERE `id`=?";
-            $params = [$trigramme, $name, $email, $id];
+            $query = "UPDATE `users` SET `trigramme`=?, `name`=?, `firstname`=?, `email`=? WHERE `id`=?";
+            $params = [$trigramme, $name, $firstname, $email, $id];
             $sth = $dbh->prepare($query);
             return $sth->execute($params);
         } catch (PDOException $e) {

@@ -53,21 +53,27 @@ function printCreateUserForm()
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
-                    <label class="block font-black uppercase text-xs mb-1">Nom Complet</label>
-                    <input type="text" name="name" placeholder="ex: Jean Onigiri" required 
+                    <label class="block font-black uppercase text-xs mb-1">Nom</label>
+                    <input type="text" name="name" placeholder="ex : Dupont" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block font-black uppercase text-xs mb-1">Prénom</label>
+                    <input type="text" name="firstname" placeholder="ex: Jean" required 
                         class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
                 </div>
 
                 <div>
                     <label class="block font-black uppercase text-xs mb-1">Trigramme (Identifiant)</label>
-                    <input id="trigrammeInput" type="text" name="trigramme" maxlength="3" minlength="3" placeholder="ABC" required 
+                    <input id="trigrammeInput" type="text" name="trigramme" maxlength="3" minlength="3" placeholder="ex : ABC" required 
                         class="w-full border-2 border-black p-3 font-black text-2xl tracking-widest focus:bg-yellow-50 outline-none uppercase text-center">
                     <p class="text-[10px] mt-1 font-bold italic">3 lettres exactement.</p>
                 </div>
 
                 <div>
                     <label class="block font-black uppercase text-xs mb-1">Adresse Email</label>
-                    <input type="email" name="email" placeholder="chef@onigirix.fr" required 
+                    <input type="email" name="email" placeholder="ex : chef@onigirix.fr" required 
                         class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
                 </div>
 
@@ -113,6 +119,7 @@ function printEditUserForm($user)
     $id = $user->id;
     $trigramme = htmlspecialchars($user->trigramme);
     $name = htmlspecialchars($user->name);
+    $firstname = htmlspecialchars($user->firstname);
     $email = htmlspecialchars($user->email);
     $role = htmlspecialchars($user->role);
 
@@ -121,7 +128,7 @@ function printEditUserForm($user)
     <div class="max-w-2xl mx-auto my-10">
         <form action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white border-4 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] space-y-6">
             <div class="border-b-4 border-black pb-4 mb-6">
-                <h2 class="text-3xl font-black uppercase italic">Vos informations : {$name}</h2>
+                <h2 class="text-3xl font-black uppercase italic">Vos informations : {$firstname}</h2>
                 <p class="text-xs font-bold text-gray-500 uppercase">Votre trigramme est votre identifiant de connexion.</p>
             </div>
 
@@ -129,8 +136,14 @@ function printEditUserForm($user)
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
-                    <label class="block font-black uppercase text-xs mb-1">Nom Complet</label>
+                    <label class="block font-black uppercase text-xs mb-1">Nom</label>
                     <input type="text" name="name" value="{$name}" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block font-black uppercase text-xs mb-1">Prénom</label>
+                    <input type="text" name="firstname" value="{$firstname}" required 
                         class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
                 </div>
 
@@ -162,7 +175,7 @@ function printEditUserForm($user)
 function printEditPasswordForm($user)
 {
     $id = $user->id;
-    $name = htmlspecialchars($user->name);
+    $firstname = htmlspecialchars($user->firstname);
     $oldPassword = htmlspecialchars($user->password);
 
     $action = "actions/processEditPassword.php";
@@ -170,7 +183,7 @@ function printEditPasswordForm($user)
     <div class="max-w-2xl mx-auto my-10">
         <form id="editUserPasswordForm" action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white border-4 border-black p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] space-y-6">
             <div class="border-b-4 border-black pb-4 mb-6">
-                <h2 class="text-3xl font-black uppercase italic">Vos informations : {$name}</h2>
+                <h2 class="text-3xl font-black uppercase italic">Vos informations : {$firstname}</h2>
                 <p class="text-xs font-bold text-gray-500 uppercase">Votre trigramme est votre identifiant de connexion.</p>
             </div>
 

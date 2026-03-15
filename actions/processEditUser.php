@@ -34,7 +34,7 @@ $name = $_POST['name'] ?? '';
 $email = $_POST['email'] ?? '';
 
 // Mise à jour de la table
-$success = User::updateUserInfo($pdo, $id, $trigramme, $name, $email);
+$success = User::updateUserInfo($pdo, $id, $trigramme, $name, $firstname, $email);
 
 if ($success) {
     Flash::success("Informations mises à jour !");
