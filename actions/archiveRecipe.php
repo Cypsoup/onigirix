@@ -1,9 +1,11 @@
 <?php
 
+// Récupération de la Session en cours
 session_name("SessionOnigirix");
 session_start();
 header('Content-Type: application/json');
 
+// Récupération des fichiers nécessaires
 require_once '../config/db.php';
 require_once '../Recipes/Recipe.php';
 

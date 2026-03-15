@@ -1,6 +1,9 @@
 <?php
 
+// Récupération de la Session en cours
 header('Content-Type: application/json');
+
+// Récupération des fichiers nécessaires
 require_once '../config/db.php';
 require_once '../users/users.php';
 

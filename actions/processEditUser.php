@@ -4,6 +4,7 @@
 session_name("SessionOnigirix");
 session_start();
 
+// Récupération des fichiers nécessaires
 require_once '../config/db.php';
 require_once '../users/users.php';
 require_once '../users/usersRenderer.php';
