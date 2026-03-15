@@ -1,5 +1,5 @@
 <?php
-$motDePasse = "hash_user1"; 
+$motDePasse = "admin";
 echo "Ton mot de passe hashé est : <br>";
 echo password_hash($motDePasse, PASSWORD_DEFAULT);
 ?>

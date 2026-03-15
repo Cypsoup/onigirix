@@ -59,8 +59,6 @@ export function toggleAddOrderPanel(todo) {
   }
 }
 
-
-
 export function updateOrderStatus(orderId, currentStatus) {
   let nextStatus = "";
   if (currentStatus === "attente") nextStatus = "prepa";
@@ -71,7 +69,7 @@ export function updateOrderStatus(orderId, currentStatus) {
   formData.append("orderId", orderId);
   formData.append("newStatus", nextStatus);
 
-  fetch("update_status.php", {
+  fetch("actions/updateStatus.php", {
     method: "POST",
     body: formData,
   })

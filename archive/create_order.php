@@ -1,10 +1,12 @@
 <?php
+
 session_start();
+header('Content-Type: application/json');
+
+
 require_once 'config/db.php';
 require_once 'includes/functions.php';
 
-// On indique au navigateur qu'on va parler exclusivement en JSON
-header('Content-Type: application/json');
 
 $eventId = $_SESSION['event_id'] ?? 1; // ID par défaut à 1, il faudra gérer ça dynamiquement plus tard
 
