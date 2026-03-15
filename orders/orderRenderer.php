@@ -173,8 +173,50 @@ class OrderRenderer
                     <h3 class="text-2xl font-black italic uppercase">ONIGIRIX EST OUVERT</h3>
                     <p class="text-sm text-zinc-500">C'est le moment de commander !</p>
                 </div>
-                <a href="commandeUser.php" class="w-full bg-[#E60012] text-white font-bold py-4 border-2 border-black flex items-center justify-center text-center hover:bg-black transition-colors">
+                <a href="?page=commandeUser" class="w-full bg-[#E60012] text-white font-bold py-4 border-2 border-black flex items-center justify-center text-center hover:bg-black transition-colors">
                     COMMANDER MAINTENANT 
+                </a>
+            </div>
+        </section>
+        HTML;
+    }
+
+    // Affiche le bloc "ITADAKIMASU" quand la commande a été récupérée
+    public static function renderUserOrderRetrieved() {
+        echo <<<HTML
+        <section id="bloc-commande-recuperee" class="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden mb-10">
+            <div class="h-40 flex items-center justify-center relative">
+                <img src="./images/logo.png" alt="Logo" class="max-h-full w-auto object-contain">
+            </div>
+
+            <div class="flex flex-col gap-6 p-4">
+                <div class="text-center flex flex-col gap-1">
+                    <h3 class="text-2xl font-black italic uppercase">ITADAKIMASU !</h3>
+                    <p class="text-sm text-zinc-500">Votre commande vous a été remise. Bon appétit !</p>
+                </div>
+                <a href="index.php?page=historyUser" class="block text-center w-full bg-black text-white py-4 font-bold uppercase tracking-widest text-xs hover:bg-zinc-800 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-none">
+                    Voir mon historique
+                </a>
+            </div>
+        </section>
+        HTML;
+    }
+
+    // Affiche le bloc "Service Fermé" quand aucune session de vente n'est en cours
+    public static function renderServiceClosed() {
+        echo <<<HTML
+        <section id="bloc-service-ferme" class="border-2 border-black bg-zinc-50 p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-dashed overflow-hidden mb-10">
+            <div class="h-40 flex items-center justify-center relative opacity-40 grayscale">
+                <img src="./images/logo.png" alt="Logo" class="max-h-full w-auto object-contain">
+            </div>
+
+            <div class="flex flex-col gap-6 p-4">
+                <div class="text-center flex flex-col gap-1">
+                    <h3 class="text-2xl font-black italic uppercase">SERVICE FERMÉ</h3>
+                    <p class="text-sm text-zinc-500">Les fourneaux sont éteints. Revenez pour la prochaine vente !</p>
+                </div>
+                <a href="index.php?page=menu" class="block text-center w-full bg-white border-2 border-black text-black py-4 font-bold uppercase tracking-widest text-xs hover:bg-zinc-100 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 transition-all duration-200 active:translate-y-0 active:translate-x-0 active:shadow-none">
+                    Consulter la carte
                 </a>
             </div>
         </section>
@@ -227,7 +269,7 @@ class OrderRenderer
         <section class="mb-10">
             <div class="flex justify-between items-end mb-4">
                 <h3 class="font-black text-xl italic uppercase tracking-tighter">Dernières Commandes</h3>
-                <a href="#" class="font-mono uppercase tracking-tighter text-[10px] text-zinc-400 hover:text-black">VOIR TOUT</a>
+                <a href="?page=historyUser" class="font-mono uppercase tracking-tighter text-[10px] text-zinc-400 hover:text-black">VOIR TOUT</a>
             </div>
             
             <div class="space-y-4">

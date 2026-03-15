@@ -18,45 +18,52 @@ class RecipeRenderer
     public static function displayList($recipes, $access)
     {
         if (!is_array($recipes) || empty($recipes)) {
-            Flash::error("Aucune recette à afficher !");
+            echo '<p class="text-center text-black/40 font-bold py-10 uppercase tracking-widest border-4 border-black border-dashed bg-zinc-50">Aucune recette pour le moment...</p>';
             return;
         }
-        echo '<div class="recipe-container">';
+        
+        // Si admin : une liste simple (colonne)
+        // Si user  : une grille moderne (2 colonnes sur tablette/desktop)
+        $containerClass = ($access === "admin") 
+            ? "flex flex-col gap-2" 
+            : "flex flex-col gap-6 sm:grid sm:grid-cols-2 lg:grid lg:grid-cols-3";
+
+        echo '<div class="' . $containerClass . '">';
         foreach ($recipes as $recipe) {
             self::displayRecipe($recipe, $access);
         }
         echo "</div>";
     }
 
+    
+
     private static function renderUserMenuCard($recipe)
     {
         $name = htmlspecialchars($recipe->name);
-        $price = number_format($recipe->price, 2, ',', ' ');
+        // On met un point au lieu d'une virgule pour le prix, c'est plus moderne
+        $price = number_format($recipe->price, 2, '.', ''); 
         $image = !empty($recipe->fileName)
             ? "images/recipeImages/" . $recipe->fileName
             : 'images/onigiri.png';
-        $desc = nl2br(htmlspecialchars($recipe->description));
+        $desc = htmlspecialchars($recipe->description ?? '');
 
         echo <<<HTML
-        <div class="border-2 border-black bg-white flex flex-col h-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <div class="border-b-2 border-black p-2 bg-black text-white text-center font-black uppercase tracking-tighter">
-                {$name}
+        <div class="flex flex-col bg-white border-2 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+            
+            <div class="w-full aspect-square border-2 border-black bg-zinc-50 mb-4 flex items-center justify-center overflow-hidden">
+                <img src="{$image}" alt="{$name}" class="w-full h-full object-cover">
             </div>
             
-            <div class="aspect-video w-full overflow-hidden border-b border-black bg-gray-100">
-                <img src="{$image}" alt="' . $recipe->name . '" class="w-full h-full object-cover">
+            <div class="mb-4">
+                <h3 class="text-2xl font-black italic uppercase text-black leading-none mb-2">{$name}</h3>
+                <p class="font-mono uppercase tracking-tighter text-xs text-zinc-500 leading-relaxed">{$desc}</p>
             </div>
-
-            <div class="p-4 flex-grow text-sm leading-relaxed italic text-gray-700">
-                {$desc}
+            
+            <div class="mt-auto text-right border-t-2 border-black border-dotted pt-4">
+                <span class="text-3xl font-black italic text-[#E60012]">{$price}€</span>
             </div>
-
-            <div class="p-4 pt-0 text-right">
-                <span class="inline-block bg-yellow-300 border-2 border-black px-3 py-1 font-black text-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    {$price}€
-                </span>
-            </div>
-        </div>';
+            
+        </div>
         HTML;
     }
 
@@ -85,7 +92,7 @@ class RecipeRenderer
         }
 
         echo <<<HTML
-            <div id="recipe-row-{$id}" class="flex items-center gap-4 bg-white border border-black p-2 mb-2 hover:bg-gray-50 transition-colors">
+            <div id="recipe-row-{$id}" class="flex items-center gap-4 bg-white border border-black p-2 hover:bg-gray-50 transition-colors">
                 <img src="{$image}" class="w-12 h-12 object-cover border border-black flex-shrink-0">
 
                 <div class="flex-grow min-w-0">
@@ -258,31 +265,29 @@ class RecipeRenderer
 
     public static function renderUserOrderCard($recipe)
     {
-        // Préparation des données
         $id = (int) $recipe->id;
         $name = htmlspecialchars($recipe->name);
         $description = htmlspecialchars($recipe->description ?? '');
         $price = number_format((float) $recipe->price, 2, '.', '');
 
-        // Gestion de l'image
         $image = !empty($recipe->fileName)
             ? "images/recipeImages/" . $recipe->fileName
             : 'images/onigiri.png';
 
-        // Gestion du stock
         $stock = (int) ($recipe->stock ?? 0);
         $isAvailable = $stock > 0 && $recipe->available;
         $opacityClass = $isAvailable ? '' : 'opacity-50 grayscale pointer-events-none';
 
-        // Affichage
+        // Remplacement total des onclick par .js-open-recipe et .js-btn-qty
+        // Ajout de pointer-events-none sur les images et SVG
         echo <<<HTML
         <div class="flex flex-col bg-white border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-2 {$opacityClass}">
             
-            <div class="w-full aspect-square border-2 border-black bg-zinc-50 mb-4 flex items-center justify-center overflow-hidden cursor-pointer active:translate-y-1 transition-transform" onclick="openDrawer({$id})">
-                <img src="{$image}" alt="{$name}" class="w-full h-full object-cover">
+            <div class="js-open-recipe w-full aspect-square border-2 border-black bg-zinc-50 mb-4 flex items-center justify-center overflow-hidden cursor-pointer active:translate-y-1 transition-transform" data-id="{$id}">
+                <img src="{$image}" alt="{$name}" class="w-full h-full object-cover pointer-events-none">
             </div>
             
-            <div class="mb-4 cursor-pointer" onclick="openDrawer({$id})">
+            <div class="js-open-recipe mb-4 cursor-pointer" data-id="{$id}">
                 <h3 class="text-xl font-black italic uppercase text-black leading-none mb-1">{$name}</h3>
                 <p class="font-mono uppercase tracking-tighter text-[10px] text-zinc-500 line-clamp-2">{$description}</p>
             </div>
@@ -291,16 +296,16 @@ class RecipeRenderer
                 <span class="text-xl font-mono font-black text-black">{$price}€</span>
                 
                 <div class="flex items-center gap-3">
-                    <button onclick="changeQty({$id}, -1)" class="w-8 h-8 border-2 border-black bg-white flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform">
-                        <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button class="js-btn-qty w-8 h-8 border-2 border-black bg-white flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform" data-id="{$id}" data-delta="-1">
+                        <svg class="w-4 h-4 text-black pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"/>
                         </svg>
                     </button>
                     
-                    <span class="text-xl font-black font-mono italic text-black w-4 text-center" id="card-qty-{$id}">0</span>
+                    <span class="js-card-qty text-xl font-black font-mono italic text-black w-4 text-center" id="card-qty-{$id}" data-id="{$id}">0</span>
                     
-                    <button onclick="changeQty({$id}, 1)" class="w-8 h-8 border-2 border-black bg-[#E60012] flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button class="js-btn-qty w-8 h-8 border-2 border-black bg-[#E60012] flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-transform" data-id="{$id}" data-delta="1">
+                        <svg class="w-4 h-4 text-white pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/>
                         </svg>
                     </button>
@@ -310,7 +315,6 @@ class RecipeRenderer
         </div>
         HTML;
     }
-
 }
 
 ?>

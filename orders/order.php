@@ -206,6 +206,20 @@ class Order
             return null;
         }
     }
+
+    // Vérifie si l'utilisateur a déjà une commande archivée pour un événement donné
+    public static function hasUserArchivedOrderForEvent($dbh, $userId, $eventId)
+    {
+        try {
+            $query = "SELECT COUNT(*) FROM `orders` WHERE `userId` = ? AND `eventId` = ? AND `status` = 'archive'";
+            $sth = $dbh->prepare($query);
+            $sth->execute([$userId, $eventId]);
+            return $sth->fetchColumn() > 0; // Retourne true si une commande archivée existe
+        } catch (PDOException $e) {
+            error_log("Erreur hasUserArchivedOrderForEvent : " . $e->getMessage());
+            return false;
+        }
+    }
 }
 
 ?>
