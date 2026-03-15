@@ -32,7 +32,9 @@ class RecipeRenderer
     {
         $name = htmlspecialchars($recipe->name);
         $price = number_format($recipe->price, 2, ',', ' ');
-        $imagePath = "images/recipeImages/" . $recipe->fileName;
+        $image = !empty($recipe->fileName)
+            ? "images/recipeImages/" . $recipe->fileName
+            : 'images/onigiri.png';
         $desc = nl2br(htmlspecialchars($recipe->description));
 
         echo <<<HTML
@@ -42,7 +44,7 @@ class RecipeRenderer
             </div>
             
             <div class="aspect-video w-full overflow-hidden border-b border-black bg-gray-100">
-                <img src="{$imagePath}" alt="' . $recipe->name . '" class="w-full h-full object-cover">
+                <img src="{$image}" alt="' . $recipe->name . '" class="w-full h-full object-cover">
             </div>
 
             <div class="p-4 flex-grow text-sm leading-relaxed italic text-gray-700">
@@ -63,7 +65,9 @@ class RecipeRenderer
         $id = (int) $recipe->id;
         $name = htmlspecialchars($recipe->name);
         $price = number_format($recipe->price, 2, ',', ' ');
-        $image = "images/recipeImages/" . $recipe->fileName;
+        $image = !empty($recipe->fileName)
+            ? "images/recipeImages/" . $recipe->fileName
+            : 'images/onigiri.png';
 
         $shortDesc = (strlen($recipe->description) > 60)
             ? substr($recipe->description, 0, 60) . "..."
@@ -115,7 +119,7 @@ class RecipeRenderer
         $name = $isEdit ? htmlspecialchars($recipe->name) : '';
         $desc = $isEdit ? htmlspecialchars($recipe->description) : '';
         $price = $isEdit ? $recipe->price : '';
-        $img = $isEdit ? "images/recipeImages/" . $recipe->fileName : "images/recipeImages/default.jpg";
+        $img = $isEdit ? "images/recipeImages/" . $recipe->fileName : "images/onigiri.png";
 
         $title = $isEdit ? "Modifier : {$name}" : "Créer une nouvelle recette";
         $btnLabel = $isEdit ? "Sauverger les modifications" : "Créer la recette";

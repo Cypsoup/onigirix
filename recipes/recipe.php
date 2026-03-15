@@ -20,7 +20,7 @@ class Recipe
             $recipe = $sth->fetch();
             return $recipe;
         } catch (PDOException $e) {
-            error_log("Erreur dans la réception du name de la recette : " . $e->getMessage());
+            error_log("Erreur getRecipeById : " . $e->getMessage());
             return null;
         }
 
@@ -75,8 +75,7 @@ class Recipe
             $sth->execute(array($status));
             return $sth->fetchAll(PDO::FETCH_CLASS, 'Recipe');
         } catch (PDOException $e) {
-            error_log("Erreur dans la réception des recettes : " . $e->getMessage());
-            echo "Recettes indisponibles pour le moment";
+            error_log("Erreur getAllRecipes : " . $e->getMessage());
             return null;
         }
     }
@@ -100,7 +99,7 @@ class Recipe
             $sth = $dbh->prepare($query);
             return $sth->execute(array($id));
         } catch (PDOException $e) {
-            error_log("Erreur dans la supression d'une recette : " . $e->getMessage());
+            error_log("Erreur deleteRecipe : " . $e->getMessage());
             return false;
         }
     }
@@ -119,7 +118,7 @@ class Recipe
             $sth = $dbh->prepare($query);
             return $sth->execute($params);
         } catch (PDOException $e) {
-            error_log("Erreur dans la modification de la recette :" . $e->getMessage());
+            error_log("Erreur updateRecipe :" . $e->getMessage());
             return false;
         }
     }
@@ -131,7 +130,7 @@ class Recipe
             $sth = $dbh->prepare($query);
             return $sth->execute([$status, $id]);
         } catch (PDOException $e) {
-            error_log("Erreur lors de la mise à jour de la disponibilité : " . $e->getMessage());
+            error_log("Erreur updateAvailability : " . $e->getMessage());
             return false;
         }
     }
