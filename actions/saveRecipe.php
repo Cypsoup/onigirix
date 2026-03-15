@@ -22,7 +22,7 @@ if ($id == null) {
 }
 
 $isEdit = ($id == "new") ? false : true;
-$nom = $_POST['nom'] ?? '';
+$name = $_POST['name'] ?? '';
 $prix = $_POST['prix'] ?? 0;
 $description = $_POST['description'] ?? '';
 $fileName = null;
@@ -33,9 +33,9 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
 }
 
 if ($isEdit) {
-    $success = Recipe::updateRecipe($pdo, $id, $nom, $fileName, $description, $prix);
-} else if (!Recipe::getRecipeByName($pdo, $nom)) {
-    $success = Recipe::insertRecipe($pdo, $nom, $fileName, $description, $prix);
+    $success = Recipe::updateRecipe($pdo, $id, $name, $fileName, $description, $prix);
+} else if (!Recipe::getRecipeByName($pdo, $name)) {
+    $success = Recipe::insertRecipe($pdo, $name, $fileName, $description, $prix);
 }
 
 if ($success) {

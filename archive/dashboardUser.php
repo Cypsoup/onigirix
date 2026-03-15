@@ -1,9 +1,9 @@
 <?php
 session_start();
-require_once 'config/db.php';
-require_once 'utils/LayoutRenderer.php'; // Votre nouvelle classe unifiée !
-require_once 'orders/order.php';
-require_once 'orders/orderRenderer.php';
+require_once '../config/db.php';
+require_once '../utils/LayoutRenderer.php'; // Votre nouvelle classe unifiée !
+require_once '../orders/order.php';
+require_once '../orders/orderRenderer.php';
 
 $activePage = 'dashboardUser';
 

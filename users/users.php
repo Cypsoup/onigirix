@@ -43,7 +43,7 @@ class User
         try {
             if (self::getUserByTrigramme($dbh, $trigramme) == null) {
                 $trigramme = strtoupper($trigramme);
-                $hashedPassword = /*password_hash($password, PASSWORD_DEFAULT)*/ $password;
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
                 $sth = $dbh->prepare('INSERT INTO `users` (`trigramme`, `name`, `email`, `password`, `role`) VALUES(?,?,?,?,?)');
                 return $sth->execute(array($trigramme, $name, $email, $hashedPassword, $role));
             } else {
@@ -72,7 +72,8 @@ class User
     {
         try {
             $query = "UPDATE `users` SET `password`=? WHERE `id`=?";
-            $params = [$password, $id]; /*password_hash($password, PASSWORD_DEFAULT)*/
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $params = [$hashedPassword, $id];
             $sth = $dbh->prepare($query);
             return $sth->execute($params);
         } catch (PDOException $e) {
@@ -83,8 +84,8 @@ class User
 
     public static function testPassword($user, $password)
     {
-        //return password_verify(password: $mdp, hash: $user->password);
-        return ($password == $user->password);
+        return password_verify($password, $user->password);
+        //return ($password == $user->password);
     }
 }
 ?>

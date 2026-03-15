@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <?php
 // Démarrage de session
 session_name("SessionOnigirix");
@@ -17,16 +16,33 @@ require_once 'pages/pagesRenderer.php';
 
 
 // Debug : à enlever
-var_dump($_SESSION);
+// var_dump($_SESSION);
 
 // Récupération des accès et de la connexion utilisateur
 $access = $_SESSION['role'] ?? "user";
 $isLogged = $_SESSION['loggedIn'] ?? 0;
 
-// Récupération de la page en fonction des accès
-$askedPage = $_GET["page"] ?? "home";
+// Définition de la page par défaut si aucune page n'est demandée dans l'URL
+if (!isset($_GET["page"])) {
+    if (!$isLogged) {
+        $askedPage = "login"; // Visiteur non connecté -> direct à la connexion
+    } else {
+        // Utilisateur connecté -> direct sur son tableau de bord respectif
+        $askedPage = ($access === 'admin') ? "dashboardAdmin" : "dashboardUser";
+    }
+} else {
+    // Si l'utilisateur a cliqué sur un lien spécifique (ex: ?page=menu)
+    $askedPage = $_GET["page"];
+}
+
+// Vérification que la page existe
 $askedPage = PagesManager::checkPageExists($askedPage) ? $askedPage : "errorPage";
-$askedPage = PagesManager::checkAccess($askedPage, $access, $isLogged) ? $askedPage : "errorAccess";
+
+// Gestion des erreurs d'accès
+if (!PagesManager::checkAccess($askedPage, $access, $isLogged)) {
+    // Si un visiteur essaie de forcer l'accès à une page privée, on le renvoie vers login
+    $askedPage = (!$isLogged) ? "login" : "errorAccess"; 
+}
 
 // Récupération du titre de la page 
 $pageTitle = PagesManager::getPageTitle($askedPage);
@@ -40,5 +56,5 @@ PagesRenderer::generateMenu($askedPage, $access, $isLogged);
 require("pages/page_" . $askedPage . ".php");
 
 // HTML Footer
-PagesRenderer::generateHTMLFooter();
+PagesRenderer::generateHTMLFooter($access);
 ?>

@@ -29,11 +29,11 @@ if ($userTrigramme && $userTrigramme->id !== $id) {
 }
 
 // Récupération des données du formulaire
-$nom = $_POST['nom'] ?? '';
+$name = $_POST['name'] ?? '';
 $email = $_POST['email'] ?? '';
 
 // Mise à jour de la table
-$success = User::updateUserInfo($pdo, $id, $trigramme, $nom, $email);
+$success = User::updateUserInfo($pdo, $id, $trigramme, $name, $email);
 
 if ($success) {
     Flash::success("Informations mises à jour !");

@@ -108,8 +108,9 @@ class PagesRenderer
 
     public static function generateMenu($askedPage, $userAccess, $isLogged)
     {
-
-        if ($userAccess === 'admin') {
+        // SI C'EST UN ADMIN, ON OUVRE LA DIV FLEX POUR ALIGNER LE MENU ET LE CONTENU
+        if ($userAccess === 'admin' && $isLogged) {
+            echo '<div class="flex h-full w-full">'; 
             self::renderSidebar($askedPage, $userAccess, $isLogged);
         } else {
             self::renderBottomNav($askedPage, $userAccess, $isLogged);
@@ -191,8 +192,11 @@ class PagesRenderer
 
         echo '</nav>';
     }
-    public static function generateHTMLFooter()
+    public static function generateHTMLFooter($userAccess)
     {
+        if ($userAccess === 'admin') {
+            echo '</div>'; // ON FERME LA DIV FLEX DE L'ADMIN
+        }
         echo "</body></html>";
     }
 }
