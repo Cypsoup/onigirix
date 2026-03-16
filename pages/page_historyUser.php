@@ -34,14 +34,28 @@ $archivedOrders = Order::getUserRecentOrders($pdo, $userId, 50);
             </div>
         <?php else: ?>
             
-            <?php foreach ($archivedOrders as $order): 
-                // Formatage de la date et du prix
-                $date = new DateTime($order->created_at);
+            <?php 
+            $compteur = count($archivedOrders);
+            foreach ($archivedOrders as $order): 
+                // Formatage de la date 
+                $date = new DateTime($order->createdAt);
                 $formattedDate = $date->format('d/m/Y à H:i');
-                $total = number_format($order->montant_total ?? 0, 2, '.', '');
                 
-                // On récupère la phrase générée par SQL (ex: "2x Saumon, 1x Thon")
-                $details = $order->details_onigiris ?? "Détails non disponibles";
+                // Formatage du prix 
+                $total = number_format($order->totalAmount ?? 0, 2, '.', '');
+                
+                // Récupération dynamique du détail des onigiris
+                $itemsDetails = Order::getOrderItemsDetails($pdo, $order->id);
+                $itemsStringArray = [];
+                foreach ($itemsDetails as $item) {
+                    $itemsStringArray[] = $item['quantity'] . 'x ' . $item['name'];
+                }
+                $details = implode(', ', $itemsStringArray);
+                
+                // Sécurité au cas où
+                if (empty($details)) {
+                    $details = "Détails non disponibles";
+                }
             ?>
             
             <details class="group border-2 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden [&_summary::-webkit-details-marker]:hidden mb-4">
@@ -49,7 +63,7 @@ $archivedOrders = Order::getUserRecentOrders($pdo, $userId, 50);
                 <summary class="flex items-center justify-between p-5 cursor-pointer hover:bg-yellow-50 active:bg-yellow-100 transition-colors list-none outline-none">
                     <div class="flex flex-col">
                         <div class="flex items-center gap-3">
-                            <span class="font-black text-xl uppercase">COMMANDE #<?= $order->id ?></span>
+                            <span class="font-black text-xl uppercase">COMMANDE #<?= $compteur ?></span>
                         </div>
                         <span class="text-xs font-bold text-black/50 mt-1"><?= $formattedDate ?></span>
                     </div>
@@ -68,8 +82,8 @@ $archivedOrders = Order::getUserRecentOrders($pdo, $userId, 50);
                         <?= htmlspecialchars($details) ?>
                     </p>
                     
-                    <div class="mt-4 flex justify-end">
-                        <a href="index.php?page=commandeUser" class="text-[10px] font-black uppercase tracking-widest border-b-2 border-black pb-1 hover:text-[#E60012] hover:border-[#E60012] transition-colors flex items-center gap-2">
+                    <div class="mt-2 flex justify-end">
+                        <a href="index.php?page=commandeUser&reorder=<?= $order->id ?>" class="text-[10px] font-black uppercase tracking-widest border-b-2 border-black pb-1 hover:text-[#E60012] hover:border-[#E60012] transition-colors flex items-center gap-2">
                             <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Recommander
                         </a>
                     </div>
@@ -77,7 +91,10 @@ $archivedOrders = Order::getUserRecentOrders($pdo, $userId, 50);
                 
             </details>
             
-            <?php endforeach; ?>
+            <?php 
+            // On décrémente le compteur pour la commande suivante (qui est plus ancienne)
+            $compteur--;
+            endforeach; ?>
         <?php endif; ?>
         
     </div>

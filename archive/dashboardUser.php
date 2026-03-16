@@ -39,9 +39,6 @@ LayoutRenderer::generateHTMLHeader("Suivi - Onigirix");
             OrderRenderer::renderUserNoOrder();
         }
 
-        // Affichage des statistiques
-        OrderRenderer::renderUserStats($userStats);
-
         // Affichage de l'historique
         OrderRenderer::renderUserRecentOrders($pdo, $recentOrders);
         ?>

@@ -57,7 +57,7 @@ $userStats = Order::getUserStats($pdo, $userId);
     } else {
         if ($activeOrder) {
             // ÉTAT 2 : A commandé, en attente de préparation
-            OrderRenderer::renderUserActiveOrder($activeOrder);
+            OrderRenderer::renderUserActiveOrder($pdo, $activeOrder, $user);
         } elseif ($hasRetrievedOrder) {
             // ÉTAT 3 : A commandé et a déjà récupéré son plat
             OrderRenderer::renderUserOrderRetrieved();
@@ -67,8 +67,8 @@ $userStats = Order::getUserStats($pdo, $userId);
         }
     }
 
-    // Affichage des statistiques et de l'historique
-    OrderRenderer::renderUserStats($userStats);
+    // Affichage de l'historique
+    // OrderRenderer::renderUserStats($userStats);
     OrderRenderer::renderUserRecentOrders($pdo, $recentOrders);
     ?>
 </main>

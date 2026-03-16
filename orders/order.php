@@ -194,7 +194,7 @@ class Order
         try {
             // On fait une jointure entre order_items et recipes pour récupérer le nom de la recette
             $stmt = $pdo->prepare("
-            SELECT oi.quantity, r.name 
+            SELECT oi.quantity, r.name, r.price
             FROM `order_items` oi
             JOIN `recipes` r ON oi.recipeId = r.id
             WHERE oi.orderId = ?
@@ -218,6 +218,23 @@ class Order
         } catch (PDOException $e) {
             error_log("Erreur hasUserArchivedOrderForEvent : " . $e->getMessage());
             return false;
+        }
+    }
+
+    // Calcule la position d'une commande dans la file d'attente
+    public static function getPositionInQueue($dbh, $eventId, $createdAt) {
+        try {
+            $query = "SELECT COUNT(*) FROM `orders` 
+                      WHERE `eventId` = ? 
+                      AND `createdAt` <= ? 
+                      AND `status` IN ('attente', 'prepa')";
+            
+            $sth = $dbh->prepare($query);
+            $sth->execute([$eventId, $createdAt]);
+            return (int) $sth->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Erreur getPositionInQueue : " . $e->getMessage());
+            return 0;
         }
     }
 }

@@ -3,6 +3,7 @@
 require_once 'recipes/recipe.php';
 require_once 'recipes/recipeRenderer.php';
 require_once 'orders/cartRenderer.php';
+require_once 'orders/order.php';
 require_once 'users/users.php';
 require_once 'events/event.php';
 
@@ -17,6 +18,37 @@ if (!$activeEvent) {
 
 // Sinon, on sauvegarde l'ID de l'événement en session
 $_SESSION['eventId'] = $activeEvent->id;
+
+// --- GESTION DE LA RECOMMANDATION ---
+$reorderItemsJson = '[]'; // Par défaut, rien à recommander
+$reorderStatus = "error";
+
+if (isset($_GET['reorder'])) {
+    $reorderId = (int)$_GET['reorder'];
+    $oldItems = Order::getOrderItems($pdo, $reorderId); 
+    
+    $validItems = [];
+    if ($oldItems) {
+        foreach ($oldItems as $item) {
+            // On vérifie que la recette est toujours disponible (available == 1)
+            if (isset($item->available) && $item->available == 1) {
+                $validItems[] = [
+                    'id' => (int)$item->recipeId,
+                    'quantity' => (int)$item->quantity
+                ];
+            }
+        }
+    }
+    
+    // Si on a trouvé des produits valides, on les prépare pour le Javascript
+    if (!empty($validItems)) {
+        $reorderItemsJson = json_encode($validItems);
+        $reorderStatus = '"success"';
+    } else {
+        $reorderStatus = '"error"';
+    }
+}
+// ==========================================
 
 // 1. Récupération des recettes depuis la BDD
 $recipes = Recipe::getAllRecipes($pdo, 1) ?? [];
@@ -38,6 +70,10 @@ CartRenderer::renderValidationModal($trigramme);
 <script>
     window.ONIGIRIX_MENU = <?= $recipesJSON ?>;
     window.ONIGIRIX_USER = "<?= $trigramme ?>";
+
+    // On passe les produits à recommander au Javascript
+    window.REORDER_DATA = <?= $reorderItemsJson ?>;
+    window.REORDER_STATUS = <?= $reorderStatus ?>;
 </script>
 
 <script type="module" src="js/cart/cartApp.js"></script>

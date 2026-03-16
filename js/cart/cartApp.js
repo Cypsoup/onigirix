@@ -13,6 +13,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const cart = new Cart(menuItems, 4);
     let currentDrawerItemId = null; // Pour savoir quel onigiri est affiché en grand
 
+    // GESTION DE LA RECOMMANDATION
+    if (window.REORDER_DATA && window.REORDER_DATA.length > 0) {
+        
+        // 1. Vider le panier actuel pour éviter les doublons
+        cart.clearCart();
+
+        // 2. Ajouter chaque produit au panier
+        window.REORDER_DATA.forEach(item => {
+            cart.changeQuantity(item.id, item.quantity);
+        });
+
+        // 3. Rafraîchir l'affichage du panier
+        updateUI();
+
+        setTimeout(() => {
+            openValidation();
+            showToast('Votre ancienne commande est prête ! 🍙', 'success');
+        }, 300); // Petit délai pour que l'animation soit fluide
+    } else if (window.REORDER_STATUS === 'error') {
+        showToast("Certains onigiris ne sont plus disponibles aujourd'hui.", "error");
+    }
+
     // ==========================================
     // 2. ÉCOUTEURS D'ÉVÉNEMENTS
     // ==========================================

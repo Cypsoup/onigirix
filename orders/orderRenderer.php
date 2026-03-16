@@ -128,38 +128,118 @@ class OrderRenderer
     }
 
     // Affiche le bloc quand l'utilisateur a une commande en cours
-    public static function renderUserActiveOrder($order) {
-        // Logique pour la barre de progression selon le statut
-        $statusColors = [
-            'attente' => ['text' => 'EN ATTENTE', 'bar1' => 'bg-black', 'bar2' => 'bg-zinc-200', 'bar3' => 'bg-zinc-200'],
-            'prepa'   => ['text' => 'EN PRÉPARATION', 'bar1' => 'bg-black', 'bar2' => 'bg-black', 'bar3' => 'bg-zinc-200'],
-            'pret'    => ['text' => 'PRÊT !', 'bar1' => 'bg-[#E60012]', 'bar2' => 'bg-[#E60012]', 'bar3' => 'bg-[#E60012]']
-        ];
-        $display = $statusColors[$order->status] ?? $statusColors['attente'];
+    public static function renderUserActiveOrder($dbh, $order, $user) {
+        // Récupération des données dynamiques
+        $items = Order::getOrderItemsDetails($dbh, $order->id);
+        $position = Order::getPositionInQueue($dbh, $order->eventId, $order->createdAt);
+        $trigramme = strtoupper(htmlspecialchars($user->trigramme));
 
+        // Gestion des statuts et de l'affichage
+        $statusMap = [
+            'attente' => ['text' => 'EN ATTENTE', 'step' => 1],
+            'prepa'   => ['text' => 'EN PRÉPARATION', 'step' => 2],
+            'pret'    => ['text' => 'PRÊT !', 'step' => 3]
+        ];
+        $current = $statusMap[$order->status] ?? $statusMap['attente'];
+        $positionDisplay = ($order->status === 'pret') ? "GO!" : "#" . $position;
+
+        // PRÉPARATION DES COULEURS
+        // L'étape 1 (Horloge) est toujours active puisqu'on est au moins en "attente"
+        $c1 = 'opacity-100 text-black';
+        $b1 = 'bg-black';
+
+        // L'étape 2 (Toque) est noire à partir de l'étape 2 (prepa), sinon grise
+        $c2 = ($current['step'] >= 2) ? 'opacity-100 text-black' : 'text-zinc-300';
+        $b2 = ($current['step'] >= 2) ? 'bg-black' : 'bg-zinc-200';
+
+        // L'étape 3 (Check) est noire à partir de l'étape 3 (pret), sinon grise
+        $c3 = ($current['step'] >= 3) ? 'opacity-100 text-black' : 'text-zinc-300';
+        $b3 = ($current['step'] >= 3) ? 'bg-black' : 'bg-zinc-200';
+
+        // Rendu HTML
         echo <<<HTML
-        <section id="bloc-commande-en-cours" class="border-2 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative mb-10">
+        <section id="bloc-commande-en-cours" class="border-2 border-black bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative mb-10">
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-2">
                     <div class="w-3 h-3 bg-[#E60012] animate-pulse"></div>
-                    <span class="font-mono uppercase tracking-tighter text-sm font-bold">{$display['text']}</span>
+                    <span class="font-mono uppercase tracking-tighter text-sm font-bold">{$current['text']}</span>
                 </div>
-                <span class="font-mono uppercase tracking-tighter text-sm text-zinc-400">N°{$order->id}</span>
+                <span class="font-mono uppercase tracking-tighter text-sm text-zinc-400">{$trigramme}</span>
             </div>
 
-            <div class="flex justify-between mb-8 border-b-2 border-black border-dotted pb-6 px-2">
-                <div class="flex flex-col items-center gap-2"><div class="h-1 w-full {$display['bar1']}"></div></div>
-                <div class="flex flex-col items-center gap-2"><div class="h-1 w-full {$display['bar2']}"></div></div>
-                <div class="flex flex-col items-center gap-2"><div class="h-1 w-full {$display['bar3']}"></div></div>
+            <div class="flex justify-between mb-4 border-b-2 border-black border-dotted pb-6 px-2 gap-2">
+                <div class="flex flex-col items-center gap-2 flex-1 {$c1}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock" aria-hidden="true">
+                        <path d="M12 6v6l4 2"></path>
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <div class="h-1 w-full {$b1}"></div>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1 {$c2}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat" aria-hidden="true">
+                        <path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"></path>
+                        <path d="M6 17h12"></path>
+                    </svg>
+                    <div class="h-1 w-full {$b2}"></div>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1 {$c3}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                    <div class="h-1 w-full {$b3}"></div>
+                </div>
             </div>
 
-            <div class="absolute bottom-4 right-4 text-right">
-                <span class="font-mono uppercase tracking-tighter text-[10px] block text-zinc-400">TOTAL</span>
-                <span class="text-3xl font-black leading-none">{$order->totalAmount}€</span>
+            <ul class="space-y-2 mb-6">
+        HTML;
+
+        // Boucle sur les produits de la commande
+        foreach ($items as $item) {
+            $name = strtoupper(htmlspecialchars($item['name']));
+            $price = number_format($item['price'] * $item['quantity'], 2, '.', '');
+            echo <<<HTML
+                <li class="flex justify-between font-mono text-sm">
+                    <span>{$item['quantity']}X {$name}</span>
+                    <span class="font-bold">{$price}€</span>
+                </li>
+            HTML;
+        }
+
+        echo <<<HTML
+            </ul>
+
+            <div class="flex justify-between items-end mt-4">
+                
+                <div>
+        HTML;
+
+        // Le bouton ANNULER ne s'affiche que si la commande est en attente
+        if ($order->status === 'attente') {
+            echo <<<HTML
+                    <button id="btn-cancel-order" data-id="{$order->id}" class="border-2 border-black border-dotted px-4 py-2 text-xs font-bold flex items-center gap-2 hover:bg-zinc-50 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x" aria-hidden="true">
+                            <path d="M18 6 6 18"></path>
+                            <path d="m6 6 12 12"></path>
+                        </svg> 
+                        ANNULER
+                    </button>
+            HTML;
+        }
+
+        echo <<<HTML
+                </div>
+
+                <div class="text-right">
+                    <span class="font-mono uppercase tracking-tighter text-[10px] block text-zinc-400 mb-1">POSITION</span>
+                    <span class="text-5xl font-black leading-none">{$positionDisplay}</span>
+                </div>
+
             </div>
         </section>
         HTML;
     }
+
 
     // Affiche le bloc "C'est le moment de commander"
     public static function renderUserNoOrder() {
@@ -315,12 +395,12 @@ class OrderRenderer
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="font-mono uppercase tracking-tighter font-bold">{$total}€</span>
-                        <button class="w-10 h-10 border-2 border-black flex items-center justify-center bg-white active:bg-zinc-100 hover:bg-zinc-50" title="Recommander">
+                        <a href="index.php?page=commandeUser&reorder={$order->id}"class="w-10 h-10 border-2 border-black flex items-center justify-center bg-white active:bg-zinc-100 hover:bg-zinc-50" title="Recommander">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw" aria-hidden="true">
                                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                                 <path d="M3 3v5h5"></path>
                             </svg>
-                        </button>
+                        </a>
                     </div>
                 </div>
                 HTML;

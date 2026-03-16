@@ -1,4 +1,5 @@
 <?php
+session_name("SessionOnigirix");
 session_start();
 /**
  * API - SUBMIT ORDER

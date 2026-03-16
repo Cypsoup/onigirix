@@ -127,12 +127,10 @@ class CartRenderer
                     <i data-lucide="x" class="w-5 h-5 text-black pointer-events-none"></i>
                 </button>
 
-                <div class="text-center mb-8">
+                <div class="text-center mb-2">
                     <div class="w-16 h-16 mx-auto border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-zinc-50 flex items-center justify-center mb-6">
                         <i data-lucide="check" class="w-8 h-8 text-[#E60012]"></i>
                     </div>
-                    <h2 class="text-2xl font-black italic uppercase text-black mb-2">Finaliser</h2>
-                    <p class="font-mono uppercase tracking-tighter text-[10px] text-zinc-500">Vérifiez avant de valider</p>
                 </div>
 
                 <div class="mb-6">
