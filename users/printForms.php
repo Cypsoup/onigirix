@@ -125,52 +125,54 @@ function printEditUserForm($user)
 
     $action = "actions/processEditUser.php";
     echo <<<HTML
-    <header class="flex items-center justify-between p-6 border-b-2 border-black">
-            <div class="flex flex-col gap-1">
-                <h3 class="text-[10px] text-black/50">MODIFIEZ VOS INFORMATIONS</h3>
-                <h1 class="text-xl font-black italic text-black uppercase">VOS INFOS
-                </h1>
-            </div>
-            <div class="w-16 h-12 bg-white flex items-center justify-center">
-                <img src="images/logo.jpg" alt="Logo" class="object-cover w-full h-full">
-            </div>
-        </header>
-    <form action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white p-8 pb-24 space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="md:col-span-2">
-                <label class="block font-black uppercase text-xs mb-1">Nom</label>
-                <input type="text" name="name" value="{$name}" required 
-                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+    <div class="w-full">
+        <header class="flex items-center justify-between p-6 border-b-2 border-black">
+                <div class="flex flex-col gap-1">
+                    <h3 class="text-[10px] text-black/50">MODIFIEZ VOS INFORMATIONS</h3>
+                    <h1 class="text-xl font-black italic text-black uppercase">VOS INFOS
+                    </h1>
+                </div>
+                <div class="w-16 h-12 bg-white flex items-center justify-center">
+                    <img src="images/logo.jpg" alt="Logo" class="object-cover w-full h-full">
+                </div>
+            </header>
+        <form action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white p-8 pb-24 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block font-black uppercase text-xs mb-1">Nom</label>
+                    <input type="text" name="name" value="{$name}" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block font-black uppercase text-xs mb-1">Prénom</label>
+                    <input type="text" name="firstname" value="{$firstname}" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-black uppercase text-xs mb-1">Trigramme (Identifiant)</label>
+                    <input id="trigrammeInput" type="text" name="trigramme" maxlength="3" minlength="3" value="{$trigramme}" required 
+                        class="w-full border-2 border-black p-3 font-black text-2xl tracking-widest focus:bg-yellow-50 outline-none uppercase text-center">
+                    <p class="text-[10px] mt-1 font-bold italic">3 lettres exactement.</p>
+                </div>
+
+                <div>
+                    <label class="block font-black uppercase text-xs mb-1">Adresse Email</label>
+                    <input type="email" name="email" value="{$email}" required 
+                        class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+                </div>
             </div>
 
-            <div class="md:col-span-2">
-                <label class="block font-black uppercase text-xs mb-1">Prénom</label>
-                <input type="text" name="firstname" value="{$firstname}" required 
-                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
-            </div>
+            <input id="idInput" type="hidden" name="id" value="{$id}">
+            <input type="hidden" name="role" value="{$role}">
 
-            <div>
-                <label class="block font-black uppercase text-xs mb-1">Trigramme (Identifiant)</label>
-                <input id="trigrammeInput" type="text" name="trigramme" maxlength="3" minlength="3" value="{$trigramme}" required 
-                    class="w-full border-2 border-black p-3 font-black text-2xl tracking-widest focus:bg-yellow-50 outline-none uppercase text-center">
-                <p class="text-[10px] mt-1 font-bold italic">3 lettres exactement.</p>
-            </div>
-
-            <div>
-                <label class="block font-black uppercase text-xs mb-1">Adresse Email</label>
-                <input type="email" name="email" value="{$email}" required 
-                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
-            </div>
-        </div>
-
-        <input id="idInput" type="hidden" name="id" value="{$id}">
-        <input type="hidden" name="role" value="{$role}">
-
-        <button type="submit" class="w-full bg-black text-white font-black p-4 uppercase hover:bg-green-500 hover:text-black transition-all hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-3 text-lg group">
-            <i data-lucide="pencil" class="w-6 h-6 transition-transform group-hover:rotate-12"></i>
-            Valider les modifications
-        </button>
-    </form>
+            <button type="submit" class="w-full bg-black text-white font-black p-4 uppercase hover:bg-green-500 hover:text-black transition-all hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-3 text-lg group">
+                <i data-lucide="pencil" class="w-6 h-6 transition-transform group-hover:rotate-12"></i>
+                Valider les modifications
+            </button>
+        </form>
+    </div>
     
     HTML;
 }
@@ -182,43 +184,45 @@ function printEditPasswordForm($user)
 
     $action = "actions/processEditPassword.php";
     echo <<<HTML
-    <header class="flex items-center justify-between p-6 border-b-2 border-black">
-        <div class="flex flex-col gap-1">
-            <h3 class="text-[10px] text-black/50">SÉCURITÉ</h3>
-            <h1 class="text-xl font-black italic text-black uppercase">VOTRE MOT DE PASSE
-            </h1>
-        </div>
-        <div class="w-16 h-12 bg-white flex items-center justify-center">
-            <img src="images/logo.jpg" alt="Logo" class="object-cover w-full h-full">
-        </div>
-    </header>
+    <div class="w-full">
+        <header class="flex items-center justify-between p-6 border-b-2 border-black">
+            <div class="flex flex-col gap-1">
+                <h3 class="text-[10px] text-black/50">SÉCURITÉ</h3>
+                <h1 class="text-xl font-black italic text-black uppercase">VOTRE MOT DE PASSE
+                </h1>
+            </div>
+            <div class="w-16 h-12 bg-white flex items-center justify-center">
+                <img src="images/logo.jpg" alt="Logo" class="object-cover w-full h-full">
+            </div>
+        </header>
 
-    <form id="editUserPasswordForm" action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white p-8 pb-24 space-y-6">
-        <div>
-            <label class="block font-black uppercase text-xs mb-1">Ancien mot de passe</label>
-            <input type="password" name="oldPassword" id="oldPassword" placeholder="••••••••" required 
-                class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
-        </div>
+        <form id="editUserPasswordForm" action="{$action}" method="POST" enctype="multipart/form-data" class="bg-white p-8 pb-24 space-y-6">
+            <div>
+                <label class="block font-black uppercase text-xs mb-1">Ancien mot de passe</label>
+                <input type="password" name="oldPassword" id="oldPassword" placeholder="••••••••" required 
+                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+            </div>
 
-        <div>
-            <label class="block font-black uppercase text-xs mb-1">Nouveau mot de passe</label>
-            <input type="password" name="password" id="password" placeholder="••••••••" required 
-                class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
-        </div>
+            <div>
+                <label class="block font-black uppercase text-xs mb-1">Nouveau mot de passe</label>
+                <input type="password" name="password" id="password" placeholder="••••••••" required 
+                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+            </div>
 
-        <div>
-            <label class="block font-black uppercase text-xs mb-1">Validez le nouveau mot de passe</label>
-            <input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="••••••••" required 
-                class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
-        </div>
+            <div>
+                <label class="block font-black uppercase text-xs mb-1">Validez le nouveau mot de passe</label>
+                <input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="••••••••" required 
+                    class="w-full border-2 border-black p-3 font-bold focus:bg-yellow-50 outline-none">
+            </div>
 
-        <input id="idInput" type="hidden" name="id" value="{$id}">
+            <input id="idInput" type="hidden" name="id" value="{$id}">
 
-        <button type="submit" class="w-full bg-black text-white font-black p-4 uppercase hover:bg-green-500 hover:text-black transition-all hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-3 text-lg group">
-            <i data-lucide="unlock" class="w-6 h-6 transition-transform group-hover:rotate-12"></i>
-            Valider le mot de passe
-        </button>
-    </form>
+            <button type="submit" class="w-full bg-black text-white font-black p-4 uppercase hover:bg-green-500 hover:text-black transition-all hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none flex items-center justify-center gap-3 text-lg group">
+                <i data-lucide="unlock" class="w-6 h-6 transition-transform group-hover:rotate-12"></i>
+                Valider le mot de passe
+            </button>
+        </form>
+    </div>
     HTML;
 }
 
