@@ -22,7 +22,7 @@ if ($access == "admin") {
         </div>
     </header>
 
-    <main class="p-6 pb-28 min-h-screen bg-white">
+    <main class="p-6 pb-28 md:pb-6 bg-white">
 
         <?php if ($access == "admin"): ?>
             <?php RecipeRenderer::renderAddRecipeBtn(); ?>

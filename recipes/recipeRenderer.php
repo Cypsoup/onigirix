@@ -21,7 +21,6 @@ class RecipeRenderer
             // Garde ID pour injection depuis JS
             $idAttr = $listId ? 'id="' . $listId . '"' : '';
             echo '<div ' . $idAttr . ' class="flex flex-col gap-2">';
-            echo '<p class="text-center text-black/40 font-bold py-10 uppercase tracking-widest border-4 border-black border-dashed bg-zinc-50">Aucune recette pour le moment...</p>';
             echo '</div>';
             return;
         }
