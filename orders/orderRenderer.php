@@ -217,13 +217,16 @@ class OrderRenderer
         // Le bouton ANNULER ne s'affiche que si la commande est en attente
         if ($order->status === 'attente') {
             echo <<<HTML
-                    <button id="btn-cancel-order" data-id="{$order->id}" class="border-2 border-black border-dotted px-4 py-2 text-xs font-bold flex items-center gap-2 hover:bg-zinc-50 transition-colors">
+                <form action="actions/cancelOrder.php" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler votre commande ?');">
+                    <input type="hidden" name="order_id" value="{$order->id}">
+                    <button type="submit" class="border-2 border-black border-dotted px-4 py-2 text-xs font-bold flex items-center gap-2 hover:bg-[#E60012] hover:text-white hover:border-[#E60012] transition-colors cursor-pointer bg-transparent">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x" aria-hidden="true">
                             <path d="M18 6 6 18"></path>
                             <path d="m6 6 12 12"></path>
                         </svg> 
                         ANNULER
                     </button>
+                </form>
             HTML;
         }
 
