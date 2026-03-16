@@ -21,7 +21,7 @@ if (!$eventId) {
 // Récupération des commandes et des détails
 $query = "SELECT u.name, u.trigramme, o.totalAmount 
           FROM `orders` o 
-          JOIN `users` u ON u.id = o.userId;
+          JOIN `users` u ON u.id = o.userId
           WHERE o.eventId = ? ";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$eventId]);
