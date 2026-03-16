@@ -1,12 +1,33 @@
 <?php
-//
+
 // Importation des fichiers
 require_once 'orders/order.php';
 require_once 'orders/orderRenderer.php';
 require_once 'recipes/recipe.php';
 require_once 'recipes/recipeRenderer.php';
 require_once 'events/event.php';
+require_once 'events/eventRenderer.php';
 require_once 'utils/flash.php';
+
+// --- LOGIQUE DE TRAITEMENT DES ACTIONS ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
+    $id = $_POST['eventId'] ?? null;
+
+    switch ($action) {
+        case 'toggleEvent':
+            $event = Event::getEventById($pdo, $id);
+            $event->isOpen ? Event::closeEvent($pdo) : Event::openEvent($pdo, $id);
+            break;
+        case 'toggleOrder':
+            $event = Event::getEventById($pdo, $id);
+            $event->canOrder ? Event::closeOrder($pdo) : Event::openOrder($pdo);
+            break;
+    }
+    // Redirection pour éviter de renvoyer le formulaire au refresh
+    header("Location: ?page=dashboardAdmin");
+    exit;
+}
 
 // Configuration des commandes de la session
 $orderConfig = [
@@ -23,6 +44,7 @@ if (!$eventId) {
     header("Location: index.php?page=eventManager");
     exit;
 }
+$event = Event::getEventById($pdo, $eventId);
 
 // Récupération des commandes
 foreach ($orderConfig as $status => $config) {
@@ -120,11 +142,28 @@ $recipes = Recipe::getAllRecipes($pdo, 1);
                 class="w-full py-3 bg-zinc-800 text-white font-bold text-sm rounded flex items-center justify-center gap-2 hover:bg-black transition-colors">
                 <i data-lucide="plus-circle" class="w-4 h-4 mt-0.5"></i> AJOUTER COMMANDE
             </button>
-            <div class="flex gap-2">
-                <button class="flex-1 py-2 border border-black flex justify-center hover:bg-black group"><i
-                        data-lucide="pause" class="w-4 h-4 group-hover:text-white"></i></button>
-                <button class="flex-1 py-2 bg-black text-white flex justify-center hover:bg-[#E60012] group"><i
-                        data-lucide="power" class="w-4 h-4 group-hover:text-white"></i></button>
+            <div class="flex gap-3 w-full mt-4">
+                <form method="POST" class="flex-1">
+                    <input type="hidden" name="eventId" value="<?= $eventId ?>">
+                    <button name="action" value="toggleOrder"
+                        class="w-full py-3 bg-white border-2 border-black flex justify-center items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-black group active:shadow-none active:translate-x-0.5 active:translate-y-0.5 transition-all">
+                        <i data-lucide="pause" class="w-5 h-5 text-black group-hover:text-white"></i>
+                    </button>
+                </form>
+
+                <form method="POST" class="flex-1">
+                    <input type="hidden" name="eventId" value="<?= $eventId ?>">
+                    <button name="action" value="toggleEvent"
+                        class="w-full py-3 bg-black border-2 border-black flex justify-center items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#E60012] group active:shadow-none active:translate-x-0.5 active:translate-y-0.5 transition-all">
+                        <i data-lucide="power" class="w-5 h-5 text-white"></i>
+                    </button>
+                </form>
+
+            </div>
+            <div class="flex gap-2 justify-center">
+                <?php
+                EventRenderer::renderStatusBadge($event);
+                ?>
             </div>
         </div>
     </aside>
