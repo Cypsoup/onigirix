@@ -61,9 +61,11 @@ $userStats = Order::getUserStats($pdo, $userId);
         } elseif ($hasRetrievedOrder) {
             // ÉTAT 3 : A commandé et a déjà récupéré son plat
             OrderRenderer::renderUserOrderRetrieved();
-        } else {
+        } elseif ($activeEvent->canOrder) {
             // ÉTAT 4 : Ouvert, mais n'a pas encore commandé
             OrderRenderer::renderUserNoOrder();
+        } else { // ETAT 5: SERVICE EN PAUSE
+            OrderRenderer::renderServiceClosed();
         }
     }
 
