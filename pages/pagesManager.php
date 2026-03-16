@@ -9,7 +9,7 @@ class PagesManager
     private static $pagesList = [
         // PAGES PUBLIQUES
         ["name" => "dashboardUser", "title" => "Suivi - Onigirix", "access" => "user", "auth" => self::AUTH_LOGGED, "visibility" => true],
-        ["name" => "menu", "title" => "La carte", "access" => "user", "auth" => self::AUTH_GUEST, "visibility" => true],
+        ["name" => "menu", "title" => "La carte", "access" => "user", "auth" => self::AUTH_ANY, "visibility" => true],
         ["name" => "commandeUser", "title" => "Commander", "access" => "user", "auth" => self::AUTH_LOGGED, "visibility" => true],
         ["name" => "historyUser", "title" => "Historique", "access" => "user", "auth" => self::AUTH_LOGGED, "visibility" => true],
 

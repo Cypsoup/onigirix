@@ -58,5 +58,3 @@ foreach ($orders as $order) {
 
 fclose($output);
 exit;
-
-?>
