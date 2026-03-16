@@ -1,28 +1,28 @@
 <?php
-// On ouvre la session pour vérifier les droits
+// Ouverture de session
 if (session_status() === PHP_SESSION_NONE) {
+    session_name("SessionOnigirix");
     session_start();
 }
 
-// Sécurité : Seul un admin peut exporter
+// Vérification des accès
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit("Accès refusé");
 }
 
 require_once __DIR__ . '/../config/db.php';
 
-$eventId = $_GET['eventId'] ?? null;
+$eventId = $_GET['eventExportedId'] ?? null;
 
 if (!$eventId) {
     exit("ID d'événement manquant");
 }
 
-// 1. Récupération des commandes et des détails (ajuste les noms de colonnes selon ta BDD)
-$query = "SELECT o.id, o.trigramme, o.status, o.dateOrder, o.totalPrice 
-          FROM orders o 
-          WHERE o.eventId = ? 
-          ORDER BY o.dateOrder ASC";
-
+// Récupération des commandes et des détails
+$query = "SELECT u.name, u.trigramme, o.totalAmount 
+          FROM `orders` o 
+          JOIN `users` u ON u.id = o.userId;
+          WHERE o.eventId = ? ";
 $stmt = $pdo->prepare($query);
 $stmt->execute([$eventId]);
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -31,30 +31,29 @@ if (!$orders) {
     exit("Aucune commande trouvée pour cet événement.");
 }
 
-// 2. Configuration des headers pour le téléchargement
+// Configuration des headers
 $filename = "export_ventes_event_" . $eventId . "_" . date('Y-m-d') . ".csv";
 header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename=' . $filename);
 
-// 3. Création du fichier CSV
+// Création du fichier csv
 $output = fopen('php://output', 'w');
 
-// Entêtes du CSV (Bom pour Excel)
+// Entêtes du CSV
 fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
 // Ligne de titres
-fputcsv($output, ['ID Commande', 'Trigramme', 'Statut', 'Date', 'Total (€)'], ';');
+fputcsv($output, ['Nom', 'Trigramme', 'Total (€)'], ';');
 
 // Remplissage des données
 foreach ($orders as $order) {
     fputcsv($output, [
-        $order['id'],
+        $order['name'],
         $order['trigramme'],
-        $order['status'],
-        $order['dateOrder'],
-        number_format($order['totalPrice'], 2, ',', '')
+        number_format($order['totalAmount'], 2, ',', '')
     ], ';');
 }
 
 fclose($output);
+
 exit;
