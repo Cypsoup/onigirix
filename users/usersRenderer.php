@@ -11,6 +11,7 @@ class UserRenderer
             return null;
         }
         echo <<<HTML
+        <div class="w-full">
         <header class="flex items-center justify-between p-6 border-b-2 border-black">
             <div class="flex flex-col gap-1">
                 <h3 class="text-[10px] text-black/50">VOS INFORMATIONS</h3>
@@ -61,6 +62,7 @@ class UserRenderer
                 <i data-lucide="lock" class="w-6 h-6 transition-transform group-hover:rotate-12"></i>
                 Changer de mot de passe
             </a>
+        </div>
         </div>
         HTML;
     }
