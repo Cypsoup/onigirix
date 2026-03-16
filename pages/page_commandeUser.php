@@ -15,8 +15,12 @@ if (!$activeEvent) {
     exit;
 }
 
-// Sinon, on sauvegarde l'ID de l'événement en session
-$_SESSION['eventId'] = $activeEvent->id;
+// On vérifie que les commandes sont ouvertes
+if (!$activeEvent->canOrder) {
+    Flash::error("Impossible de commander pour cette session !");
+    header("Location: index.php?page=dashboardUser");
+    exit;
+}
 
 // 1. Récupération des recettes depuis la BDD
 $recipes = Recipe::getAllRecipes($pdo, 1) ?? [];
