@@ -90,6 +90,7 @@ class Event
             error_log("Erreur closeEvent : il n'existe aucun event ouvert !");
             return false;
         }
+        self::closeOrder($dbh);
         try {
             $query = "UPDATE `events` SET `isOpen` = 0 WHERE `id` = ?";
             $sth = $dbh->prepare($query);

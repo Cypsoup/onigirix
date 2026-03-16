@@ -5,10 +5,11 @@ class EventRenderer
     public static function renderStatusBadge($event)
     {
         if (!$event->isOpen)
-            return '<span class="bg-zinc-200 text-zinc-600 px-2 py-1 text-[10px] font-black border border-black uppercase">Fermé</span>';
-        if ($event->canOrder)
-            return '<span class="bg-green-400 text-black px-2 py-1 text-[10px] font-black border border-black uppercase">Commandes Ouvertes</span>';
-        return '<span class="bg-orange-400 text-black px-2 py-1 text-[10px] font-black border border-black uppercase">Service Ouvert (Attente)</span>';
+            echo '<span class="bg-zinc-200 text-zinc-600 px-2 py-1 text-[10px] font-black border border-black uppercase">Fermé</span>';
+        else if ($event->canOrder)
+            echo '<span class="bg-green-400 text-black px-2 py-1 text-[10px] font-black border border-black uppercase">Commandes Ouvertes</span>';
+        else
+            echo '<span class="bg-orange-400 text-black px-2 py-1 text-[10px] font-black border border-black uppercase">Service en pause</span>';
     }
 
     public static function renderEventManagerCard($event)

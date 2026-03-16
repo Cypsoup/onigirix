@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const orderForm = document.getElementById("orderForm");
   if (orderForm) {
     orderForm.addEventListener("submit", function (e) {
-      e.preventDefault(); 
+      e.preventDefault();
 
       const existingError = document.getElementById("error-msg");
       if (existingError) existingError.remove();
@@ -48,13 +48,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (total <= 0 || total > 4) {
         const errorDiv = document.createElement("div");
         errorDiv.id = "error-msg";
-        errorDiv.className = "italic mt-2 text-[11px] text-[#E60012] font-bold text-center uppercase tracking-wider";
-        errorDiv.innerText = total <= 0
+        errorDiv.className =
+          "italic mt-2 text-[11px] text-[#E60012] font-bold text-center uppercase tracking-wider";
+        errorDiv.innerText =
+          total <= 0
             ? "Ton panier est vide !"
-            : "Maximum 4 onigiris par personne (Tu en as sélectionné " + total + ")";
+            : "Maximum 4 onigiris par personne (Tu en as sélectionné " +
+              total +
+              ")";
 
         this.querySelector('button[type="submit"]').after(errorDiv);
-        return; 
+        return;
       }
 
       const formData = new FormData(this);
@@ -83,9 +87,14 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            window.location.reload(); 
+            window.location.reload();
           } else {
-            alert("Erreur : " + (data.error || data.message || "Erreur technique côté serveur."));
+            alert(
+              "Erreur : " +
+                (data.error ||
+                  data.message ||
+                  "Erreur technique côté serveur."),
+            );
           }
         })
         .catch((err) => console.error("Erreur technique :", err));

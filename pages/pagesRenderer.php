@@ -33,16 +33,6 @@ class PagesRenderer
             'icon' => 'layout-dashboard',
             'svgPath' => '<rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect>'
         ],
-        'inventory' => [
-            'label' => 'INVENTAIRE',
-            'icon' => 'package',
-            'svgPath' => '<path d="M16.5 9.4 7.5 4.21"></path><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.29 7 12 12 20.71 7"></polyline><line x1="12" y1="22" x2="12" y2="12"></line>'
-        ],
-        'history' => [
-            'label' => 'HISTORIQUE',
-            'icon' => 'history',
-            'svgPath' => '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path>'
-        ],
 
         // PAGES DE CONNEXION
         'login' => [

@@ -1,5 +1,4 @@
 import { showToast } from "./utils.js";
-import { handleRecipeStatus } from "./recipe.js";
 import {
   validatePasswordInput,
   validatePasswordSubmit,
@@ -11,6 +10,7 @@ import {
   toggleAddOrderPanel,
   updateOrderStatus,
 } from "./orderHandler.js";
+import { handleRecipeStatus } from "./recipe.js";
 
 export function initEventListeners() {
   document.addEventListener("click", (event) => {
@@ -125,9 +125,11 @@ export function initAddOrderPanelBtnListener() {
   const toggleCloseBtn = document.getElementById("add-order-panel-close-btn");
 
   if (toggleOpenBtn) {
-    toggleOpenBtn.addEventListener("click", () => toggleAddOrderPanel('open'));
+    toggleOpenBtn.addEventListener("click", () => toggleAddOrderPanel("open"));
   }
   if (toggleCloseBtn) {
-    toggleCloseBtn.addEventListener("click", () => toggleAddOrderPanel('close'));
+    toggleCloseBtn.addEventListener("click", () =>
+      toggleAddOrderPanel("close"),
+    );
   }
 }
