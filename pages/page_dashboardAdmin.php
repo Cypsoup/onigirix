@@ -121,10 +121,10 @@ $recipes = Recipe::getAllRecipes($pdo, 1);
                 <i data-lucide="plus-circle" class="w-4 h-4 mt-0.5"></i> AJOUTER COMMANDE
             </button>
             <div class="flex gap-2">
-                <button class="flex-1 py-2 border border-black flex justify-center hover:bg-gray-100"><i
-                        data-lucide="pause" class="w-4 h-4"></i></button>
-                <button class="flex-1 py-2 bg-black text-white flex justify-center hover:bg-zinc-800"><i
-                        data-lucide="power" class="w-4 h-4"></i></button>
+                <button class="flex-1 py-2 border border-black flex justify-center hover:bg-black group"><i
+                        data-lucide="pause" class="w-4 h-4 group-hover:text-white"></i></button>
+                <button class="flex-1 py-2 bg-black text-white flex justify-center hover:bg-[#E60012] group"><i
+                        data-lucide="power" class="w-4 h-4 group-hover:text-white"></i></button>
             </div>
         </div>
     </aside>
