@@ -23,27 +23,40 @@ if (!$activeEvent->canOrder) {
     exit;
 }
 
+// Récupération des infos de l'utilisateur
+$userId = $_SESSION['userId'] ?? null;
+$user = User::getUserById($pdo, $userId);
+$trigramme = $user ? htmlspecialchars($user->trigramme) : 'ABC';
+
+// On vérifie qu'il n'y a pas une autre commande au même nom
+$activeOrder = Order::getUserActiveOrder($pdo, $userId, $activeEvent->id);
+if ($activeOrder) {
+    Flash::error("Une commande à la fois !");
+    header("Location: index.php?page=dashboardUser");
+    exit;
+}
+
 // --- GESTION DE LA RECOMMANDATION ---
 $reorderItemsJson = '[]'; // Par défaut, rien à recommander
 $reorderStatus = "error";
 
 if (isset($_GET['reorder'])) {
-    $reorderId = (int)$_GET['reorder'];
-    $oldItems = Order::getOrderItems($pdo, $reorderId); 
-    
+    $reorderId = (int) $_GET['reorder'];
+    $oldItems = Order::getOrderItems($pdo, $reorderId);
+
     $validItems = [];
     if ($oldItems) {
         foreach ($oldItems as $item) {
             // On vérifie que la recette est toujours disponible (available == 1)
             if (isset($item->available) && $item->available == 1) {
                 $validItems[] = [
-                    'id' => (int)$item->recipeId,
-                    'quantity' => (int)$item->quantity
+                    'id' => (int) $item->recipeId,
+                    'quantity' => (int) $item->quantity
                 ];
             }
         }
     }
-    
+
     // Si on a trouvé des produits valides, on les prépare pour le Javascript
     if (!empty($validItems)) {
         $reorderItemsJson = json_encode($validItems);
@@ -58,12 +71,7 @@ if (isset($_GET['reorder'])) {
 $recipes = Recipe::getAllRecipes($pdo, 1) ?? [];
 $recipesJSON = json_encode($recipes); // On prépare le JSON pour le Javascript
 
-// 2. Récupération des infos de l'utilisateur
-$userId = $_SESSION['userId'] ?? null;
-$user = User::getUserById($pdo, $userId);
-$trigramme = $user ? htmlspecialchars($user->trigramme) : 'ABC';
-
-// 3. Affichage de la page via le CartRenderer
+// 2. Affichage de la page via le CartRenderer
 CartRenderer::renderHeader();
 CartRenderer::renderMenu($recipes);
 CartRenderer::renderDrawer();

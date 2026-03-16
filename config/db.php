@@ -1,7 +1,7 @@
 <?php
 
 $host = 'localhost';
-$dbname = 'onigirix_dev';
+$dbname = 'onigirix2';
 $user = 'root';
 $password = '';
 
