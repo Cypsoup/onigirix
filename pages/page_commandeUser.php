@@ -77,7 +77,6 @@ CartRenderer::renderValidationModal($trigramme);
 
     // On passe les produits à recommander au Javascript
     window.REORDER_DATA = <?= $reorderItemsJson ?>;
-    window.REORDER_STATUS = <?= $reorderStatus ?>;
 </script>
 
 <script type="module" src="js/cart/cartApp.js"></script>
