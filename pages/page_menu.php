@@ -53,26 +53,27 @@ if ($access == "admin") {
 </header>
 
 <main class="p-6 pb-28 min-h-screen bg-white">
-    
+
     <?php if ($access == "admin"): ?>
         <?php RecipeRenderer::renderAddRecipeBtn(); ?>
     <?php endif; ?>
 
     <div class="mb-12">
         <h2 class="text-2xl font-black italic uppercase mb-6 flex items-center gap-3">
-            <span class="w-4 h-4 bg-[#E60012] block border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></span> 
+            <span
+                class="w-4 h-4 bg-[#E60012] block border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></span>
             DISPONIBLES
         </h2>
-        <?php RecipeRenderer::displayList($availableRecipes, $access); ?>
+        <?php RecipeRenderer::displayList($availableRecipes, $access, "list-available"); ?>
     </div>
 
     <?php if ($access == "admin"): ?>
         <div class="mb-12 opacity-60 grayscale transition-all hover:opacity-100 hover:grayscale-0">
             <h2 class="text-xl font-black italic uppercase mb-6 text-black flex items-center gap-3">
-                <span class="w-4 h-4 bg-black block border-2 border-black"></span> 
+                <span class="w-4 h-4 bg-black block border-2 border-black"></span>
                 ARCHIVÉES
             </h2>
-            <?php RecipeRenderer::displayList($packedRecipes, $access); ?>
+            <?php RecipeRenderer::displayList($packedRecipes, $access, "list-archived"); ?>
         </div>
     <?php endif; ?>
 

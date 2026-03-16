@@ -10,6 +10,7 @@ import {
   toggleAddOrderPanel,
   updateOrderStatus,
 } from "./orderHandler.js";
+import { handleRecipeStatus } from "./recipe.js";
 
 export function initEventListeners() {
   document.addEventListener("click", (event) => {

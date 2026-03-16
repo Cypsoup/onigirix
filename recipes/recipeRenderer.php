@@ -15,20 +15,25 @@ class RecipeRenderer
         }
     }
 
-    public static function displayList($recipes, $access)
+    public static function displayList($recipes, $access, $listId = null)
     {
         if (!is_array($recipes) || empty($recipes)) {
+            // Garde ID pour injection depuis JS
+            $idAttr = $listId ? 'id="' . $listId . '"' : '';
+            echo '<div ' . $idAttr . ' class="flex flex-col gap-2">';
             echo '<p class="text-center text-black/40 font-bold py-10 uppercase tracking-widest border-4 border-black border-dashed bg-zinc-50">Aucune recette pour le moment...</p>';
+            echo '</div>';
             return;
         }
 
-        // Si admin : une liste simple (colonne)
-        // Si user  : une grille moderne (2 colonnes sur tablette/desktop)
+        // Version Admin / User : Ordi / Mobile
         $containerClass = ($access === "admin")
             ? "flex flex-col gap-2"
             : "flex flex-col gap-6 sm:grid sm:grid-cols-2 lg:grid lg:grid-cols-3";
 
-        echo '<div class="' . $containerClass . '">';
+        // On place l'ID directement sur le conteneur Flex/Grid
+        $idAttr = $listId ? 'id="' . $listId . '"' : '';
+        echo '<div ' . $idAttr . ' class="' . $containerClass . '">';
         foreach ($recipes as $recipe) {
             self::displayRecipe($recipe, $access);
         }
