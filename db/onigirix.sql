@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 16 mars 2026 à 04:00
+-- Généré le : lun. 16 mars 2026 à 04:55
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -32,7 +32,7 @@ CREATE TABLE `events` (
   `name` varchar(255) NOT NULL,
   `isOpen` tinyint(1) DEFAULT 0,
   `canOrder` tinyint(1) DEFAULT 0,
-  `dateEvent` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `dateEvent` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -40,9 +40,9 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `name`, `isOpen`, `canOrder`, `dateEvent`) VALUES
-(1, 'Vente Inauguration', 0, 0, '2026-03-16 02:19:32'),
-(2, 'Vente de Printemps', 0, 0, '2026-03-16 02:19:32'),
-(3, 'Service de Midi', 1, 0, '2026-03-16 02:55:12');
+(1, 'Vente de Test 1', 0, 0, '2026-03-16 03:50:57'),
+(2, 'Vente de Test 2', 0, 0, '2026-03-16 03:50:57'),
+(3, 'Service Actif', 1, 1, '2026-03-16 03:50:57');
 
 -- --------------------------------------------------------
 
@@ -64,29 +64,26 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `userId`, `eventId`, `status`, `totalAmount`, `createdAt`) VALUES
-(1, 2, 1, 'archive', 11.50, '2026-03-16 02:19:33'),
-(2, 3, 1, 'archive', 7.00, '2026-03-16 02:19:33'),
-(3, 4, 1, 'archive', 15.00, '2026-03-16 02:19:33'),
-(4, 5, 1, 'archive', 4.50, '2026-03-16 02:19:33'),
-(5, 2, 1, 'archive', 8.00, '2026-03-16 02:19:33'),
-(6, 3, 1, 'archive', 12.00, '2026-03-16 02:19:33'),
-(7, 4, 1, 'archive', 3.50, '2026-03-16 02:19:33'),
-(8, 5, 1, 'archive', 9.00, '2026-03-16 02:19:33'),
-(9, 2, 2, 'pret', 13.50, '2026-03-16 02:19:33'),
-(10, 3, 2, 'pret', 4.00, '2026-03-16 02:19:33'),
-(11, 4, 2, 'archive', 10.00, '2026-03-16 02:19:33'),
-(12, 5, 2, 'archive', 7.00, '2026-03-16 02:19:33'),
-(13, 2, 2, 'pret', 5.00, '2026-03-16 02:19:33'),
-(14, 3, 2, 'pret', 8.50, '2026-03-16 02:19:33'),
-(15, 4, 2, 'archive', 12.00, '2026-03-16 02:19:33'),
-(16, 5, 2, 'archive', 3.50, '2026-03-16 02:19:33'),
-(17, 2, 3, 'prepa', 12.00, '2026-03-16 02:19:33'),
-(18, 3, 3, 'attente', 8.00, '2026-03-16 02:19:33'),
-(19, 4, 3, 'prepa', 15.00, '2026-03-16 02:19:33'),
-(20, 5, 3, 'attente', 4.50, '2026-03-16 02:19:33'),
-(21, 2, 3, 'attente', 9.00, '2026-03-16 02:19:33'),
-(22, 3, 3, 'prepa', 3.50, '2026-03-16 02:19:33'),
-(23, 4, 3, 'attente', 10.00, '2026-03-16 02:19:33');
+(1, 1, 3, 'attente', 3.50, '2026-03-16 03:50:58'),
+(2, 2, 3, 'attente', 4.50, '2026-03-16 03:50:58'),
+(3, 3, 3, 'prepa', 7.00, '2026-03-16 03:50:58'),
+(4, 4, 3, 'pret', 8.00, '2026-03-16 03:50:58'),
+(5, 5, 3, 'archive', 5.00, '2026-03-16 03:50:58'),
+(6, 6, 1, 'archive', 3.50, '2026-03-16 03:50:58'),
+(7, 7, 1, 'archive', 4.50, '2026-03-16 03:50:58'),
+(8, 8, 1, 'archive', 4.00, '2026-03-16 03:50:58'),
+(9, 9, 2, 'archive', 3.50, '2026-03-16 03:50:58'),
+(10, 10, 2, 'archive', 5.00, '2026-03-16 03:50:58'),
+(11, 11, 3, 'attente', 3.50, '2026-03-16 03:50:58'),
+(12, 12, 3, 'prepa', 4.50, '2026-03-16 03:50:58'),
+(13, 13, 3, 'pret', 4.00, '2026-03-16 03:50:58'),
+(14, 14, 3, 'archive', 3.50, '2026-03-16 03:50:58'),
+(15, 15, 3, 'attente', 5.00, '2026-03-16 03:50:58'),
+(16, 16, 1, 'archive', 3.50, '2026-03-16 03:50:58'),
+(17, 17, 1, 'archive', 4.50, '2026-03-16 03:50:58'),
+(18, 18, 2, 'archive', 4.00, '2026-03-16 03:50:58'),
+(19, 19, 2, 'archive', 3.50, '2026-03-16 03:50:58'),
+(20, 20, 3, 'prepa', 5.00, '2026-03-16 03:50:58');
 
 -- --------------------------------------------------------
 
@@ -106,33 +103,26 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`id`, `orderId`, `recipeId`, `quantity`) VALUES
-(1, 1, 1, 2),
-(2, 1, 2, 1),
-(3, 2, 3, 1),
-(4, 2, 4, 1),
-(5, 3, 5, 3),
-(6, 4, 2, 1),
-(7, 5, 3, 2),
-(8, 6, 3, 3),
-(9, 7, 1, 1),
-(10, 8, 2, 2),
-(11, 9, 1, 1),
-(12, 9, 5, 2),
-(13, 10, 3, 1),
-(14, 11, 5, 2),
-(15, 12, 1, 2),
-(16, 13, 5, 1),
-(17, 14, 2, 1),
-(18, 14, 4, 1),
-(19, 15, 3, 3),
-(20, 16, 1, 1),
-(21, 17, 3, 3),
-(22, 18, 3, 2),
-(23, 19, 5, 3),
-(24, 20, 2, 1),
-(25, 21, 2, 2),
-(26, 22, 4, 1),
-(27, 23, 5, 2);
+(1, 1, 5, 1),
+(2, 2, 4, 1),
+(3, 3, 3, 1),
+(4, 4, 5, 1),
+(5, 5, 3, 1),
+(6, 6, 1, 1),
+(7, 7, 1, 1),
+(8, 8, 3, 1),
+(9, 9, 4, 1),
+(10, 10, 2, 1),
+(11, 11, 1, 1),
+(12, 12, 1, 1),
+(13, 13, 2, 1),
+(14, 14, 4, 1),
+(15, 15, 3, 1),
+(16, 16, 2, 1),
+(17, 17, 5, 1),
+(18, 18, 4, 1),
+(19, 19, 4, 1),
+(20, 20, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -155,11 +145,11 @@ CREATE TABLE `recipes` (
 --
 
 INSERT INTO `recipes` (`id`, `name`, `fileName`, `description`, `price`, `stock`, `available`) VALUES
-(1, 'Thon Mayo', '1.png', 'Thon frais, mayonnaise japonaise, oignons verts', 3.50, 50, 1),
-(2, 'Boeuf Gyudon', '2.png', 'Fines tranches de boeuf marinées au soja et gingembre', 4.50, 30, 1),
-(3, 'Poulet Teriyaki', '3.png', 'Poulet grillé, sauce teriyaki maison, sésame', 4.00, 40, 1),
-(4, 'Aubergine Miso', '4.png', 'Aubergines fondantes glacées au miso (Végétarien)', 3.50, 25, 1),
-(5, 'Delamama', '5.png', 'Recette secrète épicée de la mama', 5.00, 15, 0);
+(1, 'Thon Mayo', '1.png', 'Thon frais, mayonnaise japonaise', 3.50, 100, 1),
+(2, 'Boeuf Gyudon', '2.png', 'Boeuf mariné au soja', 4.50, 100, 1),
+(3, 'Poulet Teriyaki', '3.png', 'Poulet grillé sauce soja sucrée', 4.00, 100, 1),
+(4, 'Aubergine Miso', '4.png', 'Aubergines glacées au miso', 3.50, 100, 1),
+(5, 'Delamama', '5.png', 'Recette épicée spéciale', 5.00, 100, 1);
 
 -- --------------------------------------------------------
 
@@ -182,11 +172,26 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `trigramme`, `name`, `firstname`, `email`, `password`, `role`) VALUES
-(1, 'ALI', 'Admin', 'Alice', 'alice@onigirix.fr', '$2y$10$qIUvs.6Yt3CWcQrFqAKDDe3wo0GDUy2LsubkvRRXROgR3TJ8jEcqu', 'admin'),
-(2, 'BOB', 'User', 'Bob', 'bob@polytechnique.edu', '$2y$10$6geG8fp1zxtNS93XXw.gKOdUB/PMdKh/r9LQ2c.hL7wxRkodqmCdi', 'user'),
-(3, 'CHA', 'Charles', 'Charlie', 'charlie@gmail.com', '$2y$10$uYRVHEB/4lR9zy7ISDKlYOggHi0xu1dS3UYaIZX33EI7Yk0NQFdPW', 'user'),
-(4, 'DAV', 'Davis', 'David', 'david@gmail.com', '$2y$10$qLL5o42x3KZ4uiVttUmGH.EniPIhZVQdA4kiwkJ28jilEfYBUjAdO', 'user'),
-(5, 'EVE', 'Everly', 'Eve', 'eve@gmail.com', '$2y$10$I4Db/umznkoMJkqPbjqXgOc.78pd4.yt7T5g1Rav2PgNZRCC7RgKK', 'user');
+(1, 'ALI', 'Admin', 'Alice', 'alice@onigirix.fr', '$2y$10$FDuXsbljVi492QTNM4HZfO7/HQKytIbj.WiacXNrhfm2u7CT1VHla', 'admin'),
+(2, 'BOB', 'User', 'Bob', 'bob@polytechnique.edu', '$2y$10$7osK5zsXR5Uanxpcz8H7duMf/t5ll6qB9yU2Saj77Rsd/kuL3dz32', 'user'),
+(3, 'CHA', 'Charles', 'Charlie', 'charlie@gmail.com', '$2y$10$hash_charlie', 'user'),
+(4, 'DAV', 'Davis', 'David', 'david@gmail.com', '$2y$10$hash_david', 'user'),
+(5, 'EVE', 'Everly', 'Eve', 'eve@gmail.com', '$2y$10$hash_eve', 'user'),
+(6, 'FAB', 'Fabrice', 'Dupont', 'fab@test.fr', '$2y$10$hash', 'user'),
+(7, 'GAB', 'Gabriel', 'Martin', 'gab@test.fr', '$2y$10$hash', 'user'),
+(8, 'HEL', 'Helene', 'Petit', 'hel@test.fr', '$2y$10$hash', 'user'),
+(9, 'IDA', 'Ida', 'Moreau', 'ida@test.fr', '$2y$10$hash', 'user'),
+(10, 'JUL', 'Jules', 'Lefebvre', 'jul@test.fr', '$2y$10$hash', 'user'),
+(11, 'KEV', 'Kevin', 'Garcia', 'kev@test.fr', '$2y$10$hash', 'user'),
+(12, 'LEO', 'Leo', 'Roux', 'leo@test.fr', '$2y$10$hash', 'user'),
+(13, 'MIA', 'Mia', 'Legrand', 'mia@test.fr', '$2y$10$hash', 'user'),
+(14, 'NOA', 'Noa', 'Garnier', 'noa@test.fr', '$2y$10$hash', 'user'),
+(15, 'OLI', 'Olive', 'Faure', 'oli@test.fr', '$2y$10$hash', 'user'),
+(16, 'PIA', 'Pia', 'Rousseau', 'pia@test.fr', '$2y$10$hash', 'user'),
+(17, 'QUY', 'Quy', 'Blanc', 'quy@test.fr', '$2y$10$hash', 'user'),
+(18, 'REM', 'Remi', 'Guerin', 'rem@test.fr', '$2y$10$hash', 'user'),
+(19, 'SAM', 'Sam', 'Muller', 'sam@test.fr', '$2y$10$hash', 'user'),
+(20, 'TOM', 'Tom', 'Lambert', 'tom@test.fr', '$2y$10$hash', 'user');
 
 --
 -- Index pour les tables déchargées
@@ -237,13 +242,13 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT pour la table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT pour la table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT pour la table `recipes`
@@ -255,7 +260,7 @@ ALTER TABLE `recipes`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
