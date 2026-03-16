@@ -155,8 +155,18 @@ class RecipeRenderer
                             <input type="number" step="0.01" name="price" value="{$price}" class="w-full border-2 border-black p-2 font-bold focus:bg-yellow-50 outline-none">
                         </div>
                         <div>
-                            <label class="block font-black uppercase text-xs mb-1">Photo actuelle</label>
-                            <img src="{$img}" class="h-12 w-12 border border-black object-cover">
+                            <label class="block font-black uppercase text-xs mb-1">Photo du produit</label>
+                            <div class="flex items-center gap-3">
+                                <?php if ($img): ?>
+                                    <div class="h-12 w-12 border-2 border-black bg-zinc-100 flex-shrink-0">
+                                        <img src="{$img}" class="h-full w-full object-cover">
+                                    </div>
+                                <?php endif; ?>
+                                <input type="file" name="image" accept="image/*" 
+                                    class="block w-full text-xs text-zinc-500 font-bold border-2 border-black p-2 cursor-pointer bg-white 
+                                        file:mr-4 file:py-1 file:px-3 file:border-0 file:text-[10px] file:font-black file:uppercase 
+                                        file:bg-black file:text-white hover:file:bg-[#E60012] file:cursor-pointer transition-all">
+                            </div>
                         </div>
                     </div>
 
