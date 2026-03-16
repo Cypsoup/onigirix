@@ -3,7 +3,7 @@ function printLoginForm()
 {
     $action = "actions/processLogin.php";
     echo <<<HTML
-        <div class="max-w-md mx-auto">
+        <div class="max-w-md mx-auto mt-10 px-6">
             <form action="{$action}" method="post" class="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6">
                 <h2 class="text-2xl font-black uppercase italic mb-6">Connexion</h2>
                 
@@ -104,7 +104,7 @@ function printCreateUserForm()
 function printCreateUserBtn()
 {
     echo <<<HTML
-    <div class="mt-8 text-center">
+    <div class="mt-8 text-center px-6">
         <a href="index.php?page=createUser" 
         class="inline-flex items-center gap-3 bg-white text-black border-4 border-black px-6 py-4 font-black uppercase italic tracking-widest hover:bg-yellow-400 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1">
             <i data-lucide="user-plus" class="w-6 h-6"></i>
