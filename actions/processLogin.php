@@ -21,7 +21,7 @@ if ($user && User::testPassword($user, $mdp)) {
     $_SESSION['loggedIn'] = true;
     $_SESSION['role'] = $user->role;
     $_SESSION['userId'] = $user->id;
-    Flash::success("Heureux de vous revoir : $user->name");
+    Flash::success("Heureux de vous revoir : {$user->firstname}");
     header("Location: ../index.php");
 } else {
     Flash::error("Erreur d'identifiants");
