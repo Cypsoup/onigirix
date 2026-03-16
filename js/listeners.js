@@ -14,6 +14,7 @@ import { handleRecipeStatus } from "./recipe.js";
 
 export function initEventListeners() {
   document.addEventListener("click", (event) => {
+    // ECOUTEUR POUR ARCHIVER - RESTAURER UNE RECETTE
     const archiveBtn = event.target.closest(".js-archive-btn");
     if (archiveBtn) {
       const id = archiveBtn.dataset.recipeId;

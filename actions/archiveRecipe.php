@@ -23,5 +23,3 @@ $newStatus = ($todo == "archive") ? 0 : 1;
 $success = Recipe::updateAvailability($pdo, $id, $newStatus);
 
 echo json_encode(['success' => $success, 'newStatus' => $newStatus]);
-
-?>
