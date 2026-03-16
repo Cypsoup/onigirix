@@ -26,7 +26,7 @@ class CartRenderer
     public static function renderMenu($recipes)
     {
         echo '<main class="p-8 pb-44">';
-        echo '<div class="flex flex-col gap-4" id="menuGrid">';
+        echo '<div class="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:grid md:grid-cols-3" id="menuGrid">';
         
         if (!empty($recipes)) {
             foreach ($recipes as $recipe) {
