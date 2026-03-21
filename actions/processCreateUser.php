@@ -32,7 +32,7 @@ if ($password !== $passwordConfirm) {
 
 // Récupération des variables de connexion
 $name = $_POST['name'] ?? null;
-$firstname == $_POST['firstname'] ?? null;
+$firstname = $_POST['firstname'] ?? null;
 $email = $_POST['email'] ?? null;
 $role = $_POST['role'] ?? 'user';
 

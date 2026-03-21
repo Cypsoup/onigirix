@@ -26,7 +26,7 @@ export async function checkTrigrammeUniqueness(trigramme, excludedId = null) {
 
   try {
     const response = await fetch(
-      `actions/checkTrigramme.php?trigramme=${trigramme}&excludeId=${excludedId}`,
+      `actions/checkTrigramme.php?trigramme=${trigramme}&excludedId=${excludedId}`,
     );
     const data = await response.json();
     return data.exists;

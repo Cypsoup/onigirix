@@ -22,7 +22,7 @@ if (!$eventId) {
 $query = "SELECT u.name, u.trigramme, o.totalAmount 
           FROM `orders` o 
           JOIN `users` u ON u.id = o.userId
-          WHERE o.eventId = ? ";
+          WHERE o.eventId = ? ";    
 $stmt = $pdo->prepare($query);
 $stmt->execute([$eventId]);
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
